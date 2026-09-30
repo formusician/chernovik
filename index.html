@@ -342,7 +342,12 @@
   .key.scale-note.black { background: linear-gradient(to bottom, #4a3f2e 0%, #2d2519 100%); }
   .key.scale-root.white { background: linear-gradient(to bottom, #e8dcc0 0%, #d4c39b 100%); box-shadow: inset 0 0 0 2px var(--accent); }
   .key.scale-root.black { background: linear-gradient(to bottom, #6a5842 0%, #4a3d2c 100%); box-shadow: inset 0 0 0 2px var(--accent); }
-  .piano-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding-bottom: 12px; }
+  .piano-scroll {
+    overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+    overscroll-behavior-x: contain;
+  }
   .piano {
     position: relative; height: 200px;
     background: var(--ink); border-radius: 6px; padding: 6px;
@@ -2258,9 +2263,45 @@ buildPiano();
 const pianoScroll = document.getElementById('pianoScroll');
 const scrollLeftBtn = document.getElementById('scrollLeft');
 const scrollRightBtn = document.getElementById('scrollRight');
+
+let pianoScrollAnim = null;
+
+function scrollPianoBy(delta) {
+  if (!pianoScroll) return;
+  const maxScroll = Math.max(0, pianoScroll.scrollWidth - pianoScroll.clientWidth);
+  if (maxScroll <= 0) return;
+
+  if (pianoScrollAnim) {
+    cancelAnimationFrame(pianoScrollAnim);
+    pianoScrollAnim = null;
+  }
+
+  const start = pianoScroll.scrollLeft;
+  const target = Math.max(0, Math.min(maxScroll, start + delta));
+  const distance = target - start;
+  if (Math.abs(distance) < 0.5) return;
+
+  const duration = 240;
+  const startTime = performance.now();
+
+  const step = (now) => {
+    const t = Math.min(1, (now - startTime) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    pianoScroll.scrollLeft = start + distance * eased;
+    if (t < 1) {
+      pianoScrollAnim = requestAnimationFrame(step);
+    } else {
+      pianoScrollAnim = null;
+      // финальная фиксация — гасим возможные расхождения
+      pianoScroll.scrollLeft = target;
+    }
+  };
+  pianoScrollAnim = requestAnimationFrame(step);
+}
+
 if (pianoScroll) {
-  scrollLeftBtn.addEventListener('click', () => pianoScroll.scrollBy({ left: -220, behavior: 'smooth' }));
-  scrollRightBtn.addEventListener('click', () => pianoScroll.scrollBy({ left: 220, behavior: 'smooth' }));
+  scrollLeftBtn.addEventListener('click', () => scrollPianoBy(-220));
+  scrollRightBtn.addEventListener('click', () => scrollPianoBy(220));
   setTimeout(() => {
     const c4 = keyElements.get(60);
     if (c4) {
