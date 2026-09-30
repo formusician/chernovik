@@ -13,6 +13,19 @@
     --muted: #837c6e; --line: #ddd6c8;
     --accent: #8a6f47; --accent-2: #b89b6b;
     --green: #5a7a5a; --red: #a05555;
+    /* Новая палитра сцены */
+    --stage-bg-1: #1a1628;
+    --stage-bg-2: #2a1f35;
+    --stage-bg-3: #3a2530;
+    --curtain-1: #6b1f2a;
+    --curtain-2: #8a2c3a;
+    --curtain-3: #5a1520;
+    --gold: #e8c878;
+    --gold-deep: #c9a14a;
+    --mint: #8fc4b0;
+    --amber: #e0a050;
+    --copper: #c07850;
+    --cream: #f8ecc8;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -101,43 +114,82 @@
     display: flex; justify-content: center; gap: 12px;
     margin-top: 22px; flex-wrap: wrap;
   }
-  .staff-wrap {
-    min-height: 180px; padding: 20px 0;
-    background: var(--bg); border-radius: 8px;
-    border: 1px solid var(--line);
+
+  /* СЦЕНА */
+  .stage {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(to bottom, var(--stage-bg-1) 0%, var(--stage-bg-2) 55%, var(--stage-bg-3) 100%);
+    box-shadow: inset 0 -40px 60px rgba(0,0,0,.45), 0 12px 40px -18px rgba(0,0,0,.5);
+    min-height: 300px;
+    isolation: isolate;
   }
-  .staff-empty {
-    text-align: center; color: var(--muted);
-    font-size: 13px; font-style: italic; padding: 60px 20px;
+  .stage-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 800 / 300;
   }
-  .staff { position: relative; padding: 10px 24px; }
-  .staff-line-group {
-    position: relative; height: 78px; margin-bottom: 26px;
+  /* Кулисы */
+  .curtain {
+    position: absolute; top: 0; bottom: 0;
+    width: 8%; min-width: 40px; max-width: 70px;
+    background: repeating-linear-gradient(to right,
+      var(--curtain-3) 0px,
+      var(--curtain-2) 6px,
+      var(--curtain-1) 12px,
+      var(--curtain-3) 18px);
+    z-index: 2;
+    box-shadow: inset 0 0 30px rgba(0,0,0,.6);
   }
-  .staff-line-group .line {
-    position: absolute; left: 0; right: 0;
-    height: 1px; background: var(--line);
+  .curtain.left { left: 0; }
+  .curtain.right { right: 0; }
+  .curtain-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 22px;
+    background: linear-gradient(to bottom, var(--curtain-2) 0%, var(--curtain-1) 60%, transparent 100%);
+    z-index: 3;
+    box-shadow: 0 4px 20px rgba(0,0,0,.5);
   }
-  .staff-line-group .line:nth-child(1) { bottom: 0; }
-  .staff-line-group .line:nth-child(2) { bottom: 12px; }
-  .staff-line-group .line:nth-child(3) { bottom: 24px; }
-  .staff-line-group .line:nth-child(4) { bottom: 36px; }
-  .staff-line-group .line:nth-child(5) { bottom: 48px; }
-  .note {
-    position: absolute; width: 12px; height: 9px;
-    border-radius: 50%; background: var(--accent);
-    transform: rotate(-22deg); animation: noteAppear .4s ease;
+  /* Пылинки в свете */
+  .particle {
+    animation: floatUp 6s ease-in-out infinite;
   }
-  .note::after {
-    content: ''; position: absolute;
-    right: -1px; bottom: 4px;
-    width: 1.5px; height: 26px;
-    background: var(--accent); border-radius: 1px;
+  @keyframes floatUp {
+    0%, 100% { transform: translateY(0); opacity: .3; }
+    50% { transform: translateY(-12px); opacity: .7; }
   }
-  @keyframes noteAppear {
-    0% { opacity: 0; transform: rotate(-22deg) scale(.3); }
-    100% { opacity: 1; transform: rotate(-22deg) scale(1); }
+  /* Появление музыканта */
+  .musician {
+    opacity: 0;
+    transition: opacity .8s ease-out;
   }
+  .musician.visible {
+    opacity: 1;
+  }
+  .musician-baton { animation: batonGlow 2s ease-in-out infinite; }
+  @keyframes batonGlow {
+    0%, 100% { filter: drop-shadow(0 0 4px #fff); }
+    50% { filter: drop-shadow(0 0 10px #fff); }
+  }
+  /* Бейдж прогресса оркестра */
+  .orchestra-count {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(232,200,120,.4);
+    color: var(--gold);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    z-index: 4;
+  }
+
+  /* СТАТИСТИКА */
   .practice-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -242,15 +294,8 @@
     .panel-title { font-size: 32px; }
     .card { padding: 22px; }
     .practice-timer { font-size: 60px; }
-    .staff-line-group { height: 60px; margin-bottom: 20px; }
-    .staff-line-group .line:nth-child(1) { bottom: 0; }
-    .staff-line-group .line:nth-child(2) { bottom: 9px; }
-    .staff-line-group .line:nth-child(3) { bottom: 18px; }
-    .staff-line-group .line:nth-child(4) { bottom: 27px; }
-    .staff-line-group .line:nth-child(5) { bottom: 36px; }
-    .note { width: 10px; height: 7px; }
-    .note::after { height: 20px; bottom: 3px; }
     .bpm-value { font-size: 56px; }
+    .curtain { min-width: 26px; }
   }
 </style>
 </head>
@@ -271,12 +316,11 @@
 
 <main>
 
-  <!-- МЕТРОНОМ -->
   <section id="panel-metronome" class="panel">
     <div class="panel-head">
       <div class="panel-eyebrow">Инструмент 01</div>
       <h1 class="panel-title">Метроном</h1>
-      <p class="panel-desc">Простой тестовый метроном — чтобы убедиться, что звук работает и вкладки переключаются.</p>
+      <p class="panel-desc">Простой тестовый метроном — чтобы убедиться, что звук работает.</p>
     </div>
     <div class="card">
       <div class="bpm-value" id="bpmValue">90</div>
@@ -288,7 +332,6 @@
     </div>
   </section>
 
-  <!-- ТЮНЕР -->
   <section id="panel-tuner" class="panel">
     <div class="panel-head">
       <div class="panel-eyebrow">Инструмент 02</div>
@@ -297,11 +340,10 @@
     </div>
     <div class="placeholder">
       <div class="placeholder-mark">♪</div>
-      <div class="placeholder-desc">В полной версии здесь полноценный хроматический тюнер с микрофоном и строями инструментов.</div>
+      <div class="placeholder-desc">В полной версии — тюнер с микрофоном и строями инструментов.</div>
     </div>
   </section>
 
-  <!-- ПИАНИНО -->
   <section id="panel-piano" class="panel">
     <div class="panel-head">
       <div class="panel-eyebrow">Инструмент 03</div>
@@ -310,11 +352,10 @@
     </div>
     <div class="placeholder">
       <div class="placeholder-mark">♬</div>
-      <div class="placeholder-desc">В полной версии здесь четыре октавы с выбором тембра и лада.</div>
+      <div class="placeholder-desc">В полной версии — четыре октавы с тембрами и ладами.</div>
     </div>
   </section>
 
-  <!-- ТЕРМИНЫ -->
   <section id="panel-terms" class="panel">
     <div class="panel-head">
       <div class="panel-eyebrow">Справочник 04</div>
@@ -323,16 +364,15 @@
     </div>
     <div class="placeholder">
       <div class="placeholder-mark">𝄞</div>
-      <div class="placeholder-desc">В полной версии — большой справочник с транскрипцией, знаками нотации и ключами.</div>
+      <div class="placeholder-desc">В полной версии — справочник с транскрипцией и знаками нотации.</div>
     </div>
   </section>
 
-  <!-- ПРАКТИКА -->
   <section id="panel-practice" class="panel active">
     <div class="panel-head">
       <div class="panel-eyebrow">Раздел 05</div>
       <h1 class="panel-title">Практика</h1>
-      <p class="panel-desc">Таймер занятий с нотной летописью. Время идёт даже когда вкладка в фоне.</p>
+      <p class="panel-desc">С каждыми 2 минутами занятия на сцену выходит новый музыкант. Через полчаса собирается целый оркестр.</p>
     </div>
 
     <div class="card">
@@ -349,9 +389,103 @@
         <input type="text" id="practiceNoteInput" placeholder="Что сегодня практикуешь? (необязательно)" autocomplete="off">
       </div>
 
-      <div class="staff-wrap">
-        <div class="staff-empty" id="staffEmpty">Ноты появятся по мере занятия — каждые 2 минуты.</div>
-        <div class="staff" id="staff"></div>
+      <div class="stage" id="stage">
+        <div class="curtain-top"></div>
+        <div class="curtain left"></div>
+        <div class="curtain right"></div>
+        <div class="orchestra-count" id="orchestraCount">На сцене: 0 / 12</div>
+
+        <svg class="stage-svg" viewBox="0 0 800 300" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Пучки света сверху -->
+            <radialGradient id="glowTop" cx="50%" cy="0%" r="70%">
+              <stop offset="0%" stop-color="#f8ecc8" stop-opacity="0.18"/>
+              <stop offset="60%" stop-color="#c9a14a" stop-opacity="0.04"/>
+              <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="spotBeam" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f8ecc8" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#f8ecc8" stop-opacity="0"/>
+            </linearGradient>
+
+            <!-- МУЗЫКАНТЫ -->
+            <!-- Скрипач / альтист -->
+            <symbol id="mus-violin" viewBox="0 0 24 48">
+              <circle cx="12" cy="8" r="4"/>
+              <rect x="8" y="13" width="8" height="33" rx="2.5"/>
+              <ellipse cx="6" cy="20" rx="3.2" ry="5"/>
+              <line x1="6" y1="18" x2="20" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </symbol>
+            <!-- Виолончелист (сидит) -->
+            <symbol id="mus-cello" viewBox="0 0 24 48">
+              <circle cx="12" cy="7" r="3.6"/>
+              <rect x="9" y="11" width="6" height="18" rx="2"/>
+              <ellipse cx="12" cy="36" rx="6.5" ry="10"/>
+              <rect x="4" y="28" width="16" height="3" rx="1.5"/>
+            </symbol>
+            <!-- Флейтист -->
+            <symbol id="mus-flute" viewBox="0 0 24 48">
+              <circle cx="11" cy="8" r="4"/>
+              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
+              <line x1="14" y1="15" x2="24" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </symbol>
+            <!-- Гобоист / кларнетист -->
+            <symbol id="mus-clar" viewBox="0 0 24 48">
+              <circle cx="11" cy="8" r="4"/>
+              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
+              <line x1="13" y1="14" x2="20" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </symbol>
+            <!-- Валторнист / трубач -->
+            <symbol id="mus-brass" viewBox="0 0 24 48">
+              <circle cx="11" cy="8" r="4"/>
+              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
+              <path d="M 15 18 Q 23 22 19 30 Q 17 32 15 30" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            </symbol>
+            <!-- Литаврист -->
+            <symbol id="mus-timp" viewBox="0 0 32 48">
+              <circle cx="16" cy="6" r="4"/>
+              <rect x="12" y="11" width="8" height="24" rx="2.5"/>
+              <ellipse cx="7" cy="40" rx="7" ry="4"/>
+              <ellipse cx="25" cy="40" rx="7" ry="4"/>
+            </symbol>
+            <!-- Дирижёр -->
+            <symbol id="mus-cond" viewBox="0 0 36 48">
+              <circle cx="18" cy="8" r="4.5"/>
+              <rect x="14" y="14" width="8" height="32" rx="3"/>
+              <line x1="14" y1="18" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="22" y1="18" x2="32" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line class="musician-baton" x1="32" y1="6" x2="36" y2="-1" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
+            </symbol>
+          </defs>
+
+          <!-- Верхний свет -->
+          <rect x="0" y="0" width="800" height="300" fill="url(#glowTop)"/>
+
+          <!-- Пучки софитов -->
+          <polygon points="100,0 220,0 200,270 130,270" fill="url(#spotBeam)"/>
+          <polygon points="300,0 420,0 390,270 330,270" fill="url(#spotBeam)"/>
+          <polygon points="500,0 620,0 570,270 520,270" fill="url(#spotBeam)"/>
+
+          <!-- Пылинки в воздухе -->
+          <g fill="#f8ecc8" opacity="0.5">
+            <circle class="particle" cx="120" cy="70" r="1" style="animation-delay:0s"/>
+            <circle class="particle" cx="250" cy="50" r="1.2" style="animation-delay:1.5s"/>
+            <circle class="particle" cx="380" cy="90" r="0.9" style="animation-delay:3s"/>
+            <circle class="particle" cx="520" cy="60" r="1.1" style="animation-delay:2s"/>
+            <circle class="particle" cx="650" cy="80" r="1" style="animation-delay:4s"/>
+            <circle class="particle" cx="180" cy="130" r="0.8" style="animation-delay:.7s"/>
+            <circle class="particle" cx="440" cy="120" r="0.9" style="animation-delay:2.7s"/>
+            <circle class="particle" cx="600" cy="140" r="1" style="animation-delay:3.5s"/>
+          </g>
+
+          <!-- Группа музыкантов (динамически заполняется) -->
+          <g id="musiciansGroup"></g>
+
+          <!-- Линия сцены -->
+          <line x1="0" y1="272" x2="800" y2="272" stroke="#c9a14a" stroke-opacity="0.5" stroke-width="1.5"/>
+          <!-- Тень пола -->
+          <rect x="0" y="272" width="800" height="28" fill="#1a0f14" opacity="0.7"/>
+        </svg>
       </div>
 
       <div class="practice-actions">
@@ -396,12 +530,12 @@
     <div class="card">
       <div class="chart-title">Как тестировать</div>
       <ul style="list-style: none; padding: 0; font-size: 13px; line-height: 1.8; color: var(--muted);">
-        <li>— Нажми «Начать» → таймер пойдёт.</li>
-        <li>— Сверни браузер на 1–2 минуты и вернись — время должно продолжить идти.</li>
-        <li>— Обнови страницу — сессия должна восстановиться.</li>
-        <li>— Дождись 4–6 минут — на нотном стане появятся первые ноты.</li>
-        <li>— Нажми «Завершить» → сессия попадёт в историю, обновятся статистика и график.</li>
-        <li>— Кнопка «Прослушать мою сессию» сыграет мелодию из появившихся нот.</li>
+        <li>— Нажми «Начать» → таймер пойдёт, оркестр начнёт собираться.</li>
+        <li>— Через 2 минуты на сцену выйдет первый скрипач, через 4 — второй, и так далее.</li>
+        <li>— Сверни браузер на пару минут и вернись — музыканты появятся за пропущенное время.</li>
+        <li>— Обнови страницу — сессия и оркестр восстановятся с того же момента.</li>
+        <li>— Последним на сцену выходит дирижёр — через ~32 минуты.</li>
+        <li>— Заверши сессию — она попадёт в историю, обновятся статистика и график.</li>
       </ul>
     </div>
   </section>
@@ -456,13 +590,13 @@ bpmSlider.addEventListener('input', e => {
   bpmValueEl.textContent = metroBpm;
 });
 
-function playClick(time, accent) {
+function playClick(time) {
   const ctx = getCtx();
   if (!ctx) return;
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = 'triangle';
-  osc.frequency.value = accent ? 1500 : 900;
+  osc.frequency.value = 1000;
   gain.gain.setValueAtTime(0, time);
   gain.gain.linearRampToValueAtTime(0.5, time + 0.002);
   gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.05);
@@ -475,7 +609,7 @@ function metroSched() {
   const ctx = getCtx();
   if (!ctx) return;
   while (metroNext < ctx.currentTime + 0.1) {
-    playClick(metroNext, false);
+    playClick(metroNext);
     metroNext += 60.0 / metroBpm;
   }
 }
@@ -501,8 +635,8 @@ metroBtn.addEventListener('click', () => {
 /* ============================================================
    ПРАКТИКА
    ============================================================ */
-const LS_SESSIONS = 'demo-practice-sessions';
-const LS_ACTIVE = 'demo-practice-active';
+const LS_SESSIONS = 'demo-practice-sessions-v2';
+const LS_ACTIVE = 'demo-practice-active-v2';
 
 const practiceTimerEl = document.getElementById('practiceTimer');
 const practiceStatusEl = document.getElementById('practiceStatus');
@@ -510,8 +644,8 @@ const practiceStartBtn = document.getElementById('practiceStart');
 const practicePauseBtn = document.getElementById('practicePause');
 const practiceFinishBtn = document.getElementById('practiceFinish');
 const practiceNoteInput = document.getElementById('practiceNoteInput');
-const staffEmptyEl = document.getElementById('staffEmpty');
-const staffEl = document.getElementById('staff');
+const musiciansGroup = document.getElementById('musiciansGroup');
+const orchestraCountEl = document.getElementById('orchestraCount');
 const statTotalEl = document.getElementById('statTotal');
 const statStreakEl = document.getElementById('statStreak');
 const statTodayEl = document.getElementById('statToday');
@@ -523,10 +657,36 @@ const practiceClearBtn = document.getElementById('practiceClearAll');
 
 let practiceActive = null;
 let practiceTickId = null;
-let lastRenderedNoteCount = -1;
+let lastMusicianCount = -1;
 
-const NOTE_DURATION_MS = 2 * 60 * 1000;
-const NOTES_PER_ROW = 16;
+// Расписание появления музыкантов. Время в миллисекундах.
+// Меняй 120000 на другое значение, чтобы ускорить/замедлить (например, 20000 = 20 сек).
+const MUSICIAN_INTERVAL_MS = 120000;
+
+const COLORS = {
+  strings: '#e8c878',   // тёплое золото
+  woods:   '#8fc4b0',   // мятно-зелёный
+  brass:   '#e0a050',   // янтарный
+  perc:    '#c07850',   // медь
+  cond:    '#f8ecc8'    // яркий крем
+};
+
+// Порядок выхода музыкантов на сцену.
+// x/y — координаты в SVG (viewBox 0 0 800 300).
+const ORCHESTRA = [
+  { kind: 'violin', x: 110, y: 224, color: 'strings' },
+  { kind: 'violin', x: 195, y: 224, color: 'strings' },
+  { kind: 'cello',  x: 290, y: 220, color: 'strings' },
+  { kind: 'violin', x: 500, y: 224, color: 'strings' },
+  { kind: 'cello',  x: 600, y: 220, color: 'strings' },
+  { kind: 'violin', x: 690, y: 224, color: 'strings' },
+  { kind: 'flute',  x: 155, y: 200, color: 'woods' },
+  { kind: 'clar',   x: 640, y: 200, color: 'woods' },
+  { kind: 'brass',  x: 300, y: 200, color: 'brass' },
+  { kind: 'brass',  x: 500, y: 200, color: 'brass' },
+  { kind: 'timp',   x: 400, y: 205, color: 'perc' },
+  { kind: 'cond',   x: 385, y: 220, color: 'cond' }
+];
 
 function loadSessions() {
   try {
@@ -583,48 +743,49 @@ function getElapsed() {
   if (practiceActive.paused) return practiceActive.accumulated;
   return practiceActive.accumulated + (Date.now() - practiceActive.startTime);
 }
-function noteIndexFromMs(ms) {
-  return Math.floor(ms / NOTE_DURATION_MS);
+function musicianCountFromMs(ms) {
+  return Math.min(ORCHESTRA.length, Math.floor(ms / MUSICIAN_INTERVAL_MS));
 }
 
-function renderStaff(ms) {
-  const totalNotes = noteIndexFromMs(ms);
-  if (totalNotes === 0) {
-    staffEmptyEl.style.display = 'block';
-    staffEl.innerHTML = '';
-    lastRenderedNoteCount = 0;
+function createMusicianSVG(m) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const g = document.createElementNS(ns, 'g');
+  g.setAttribute('class', 'musician');
+  g.setAttribute('transform', 'translate(' + m.x + ', ' + m.y + ')');
+  const use = document.createElementNS(ns, 'use');
+  use.setAttribute('href', '#mus-' + m.kind);
+  use.setAttribute('fill', COLORS[m.color] || COLORS.strings);
+  g.appendChild(use);
+  return g;
+}
+
+function renderOrchestra(ms) {
+  const count = musicianCountFromMs(ms);
+  if (count === lastMusicianCount && musiciansGroup.children.length === count) {
+    orchestraCountEl.textContent = 'На сцене: ' + count + ' / ' + ORCHESTRA.length;
     return;
   }
-  staffEmptyEl.style.display = 'none';
-  const rowsNeeded = Math.ceil(totalNotes / NOTES_PER_ROW);
-  if (totalNotes === lastRenderedNoteCount && staffEl.children.length === rowsNeeded) return;
-  lastRenderedNoteCount = totalNotes;
 
-  const isMobile = window.innerWidth <= 860;
-  const step = isMobile ? 9 : 12;
-
-  staffEl.innerHTML = '';
-  for (let r = 0; r < rowsNeeded; r++) {
-    const row = document.createElement('div');
-    row.className = 'staff-line-group';
-    for (let i = 0; i < 5; i++) {
-      const line = document.createElement('div');
-      line.className = 'line';
-      row.appendChild(line);
-    }
-    const notesInRow = Math.min(NOTES_PER_ROW, totalNotes - r * NOTES_PER_ROW);
-    for (let i = 0; i < notesInRow; i++) {
-      const note = document.createElement('div');
-      note.className = 'note';
-      const globalIdx = r * NOTES_PER_ROW + i;
-      const sinVal = Math.sin(globalIdx * 0.7);
-      const stepIdx = Math.round((sinVal + 1) / 2 * 4);
-      note.style.bottom = (stepIdx * step) + 'px';
-      note.style.left = (((i + 0.5) / NOTES_PER_ROW) * 100) + '%';
-      row.appendChild(note);
-    }
-    staffEl.appendChild(row);
+  // Если музыкантов стало меньше (например, очистили) — очистим всех
+  if (count < lastMusicianCount || lastMusicianCount === -1) {
+    musiciansGroup.innerHTML = '';
+    lastMusicianCount = 0;
   }
+
+  // Добавим недостающих
+  for (let i = musiciansGroup.children.length; i < count; i++) {
+    const g = createMusicianSVG(ORCHESTRA[i]);
+    musiciansGroup.appendChild(g);
+    // Обрабатываем появление в следующем кадре, чтобы сработала анимация opacity
+    (function(el) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => el.classList.add('visible'));
+      });
+    })(g);
+  }
+
+  lastMusicianCount = count;
+  orchestraCountEl.textContent = 'На сцене: ' + count + ' / ' + ORCHESTRA.length;
 }
 
 function renderStats() {
@@ -769,7 +930,7 @@ function tick() {
   if (!practiceActive) return;
   const ms = getElapsed();
   practiceTimerEl.textContent = formatTimer(ms);
-  renderStaff(ms);
+  renderOrchestra(ms);
 }
 
 function startPractice() {
@@ -781,7 +942,7 @@ function startPractice() {
     note: practiceNoteInput.value.trim()
   };
   saveActive(practiceActive);
-  lastRenderedNoteCount = -1;
+  lastMusicianCount = -1;
   updateUI();
   if (practiceTickId) clearInterval(practiceTickId);
   practiceTickId = setInterval(tick, 500);
@@ -820,8 +981,8 @@ function finishPractice() {
   practiceTickId = null;
   practiceTimerEl.textContent = '00:00:00';
   practiceNoteInput.value = '';
-  lastRenderedNoteCount = 0;
-  renderStaff(0);
+  lastMusicianCount = -1;
+  renderOrchestra(0);
   updateUI();
   renderStats();
   renderChart();
@@ -838,7 +999,7 @@ async function playLast() {
   const sessions = loadSessions();
   if (!sessions.length) return;
   const last = sessions.slice().sort((a,b) => new Date(b.date) - new Date(a.date))[0];
-  const totalNotes = Math.min(24, noteIndexFromMs(last.duration));
+  const totalNotes = Math.min(24, musicianCountFromMs(last.duration) * 2);
   if (totalNotes === 0) return;
   const ctx = getCtx();
   if (!ctx) return;
@@ -878,8 +1039,8 @@ practiceClearBtn.addEventListener('click', () => {
   practiceTickId = null;
   practiceTimerEl.textContent = '00:00:00';
   practiceNoteInput.value = '';
-  lastRenderedNoteCount = 0;
-  renderStaff(0);
+  lastMusicianCount = -1;
+  renderOrchestra(0);
   updateUI();
   renderStats();
   renderChart();
@@ -892,13 +1053,14 @@ practiceClearBtn.addEventListener('click', () => {
   if (saved) {
     practiceActive = saved;
     if (!practiceActive.paused) practiceActive.startTime = Date.now();
-    lastRenderedNoteCount = -1;
+    lastMusicianCount = -1;
     if (practiceNoteInput) practiceNoteInput.value = practiceActive.note || '';
     updateUI();
     practiceTickId = setInterval(tick, 500);
     tick();
   } else {
-    renderStaff(0);
+    lastMusicianCount = -1;
+    renderOrchestra(0);
     updateUI();
   }
   renderStats();
