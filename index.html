@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ea">
-<title>Maestro — Трекер занятий (demo)</title>
+<title>Maestro — Трекер занятий (VexFlow demo)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
     --line: #ddd6c8;
     --accent: #8a6f47;
     --accent-2: #b89b6b;
-    --warm: #c07850;
-    --glow: #d4a55a;
+    --green: #5a7a5a;
+    --red: #a05555;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -29,26 +29,30 @@
     min-height: 100vh;
   }
   body { padding: 24px 16px 80px; display: flex; justify-content: center; }
-  .wrap { width: 100%; max-width: 720px; }
+  .wrap { width: 100%; max-width: 760px; }
 
   h1 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 38px; font-weight: 500; line-height: 1.1;
+    font-size: 38px;
+    font-weight: 500;
+    line-height: 1.1;
     margin-bottom: 6px;
   }
   .subtitle {
-    font-size: 13px; color: var(--muted);
-    margin-bottom: 28px; line-height: 1.5;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.55;
   }
 
   .card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 14px;
-    padding: 28px 22px;
+    padding: 24px 20px;
   }
 
-  /* Streak */
+  /* ---- Streak ---- */
   .streak-row {
     display: flex; justify-content: center; gap: 10px;
     flex-wrap: wrap; margin-bottom: 8px;
@@ -82,12 +86,16 @@
   }
   .streak-flame { font-size: 16px; margin-right: 2px; }
 
-  /* Timer */
+  /* ---- Таймер ---- */
   .timer {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 96px; font-weight: 500; line-height: 1;
-    text-align: center; font-variant-numeric: tabular-nums;
-    margin: 24px 0 20px; letter-spacing: -0.01em;
+    font-size: 88px;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    margin: 20px 0 18px;
+    letter-spacing: -0.01em;
     transition: color .3s, text-shadow .3s;
   }
   .timer.running {
@@ -101,14 +109,21 @@
     50%      { text-shadow: 0 0 32px rgba(138,111,71,.45); }
   }
 
-  /* Buttons */
+  /* ---- Кнопки ---- */
   .btn {
-    font-family: inherit; font-size: 13px; letter-spacing: .06em;
-    text-transform: uppercase; padding: 14px 28px;
-    border-radius: 8px; border: 1px solid var(--ink);
-    background: var(--ink); color: var(--surface);
-    cursor: pointer; transition: background .15s, color .15s, border-color .15s;
-    -webkit-appearance: none; appearance: none;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: 8px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--surface);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    -webkit-appearance: none;
+    appearance: none;
   }
   .btn:hover { background: transparent; color: var(--ink); }
   .btn.ghost { background: transparent; color: var(--ink); }
@@ -118,134 +133,154 @@
   .btn.small { padding: 8px 14px; font-size: 11px; }
 
   .controls {
-    display: flex; justify-content: center;
-    gap: 12px; flex-wrap: wrap; margin: 8px 0 12px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 6px 0 20px;
   }
 
-  /* Melody header */
-  .melody-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin: 20px 0 8px; flex-wrap: wrap; gap: 10px;
+  /* ---- Заголовок партитуры ---- */
+  .score-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 18px 0 10px;
+    flex-wrap: wrap;
+    gap: 10px;
   }
-  .melody-label {
-    font-size: 11px; letter-spacing: .18em;
-    text-transform: uppercase; color: var(--muted);
+  .score-label {
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
   .switch {
-    display: inline-flex; align-items: center; gap: 10px;
-    cursor: pointer; user-select: none; -webkit-user-select: none;
-    font-size: 13px; color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    font-size: 13px;
+    color: var(--muted);
   }
   .switch input { display: none; }
   .switch-slider {
-    width: 40px; height: 22px; background: var(--line);
-    border-radius: 11px; position: relative;
-    transition: background .2s; flex-shrink: 0;
+    width: 40px; height: 22px;
+    background: var(--line);
+    border-radius: 11px;
+    position: relative;
+    transition: background .2s;
+    flex-shrink: 0;
   }
   .switch-slider::before {
-    content: ''; position: absolute;
-    left: 3px; top: 3px; width: 16px; height: 16px;
-    background: var(--surface); border-radius: 50%;
+    content: '';
+    position: absolute;
+    left: 3px; top: 3px;
+    width: 16px; height: 16px;
+    background: var(--surface);
+    border-radius: 50%;
     transition: transform .2s;
   }
   .switch input:checked + .switch-slider { background: var(--accent); }
   .switch input:checked + .switch-slider::before { transform: translateX(18px); }
 
-  /* Score (партитура) */
+  /* ---- Партитура ---- */
   .score-wrap {
-    margin-top: 8px;
-    padding: 12px 6px;
+    margin-top: 6px;
+    padding: 12px 8px;
     background: linear-gradient(135deg, var(--bg) 0%, rgba(184,155,107,.06) 100%);
     border: 1px solid var(--line);
     border-radius: 12px;
-    overflow-x: auto; overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    transition: background .8s ease;
+    overflow: hidden;
+    transition: box-shadow .6s ease, border-color .6s ease;
+    min-height: 220px;
   }
   .score-wrap.complete {
-    background: linear-gradient(135deg, rgba(212,165,90,.18) 0%, rgba(192,120,80,.12) 100%);
-    border-color: rgba(192,120,80,.45);
-    box-shadow: 0 0 32px rgba(212,165,90,.25), inset 0 0 24px rgba(212,165,90,.08);
-    animation: scoreComplete 3s ease-in-out infinite;
+    border-color: rgba(184,148,74,.5);
+    box-shadow: 0 0 40px rgba(184,148,74,.25), inset 0 0 30px rgba(184,148,74,.08);
+    animation: scorePulse 3s ease-in-out infinite;
   }
-  @keyframes scoreComplete {
-    0%, 100% { box-shadow: 0 0 32px rgba(212,165,90,.2), inset 0 0 24px rgba(212,165,90,.08); }
-    50%      { box-shadow: 0 0 48px rgba(212,165,90,.4), inset 0 0 32px rgba(212,165,90,.16); }
+  @keyframes scorePulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(184,148,74,.25), inset 0 0 30px rgba(184,148,74,.08); }
+    50%      { box-shadow: 0 0 60px rgba(184,148,74,.4), inset 0 0 40px rgba(184,148,74,.15); }
   }
-  .score {
+  #score-output {
+    width: 100%;
+    min-height: 200px;
+  }
+  #score-output svg {
     display: block;
-    color: var(--accent);
-    transition: color .8s ease;
-  }
-  .score-wrap.complete .score { color: var(--warm); }
-  .score svg {
-    display: block;
+    width: 100%;
     height: auto;
-    max-width: 100%;
-    margin: 0 auto;
-  }
-  .score .note-group {
-    animation: noteAppear .6s cubic-bezier(.2,.9,.3,1.4);
-    transform-origin: center;
-  }
-  @keyframes noteAppear {
-    0%   { opacity: 0; transform: scale(.2); }
-    55%  { opacity: 1; transform: scale(1.25); }
-    100% { opacity: 1; transform: scale(1); }
-  }
-  .score .note-group.playing .note-head {
-    filter: drop-shadow(0 0 12px currentColor) brightness(1.4);
-  }
-  .score .note-group.playing .note-stem {
-    filter: drop-shadow(0 0 10px currentColor);
   }
 
-  /* Result */
-  .melody-result {
+  /* ---- Результат ---- */
+  .score-result {
     margin-top: 14px;
-    padding: 16px 20px;
-    background: linear-gradient(135deg, rgba(212,165,90,.18), rgba(192,120,80,.14));
-    border: 1px solid rgba(192,120,80,.4);
+    padding: 16px 18px;
+    background: linear-gradient(135deg, rgba(184,155,107,.18), rgba(138,111,71,.1));
+    border: 1px solid rgba(184,148,74,.45);
     border-radius: 12px;
     display: none;
     flex-wrap: wrap;
     align-items: center;
     gap: 12px;
     justify-content: space-between;
-    animation: fadeIn .6s ease;
+    animation: fadeIn .5s ease;
   }
-  .melody-result.show { display: flex; }
+  .score-result.show { display: flex; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .melody-result-text {
-    font-size: 14px; color: var(--warm);
-    font-weight: 500; line-height: 1.4;
+  .score-result-text {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 500;
+    line-height: 1.4;
   }
-  .melody-result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .score-result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  /* Divider */
-  .divider { height: 1px; background: var(--line); margin: 24px 0; }
-
-  /* Goal */
+  /* ---- Цель ---- */
+  .divider {
+    height: 1px;
+    background: var(--line);
+    margin: 22px 0;
+  }
   .goal-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
   }
   .goal-label {
-    font-size: 11px; letter-spacing: .18em;
-    text-transform: uppercase; color: var(--muted);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
   .goal-values {
-    font-size: 13px; color: var(--muted);
-    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
   .goal-input {
-    width: 60px; padding: 4px 8px;
-    border: 1px solid var(--line); background: var(--surface);
-    border-radius: 6px; color: var(--ink); outline: none;
-    font-family: inherit; font-size: 14px;
-    text-align: center; font-variant-numeric: tabular-nums;
-    -webkit-appearance: none; appearance: textfield;
+    width: 60px;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 6px;
+    color: var(--ink);
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    -webkit-appearance: none;
+    appearance: textfield;
     transition: border-color .15s;
   }
   .goal-input:focus { border-color: var(--accent); }
@@ -253,13 +288,17 @@
   .goal-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   .goal-bar {
-    height: 8px; background: var(--line);
-    border-radius: 4px; overflow: hidden; margin-top: 4px;
+    height: 8px;
+    background: var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 4px;
   }
   .goal-bar-fill {
     height: 100%;
     background: linear-gradient(to right, #6a8090, var(--accent-2), var(--accent));
-    transition: width .5s ease; border-radius: 4px;
+    transition: width .5s ease;
+    border-radius: 4px;
   }
   .goal-bar-fill.full {
     background: linear-gradient(to right, #b8944a, #c07850, #a05030);
@@ -270,47 +309,56 @@
     50%      { filter: brightness(1.25); }
   }
 
-  /* Stats */
+  /* ---- Статистика ---- */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px; margin-top: 8px;
+    gap: 16px;
+    margin-top: 8px;
   }
   .stat-label {
-    font-size: 11px; letter-spacing: .18em;
-    text-transform: uppercase; color: var(--muted);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
   .stat-value {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 26px; font-weight: 500;
-    margin-top: 2px; font-variant-numeric: tabular-nums;
+    font-size: 26px;
+    font-weight: 500;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
   }
 
-  /* Toast */
+  /* ---- Toast ---- */
   .session-toast {
-    position: fixed; top: 24px; left: 50%;
+    position: fixed;
+    top: 24px;
+    left: 50%;
     transform: translateX(-50%) translateY(-140%);
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 14px; padding: 14px 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 22px;
     box-shadow: 0 12px 40px rgba(0,0,0,.18);
-    z-index: 2000; font-size: 15px;
+    z-index: 2000;
+    font-size: 15px;
     transition: transform .4s cubic-bezier(.2,.9,.3,1.3);
     pointer-events: none;
-    display: flex; align-items: center; gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .session-toast.show { transform: translateX(-50%) translateY(0); }
   .session-toast .flame { font-size: 22px; }
   .session-toast .mins {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 26px; color: var(--accent); font-weight: 500;
+    font-size: 26px;
+    color: var(--accent);
+    font-weight: 500;
   }
 
-  .info {
-    margin-top: 28px; font-size: 12px;
-    color: var(--muted); line-height: 1.6;
-    text-align: center; font-style: italic;
-  }
-
+  /* ---- Mobile ---- */
   @media (max-width: 600px) {
     body { padding: 16px 12px 60px; }
     h1 { font-size: 30px; }
@@ -326,7 +374,7 @@
 <div class="wrap">
 
   <h1>Занятия</h1>
-  <p class="subtitle">Считайте время практики — и партитура заполняется нота за нотой. Первая нота через 30 секунд, дальше — каждые 2,5 минуты. Полная партитура — 40 минут.</p>
+  <p class="subtitle">Считайте время практики и собирайте секретную мелодию. Первая нота появится через 30 секунд, дальше — каждые 2.5 минуты. Таймер продолжает считать, даже если вы закроете страницу.</p>
 
   <div class="card">
 
@@ -340,19 +388,19 @@
       </div>
     </div>
 
-    <!-- Timer -->
+    <!-- Таймер -->
     <div class="timer" id="practiceTimer">00:00:00</div>
 
-    <!-- Controls -->
+    <!-- Кнопки -->
     <div class="controls">
       <button type="button" class="btn accent" id="practiceStart">Начать занятие</button>
       <button type="button" class="btn ghost" id="practiceReset" style="display:none;">Сброс</button>
       <button type="button" class="btn ghost" id="practiceFinish" style="display:none;">Завершить</button>
     </div>
 
-    <!-- Melody header -->
-    <div class="melody-header">
-      <span class="melody-label">🎼 Партитура: <span id="noteCount">0</span> / <span id="noteTotal">16</span></span>
+    <!-- Заголовок партитуры -->
+    <div class="score-header">
+      <span class="score-label">🎼 Партитура: <span id="noteCount">0</span> / <span id="noteTotal">16</span> нот</span>
       <label class="switch">
         <input type="checkbox" id="practiceSoundToggle">
         <span class="switch-slider"></span>
@@ -360,28 +408,28 @@
       </label>
     </div>
 
-    <!-- Score -->
+    <!-- Партитура -->
     <div class="score-wrap" id="scoreWrap">
-      <div class="score" id="practiceStaff"></div>
+      <div id="score-output"></div>
     </div>
 
-    <!-- Result -->
-    <div class="melody-result" id="melodyResult">
-      <div class="melody-result-text" id="melodyResultText"></div>
-      <div class="melody-result-actions">
+    <!-- Результат -->
+    <div class="score-result" id="melodyResult">
+      <div class="score-result-text" id="melodyResultText"></div>
+      <div class="score-result-actions">
         <button type="button" class="btn accent small" id="practicePlay">▶ Прослушать</button>
-        <button type="button" class="btn ghost small" id="practiceNext">Новая партитура</button>
+        <button type="button" class="btn ghost small" id="practiceNext">Новая мелодия</button>
       </div>
     </div>
 
     <div class="divider"></div>
 
-    <!-- Goal -->
+    <!-- Цель -->
     <div class="goal-header">
       <span class="goal-label">Цель на сегодня</span>
       <span class="goal-values">
         <span id="goalDone">0</span> /
-        <input type="number" id="goalInput" min="5" max="480" step="5" value="40" class="goal-input">
+        <input type="number" id="goalInput" min="5" max="480" step="5" value="30" class="goal-input">
         мин
       </span>
     </div>
@@ -389,7 +437,7 @@
 
     <div class="divider"></div>
 
-    <!-- Stats -->
+    <!-- Статистика -->
     <div class="stat-label">Статистика</div>
     <div class="stats-grid">
       <div>
@@ -412,14 +460,17 @@
 
   </div>
 
-  <p class="info">Демо-версия трекера. Данные хранятся локально в браузере (localStorage).</p>
+  <p class="info" style="margin-top:28px;font-size:12px;color:var(--muted);line-height:1.6;text-align:center;font-style:italic;">
+    Демо-версия трекера с VexFlow. Данные хранятся локально в браузере.
+  </p>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
 <script>
 'use strict';
 
 /* ============================================================
-   АУДИО-КОНТЕКСТ
+   АУДИО
    ============================================================ */
 let audioCtx = null;
 function getCtx() {
@@ -434,103 +485,38 @@ function getCtx() {
 const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
 /* ============================================================
-   ТРЕКЕР ЗАНЯТИЙ
+   ТРЕКЕР С VEXFLOW
    ============================================================ */
 (function initTracker() {
   const LS_SESSIONS = 'maestro-practice-sessions';
   const LS_STREAK   = 'maestro-practice-streak';
   const LS_GOAL     = 'maestro-practice-goal';
   const LS_ACTIVE   = 'maestro-practice-active';
-  const LS_SCORE    = 'maestro-practice-score';
+  const LS_MELODY   = 'maestro-practice-melody';
 
-  const FIRST_NOTE_DELAY = 30;      // секунд до первой ноты
-  const NOTE_INTERVAL    = 150;     // секунд между нотами (2.5 минуты)
-  const TOTAL_NOTES      = 16;      // 16 нот × 2.5 мин = 40 минут
+  const FIRST_NOTE_DELAY = 30;      // 30 секунд до первой ноты
+  const NOTE_INTERVAL    = 150;     // 2.5 минуты между нотами
 
-  // 5 возможных длительностей (в "тиках" для отрисовки):
-  // 1 = четвертная, 2 = половинная, 4 = целая
-  const DUR_QUARTER = 1;
-  const DUR_HALF    = 2;
-  const DUR_WHOLE   = 4;
-
-  // Пентатоника C-D-E-G-A. MIDI: C4=60, D4=62, E4=64, G4=67, A4=69,
-  // затем следующая октава: C5=72, D5=74, E5=76, G5=79, A5=81
-  // В DIA-шагах: 0=C4, 1=D4, 2=E4, 3=G4, 4=A4, 5=C5, 6=D5, 7=E5, 8=G5, 9=A5
-  const PATTERNS = [
-    // 16 нот: плавный контур с подъёмом и разрешением в конце
-    [
-      { m:60, d:1 }, { m:62, d:1 }, { m:64, d:2 },
-      { m:67, d:1 }, { m:64, d:1 }, { m:62, d:2 },
-      { m:60, d:4 },
-      { m:64, d:1 }, { m:67, d:1 }, { m:69, d:2 },
-      { m:72, d:4 },
-      { m:69, d:1 }, { m:67, d:1 }, { m:64, d:1 }, { m:62, d:1 },
-      { m:60, d:4 }
-    ],
-    [
-      { m:69, d:2 }, { m:67, d:1 }, { m:64, d:1 },
-      { m:67, d:4 },
-      { m:64, d:1 }, { m:62, d:1 }, { m:60, d:2 },
-      { m:62, d:4 },
-      { m:64, d:1 }, { m:67, d:1 }, { m:69, d:1 }, { m:67, d:1 },
-      { m:64, d:2 }, { m:62, d:2 },
-      { m:60, d:4 },
-      { m:60, d:4 }
-    ],
-    [
-      { m:60, d:4 },
-      { m:64, d:1 }, { m:67, d:1 }, { m:69, d:2 },
-      { m:67, d:2 }, { m:64, d:2 },
-      { m:62, d:4 },
-      { m:64, d:1 }, { m:62, d:1 }, { m:60, d:2 },
-      { m:64, d:4 },
-      { m:67, d:2 }, { m:69, d:2 },
-      { m:72, d:2 }, { m:71, d:1 }, { m:69, d:1 },
-      { m:67, d:4 }
-    ]
+  // Пентатоническая мелодия (16 нот, C-dur, только белые клавиши)
+  const MELODY = [
+    'C4', 'D4', 'E4', 'G4',
+    'A4', 'G4', 'E4', 'D4',
+    'C4', 'D4', 'E4', 'G4',
+    'A4', 'C5', 'A4', 'G4'
   ];
 
-  // DIA: сколько шагов от E4 (первая линейка снизу)
-  // Полушаг = 6px (lineGap=12)
-  const DIA = { 60:-2, 62:-1, 64:0, 67:2, 69:3, 72:5, 74:6, 76:7, 79:9 };
-
-  // Цвет ноты по высоте: тёплый терракот → синий
-  const COLOR_STOPS = [
-    { m: 60, c: [200, 118, 78] },
-    { m: 64, c: [186, 148, 74] },
-    { m: 67, c: [138, 111, 71] },
-    { m: 69, c: [155, 130, 100] },
-    { m: 72, c: [106, 128, 144] },
-    { m: 79, c: [88, 118, 154] }
-  ];
-  function noteColor(midi) {
-    if (midi <= COLOR_STOPS[0].m) {
-      const c = COLOR_STOPS[0].c;
-      return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
-    }
-    const last = COLOR_STOPS[COLOR_STOPS.length - 1];
-    if (midi >= last.m) {
-      return 'rgb(' + last.c[0] + ',' + last.c[1] + ',' + last.c[2] + ')';
-    }
-    for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
-      const a = COLOR_STOPS[i], b = COLOR_STOPS[i + 1];
-      if (midi >= a.m && midi <= b.m) {
-        const t = (midi - a.m) / (b.m - a.m);
-        const r = Math.round(a.c[0] + (b.c[0] - a.c[0]) * t);
-        const g = Math.round(a.c[1] + (b.c[1] - a.c[1]) * t);
-        const bl = Math.round(a.c[2] + (b.c[2] - a.c[2]) * t);
-        return 'rgb(' + r + ',' + g + ',' + bl + ')';
-      }
-    }
-    return '#8a6f47';
-  }
+  // Соответствие нот нотам MIDI для прослушивания
+  const NOTE_TO_MIDI = {
+    'C4': 60, 'D4': 62, 'E4': 64, 'F4': 65, 'G4': 67, 'A4': 69, 'B4': 71,
+    'C5': 72, 'D5': 74, 'E5': 76, 'F5': 77, 'G5': 79, 'A5': 81
+  };
 
   const $ = id => document.getElementById(id);
   const $timer = $('practiceTimer');
   const $start = $('practiceStart');
   const $finish = $('practiceFinish');
   const $reset = $('practiceReset');
-  const $staff = $('practiceStaff');
+  const $scoreOutput = $('score-output');
   const $scoreWrap = $('scoreWrap');
   const $noteCount = $('noteCount');
   const $noteTotal = $('noteTotal');
@@ -559,7 +545,8 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   let playedNotes = [];
   let previousCount = 0;
   let playingPreview = false;
-  let scoreState = loadScoreState();
+  let melodyState = loadMelodyState();
+  let vexFlowReady = false;
 
   // ---------- Storage ----------
   function loadJSON(k, f) {
@@ -570,16 +557,15 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
   }
 
-  function newScoreState() {
-    return { patternId: Math.floor(Math.random() * PATTERNS.length), progressSec: 0, completed: [] };
+  function newMelodyState() {
+    return { melodyId: 0, progressSec: 0 };
   }
-  function loadScoreState() {
-    const s = loadJSON(LS_SCORE, null);
-    if (s && typeof s.patternId === 'number' && Array.isArray(s.completed)) return s;
-    return newScoreState();
+  function loadMelodyState() {
+    const s = loadJSON(LS_MELODY, null);
+    if (s && typeof s.progressSec === 'number') return s;
+    return newMelodyState();
   }
-  function saveScoreState() { saveJSON(LS_SCORE, scoreState); }
-  function currentPattern() { return PATTERNS[scoreState.patternId]; }
+  function saveMelodyState() { saveJSON(LS_MELODY, melodyState); }
 
   function dayKey(d) {
     d = d || new Date();
@@ -601,7 +587,7 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
   function notesCountForSec(sec) {
     if (sec < FIRST_NOTE_DELAY) return 0;
-    return Math.min(1 + Math.floor((sec - FIRST_NOTE_DELAY) / NOTE_INTERVAL), TOTAL_NOTES);
+    return Math.min(1 + Math.floor((sec - FIRST_NOTE_DELAY) / NOTE_INTERVAL), MELODY.length);
   }
 
   function persistActive() {
@@ -631,9 +617,9 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     const newElapsed = computeElapsedSec();
     const delta = newElapsed - lastElapsedSec;
     if (delta > 0) {
-      scoreState.progressSec += delta;
+      melodyState.progressSec += delta;
       lastElapsedSec = newElapsed;
-      saveScoreState();
+      saveMelodyState();
     }
     elapsedSec = newElapsed;
     $timer.textContent = fmt(elapsedSec);
@@ -682,10 +668,11 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     lastElapsedSec = 0;
     running = false;
 
-    scoreState.progressSec = 0;
+    melodyState.progressSec = 0;
     playedNotes = [];
     previousCount = 0;
-    saveScoreState();
+    saveMelodyState();
+
     $melodyResult.classList.remove('show');
     $scoreWrap.classList.remove('complete');
     $noteCount.textContent = '0';
@@ -762,7 +749,7 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   // ---------- Статистика ----------
   function renderStats() {
     const sessions = getSessions();
-    const goal = parseInt(localStorage.getItem(LS_GOAL) || '40', 10);
+    const goal = parseInt(localStorage.getItem(LS_GOAL) || '30', 10);
     if ($goalInput.value !== String(goal)) $goalInput.value = goal;
 
     const today = dayKey();
@@ -796,147 +783,104 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     }, 3200);
   }
 
-  // ---------- SVG партитуры ----------
+  // ---------- VexFlow ----------
+  function initVexFlow() {
+    if (vexFlowReady) return;
+    if (typeof VexFlow === 'undefined') {
+      console.warn('VexFlow не загружен');
+      return;
+    }
+    vexFlowReady = true;
+    renderScore();
+  }
+
   function renderScore() {
-    const lineGap     = 12;
-    const staffHeight = lineGap * 4;               // 4 промежутка = 5 линеек
-    const leftPad     = 20;
-    const rightPad    = 20;
-    const topPad      = 40;
-    const bottomPad   = 40;
+    if (!vexFlowReady || !$scoreOutput) return;
 
-    // Количество тактов = 8 (по 2 ноты в такт), чтобы уместилось в ширину
-    const total = TOTAL_NOTES;
-    const notesPerMeasure = 2;
-    const measureCount = Math.ceil(total / notesPerMeasure);
+    const totalNotes = MELODY.length;
+    const visibleNotes = playedNotes;
 
-    // Ширина такта
-    const measureWidth = 62;
-    const totalWidth = leftPad + measureCount * measureWidth + rightPad;
-    const totalHeight = topPad + staffHeight + bottomPad;
+    // Очищаем контейнер
+    $scoreOutput.innerHTML = '';
 
-    const topLineY = topPad;
-    const bottomLineY = topPad + staffHeight;
-    const stepY = lineGap / 2;
-    // G4 (DIA=2) — на 2-й линейке снизу
-    const yForDia = dia => bottomLineY - (dia - 2) * stepY;
-
-    let svg = '<svg viewBox="0 0 ' + totalWidth + ' ' + totalHeight + '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">';
-
-    // 5 линеек стана
-    for (let i = 0; i < 5; i++) {
-      const y = topLineY + i * lineGap;
-      svg += '<line x1="' + leftPad + '" y1="' + y + '" x2="' + (totalWidth - rightPad) + '" y2="' + y + '" stroke="currentColor" stroke-width="1.1" opacity="0.5"/>';
-    }
-
-    // Тактовые черты (через каждые N нот)
-    for (let m = 0; m <= measureCount; m++) {
-      const x = leftPad + m * measureWidth;
-      // начальная и конечная — толще
-      const isEdge = (m === 0 || m === measureCount);
-      svg += '<line x1="' + x + '" y1="' + topLineY + '" x2="' + x + '" y2="' + bottomLineY + '" stroke="currentColor" stroke-width="' + (isEdge ? 2 : 1) + '" opacity="' + (isEdge ? 0.9 : 0.5) + '"/>';
-    }
-
-    // Ноты
-    playedNotes.forEach((note, i) => {
-      const midi = note.m;
-      const dur = note.d;
-      const dia = DIA[midi] !== undefined ? DIA[midi] : 0;
-      const measureIdx = Math.floor(i / notesPerMeasure);
-      const posInMeasure = i % notesPerMeasure;
-      // Позиция X: внутри такта две ноты делят его пополам
-      const measureX = leftPad + measureIdx * measureWidth;
-      const x = measureX + 16 + posInMeasure * (measureWidth - 32);
-
-      const y = yForDia(dia);
-      const isLast = i === playedNotes.length - 1;
-      const col = noteColor(midi);
-
-      // Добавочные линейки
-      if (dia <= -2) {
-        for (let d = -2; d >= dia; d -= 2) {
-          const ly = yForDia(d);
-          svg += '<line x1="' + (x - 10) + '" y1="' + ly + '" x2="' + (x + 10) + '" y2="' + ly + '" stroke="currentColor" stroke-width="1"/>';
-        }
+    // Создаём Factory
+    const factory = new VexFlow.Factory({
+      renderer: {
+        elementId: 'score-output',
+        width: 700,
+        height: 400
       }
-      if (dia >= 10) {
-        for (let d = 10; d <= dia; d += 2) {
-          const ly = yForDia(d);
-          svg += '<line x1="' + (x - 10) + '" y1="' + ly + '" x2="' + (x + 10) + '" y2="' + ly + '" stroke="currentColor" stroke-width="1"/>';
-        }
-      }
-
-      const cls = 'note-group' + (isLast ? ' new' : '');
-      const isHollow = dur >= 2;
-      const hasStem = dur < 4;  // целая нота — без штиля
-
-      svg += '<g class="' + cls + '" data-note-index="' + i + '" transform="translate(' + x + ',' + y + ')" style="color:' + col + '">';
-
-      // Головка
-      const headClass = 'note-head';
-      if (isHollow) {
-        svg += '<ellipse class="' + headClass + '" cx="0" cy="0" rx="6" ry="4.3" fill="none" stroke="' + col + '" stroke-width="1.8" transform="rotate(-20)"/>';
-      } else {
-        svg += '<ellipse class="' + headClass + '" cx="0" cy="0" rx="5.6" ry="4.1" fill="' + col + '" transform="rotate(-20)"/>';
-      }
-
-      // Штиль (для четвертных и половинных)
-      if (hasStem) {
-        const stemUp = dia < 4;
-        if (stemUp) {
-          svg += '<line class="note-stem" x1="4.5" y1="0" x2="4.5" y2="-28" stroke="' + col + '" stroke-width="1.5"/>';
-        } else {
-          svg += '<line class="note-stem" x1="-4.5" y1="0" x2="-4.5" y2="28" stroke="' + col + '" stroke-width="1.5"/>';
-        }
-      }
-
-      svg += '</g>';
     });
 
-    svg += '</svg>';
-    $staff.innerHTML = svg;
+    const score = factory.EasyScore();
+
+    // 4 строки по 4 ноты
+    const notesPerLine = 4;
+    const lines = Math.ceil(totalNotes / notesPerLine);
+
+    for (let i = 0; i < lines; i++) {
+      const start = i * notesPerLine;
+      const end = Math.min(start + notesPerLine, totalNotes);
+      const lineNotes = [];
+
+      for (let j = start; j < end; j++) {
+        if (j < visibleNotes.length) {
+          lineNotes.push(visibleNotes[j] + '/w');
+        } else {
+          // Пустой такт — используем целую паузу
+          lineNotes.push('b/4/w/r');
+        }
+      }
+
+      const system = factory.System({ width: 650, y: 40 + i * 90 });
+
+      system
+        .addStave({
+          voices: [
+            score.voice(score.notes(lineNotes.join(', ')))
+          ]
+        })
+        .addClef('treble')
+        .addKeySignature('C')
+        .addTimeSignature('4/4');
+    }
+
+    factory.draw();
   }
 
   function syncScore() {
-    const count = Math.min(notesCountForSec(scoreState.progressSec), TOTAL_NOTES);
+    const total = MELODY.length;
+    const count = Math.min(notesCountForSec(melodyState.progressSec), total);
     if (count === playedNotes.length) return;
 
-    playedNotes = currentPattern().slice(0, count);
+    playedNotes = MELODY.slice(0, count);
     renderScore();
     $noteCount.textContent = count;
-    $noteTotal.textContent = TOTAL_NOTES;
+    $noteTotal.textContent = total;
 
     if (count > previousCount && count > 0) {
       if ($soundToggle.checked && !document.hidden) {
-        playNoteTick(currentPattern()[count - 1].m);
+        playNoteTick(MELODY[count - 1]);
       }
     }
     previousCount = count;
 
-    if (count >= TOTAL_NOTES && TOTAL_NOTES > 0) showScoreCompleted();
+    if (count >= total && total > 0) showMelodyCompleted();
   }
 
-  function showScoreCompleted() {
+  function showMelodyCompleted() {
     if ($melodyResult.classList.contains('show')) return;
-    $scoreWrap.classList.add('complete');
-    $melodyResultText.textContent = '🎉 Партитура дописана! Нажмите «Прослушать» — услышите, что вы сыграли за эти 40 минут.';
+    $melodyResultText.textContent = '🎉 Партитура дописана!';
     $melodyResult.classList.add('show');
+    $scoreWrap.classList.add('complete');
   }
 
   // ---------- Звук ----------
-  async function ensureRunningCtx() {
-    const ctx = getCtx();
-    if (!ctx) return null;
-    if (ctx.state === 'suspended') {
-      try { await ctx.resume(); } catch(e) {}
-    }
-    return ctx;
-  }
-
-  function playNoteTick(midi) {
+  function playNoteTick(noteName) {
     const ctx = getCtx();
     if (!ctx) return;
     if (ctx.state === 'suspended') ctx.resume();
+    const midi = NOTE_TO_MIDI[noteName] || 60;
     const freq = midiToFreq(midi, 440);
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -954,30 +898,19 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     if (playingPreview || playedNotes.length === 0) return;
     playingPreview = true;
 
-    const ctx = await ensureRunningCtx();
+    const ctx = getCtx();
     if (!ctx) { playingPreview = false; return; }
+    if (ctx.state === 'suspended') {
+      try { await ctx.resume(); } catch(e) {}
+    }
 
-    try {
-      const warm = ctx.createOscillator();
-      const warmG = ctx.createGain();
-      warmG.gain.value = 0.001;
-      warm.frequency.value = 880;
-      warm.connect(warmG).connect(ctx.destination);
-      warm.start(ctx.currentTime);
-      warm.stop(ctx.currentTime + 0.01);
-    } catch(e) {}
+    const noteDur = 0.6;
+    const startTime = ctx.currentTime + 0.1;
 
-    const noteEls = $staff.querySelectorAll('.note-group');
-    const baseDur = 0.5;       // четвертная в секундах (~120 BPM)
-    const startTime = ctx.currentTime + 0.08;
-    const tailGap = 0.06;
-
-    let cumTime = 0;
-    playedNotes.forEach((note, i) => {
-      const dur = baseDur * note.d;
-      const t = startTime + cumTime;
-      const sounding = Math.max(0.12, dur - tailGap);
-      const freq = midiToFreq(note.m, 440);
+    playedNotes.forEach((noteName, i) => {
+      const midi = NOTE_TO_MIDI[noteName] || 60;
+      const freq = midiToFreq(midi, 440);
+      const t = startTime + i * noteDur;
 
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
@@ -985,44 +918,26 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
       osc.frequency.value = freq;
       g.gain.setValueAtTime(0, t);
       g.gain.linearRampToValueAtTime(0.28, t + 0.02);
-      g.gain.setValueAtTime(0.28, t + Math.max(0.05, sounding - 0.08));
-      g.gain.exponentialRampToValueAtTime(0.0001, t + sounding);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + noteDur - 0.05);
       osc.connect(g).connect(ctx.destination);
       osc.start(t);
-      osc.stop(t + sounding + 0.05);
-
-      const el = noteEls[i];
-      if (el) {
-        const delay = (t - ctx.currentTime) * 1000;
-        setTimeout(() => {
-          el.classList.add('playing');
-          setTimeout(() => el.classList.remove('playing'), sounding * 1000);
-        }, Math.max(0, delay));
-      }
-
-      cumTime += dur;
+      osc.stop(t + noteDur + 0.05);
     });
 
-    const totalMs = (cumTime + 0.5) * 1000;
+    const totalMs = playedNotes.length * noteDur * 1000 + 500;
     setTimeout(() => { playingPreview = false; }, totalMs);
   }
 
-  function nextScore() {
-    if (scoreState.completed.indexOf(scoreState.patternId) === -1) {
-      scoreState.completed.push(scoreState.patternId);
-    }
-    const pool = PATTERNS.map((_, i) => i).filter(i => i !== scoreState.patternId);
-    const fresh = pool.filter(i => scoreState.completed.indexOf(i) === -1);
-    const candidates = fresh.length > 0 ? fresh : pool;
-    scoreState.patternId = candidates[Math.floor(Math.random() * candidates.length)];
-    scoreState.progressSec = 0;
+  function newMelody() {
+    // Сбрасываем партитуру
+    melodyState.progressSec = 0;
     playedNotes = [];
     previousCount = 0;
-    saveScoreState();
+    saveMelodyState();
     $melodyResult.classList.remove('show');
     $scoreWrap.classList.remove('complete');
     $noteCount.textContent = '0';
-    $noteTotal.textContent = TOTAL_NOTES;
+    $noteTotal.textContent = MELODY.length;
     renderScore();
   }
 
@@ -1031,16 +946,16 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   $finish.addEventListener('click', finishTimer);
   $reset.addEventListener('click', resetTimer);
   $play.addEventListener('click', playPreview);
-  $next.addEventListener('click', nextScore);
+  $next.addEventListener('click', newMelody);
 
   $goalInput.addEventListener('change', () => {
-    const v = Math.max(5, Math.min(480, parseInt($goalInput.value, 10) || 40));
+    const v = Math.max(5, Math.min(480, parseInt($goalInput.value, 10) || 30));
     $goalInput.value = v;
     try { localStorage.setItem(LS_GOAL, v); } catch(e) {}
     renderStats();
   });
   $goalInput.addEventListener('blur', () => {
-    const v = Math.max(5, Math.min(480, parseInt($goalInput.value, 10) || 40));
+    const v = Math.max(5, Math.min(480, parseInt($goalInput.value, 10) || 30));
     $goalInput.value = v;
     try { localStorage.setItem(LS_GOAL, v); } catch(e) {}
     renderStats();
@@ -1058,8 +973,8 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
       const now = Date.now();
       const closedDuration = Math.max(0, Math.floor((now - (active.savedAt || now)) / 1000));
       if (closedDuration > 0) {
-        scoreState.progressSec += closedDuration;
-        saveScoreState();
+        melodyState.progressSec += closedDuration;
+        saveMelodyState();
       }
       running = true;
       startedAtMs = active.startedAtMs;
@@ -1090,8 +1005,8 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
     syncScore();
     previousCount = playedNotes.length;
-    if (playedNotes.length >= TOTAL_NOTES) {
-      showScoreCompleted();
+    if (playedNotes.length >= MELODY.length && MELODY.length > 0) {
+      showMelodyCompleted();
     }
   }
 
@@ -1100,11 +1015,22 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   document.addEventListener('visibilitychange', () => { if (document.hidden) persistActive(); });
 
   // ---------- Инициализация ----------
-  restore();
-  renderStreak();
-  renderStats();
-  $noteTotal.textContent = TOTAL_NOTES;
-  renderScore();
+  // Ждём загрузки VexFlow
+  if (typeof VexFlow !== 'undefined') {
+    VexFlow.loadFonts('Bravura', 'Academico').then(() => {
+      VexFlow.setFonts('Bravura', 'Academico');
+      vexFlowReady = true;
+      restore();
+      renderStreak();
+      renderStats();
+      $noteTotal.textContent = MELODY.length;
+      renderScore();
+    });
+  } else {
+    // Фолбэк, если VexFlow не загрузился
+    document.getElementById('score-output').innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">Не удалось загрузить VexFlow. Проверьте подключение к интернету.</p>';
+  }
+
 })();
 </script>
 </body>
