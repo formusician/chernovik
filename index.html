@@ -786,30 +786,92 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   // ---------- VexFlow ----------
   function initVexFlow() {
     if (vexFlowReady) return;
-    if (typeof VexFlow === 'undefined') {
-      console.warn('VexFlow не загружен');
+    if (typeof Vex === 'undefined' || !Vex.Flow) {
+      document.getElementById('score-output').innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">Не удалось загрузить VexFlow. Проверьте подключение к интернету.</p>';
       return;
     }
     vexFlowReady = true;
-    renderScore();
+    restore();
+    renderStreak();
+    renderStats();
+    $noteTotal.textContent = MELODY.length;
+    // Небольшая задержка, чтобы контейнер получил реальные размеры
+    requestAnimationFrame(() => {
+      renderScore();
+    });
   }
 
   function renderScore() {
     if (!vexFlowReady || !$scoreOutput) return;
 
-    const totalNotes = MELODY.length;
-    const visibleNotes = playedNotes;
+    const VF = Vex.Flow;
+    const element = $scoreOutput;
+    element.innerHTML = '';
 
-    // Очищаем контейнер
-    $scoreOutput.innerHTML = '';
+    const width = Math.max(300, element.clientWidth || 700);
+    const height = 240;
 
-    // Создаём Factory
-    const factory = new Vex.Flow.Factory({
-      renderer: {
-        elementId: 'score-output',
-        width: 700,
-        height: 400
+    const renderer = new VF.Renderer(element, VF.Renderer.Backends.SVG);
+    renderer.resize(width, height);
+    const context = renderer.getContext();
+
+    // 16 нот = 4 такта по 4 четвертных.
+    // Раскладка: 2 строки по 2 такта.
+    const notesPerStave = 4;
+    const stavesPerRow = 2;
+    const rows = 2;
+    const clefPad = 70;              // место под ключ и размер в первом такте
+    const outerPad = 20;
+    const innerWidth = width - outerPad * 2;
+    const rowY = [40, 140];
+
+    let noteIndex = 0;
+    const visibleNotes = playedNotes.length;
+
+    for (let row = 0; row < rows; row++) {
+      const availableForRow = innerWidth - clefPad;
+      const staveWidth = availableForRow / stavesPerRow;
+      let x = outerPad;
+
+      for (let s = 0; s < stavesPerRow; s++) {
+        const w = (row === 0 && s === 0)
+          ? staveWidth + clefPad
+          : staveWidth;
+
+        const stave = new VF.Stave(x, rowY[row], w);
+        if (row === 0 && s === 0) {
+          stave.addClef('treble');
+          stave.addTimeSignature('4/4');
+        }
+        stave.setContext(context).draw();
+
+        const tickables = [];
+        for (let j = 0; j < notesPerStave; j++) {
+          const idx = noteIndex + j;
+          if (idx < visibleNotes) {
+            tickables.push(new VF.StaveNote({
+              keys: [MELODY[idx]],
+              duration: 'q'
+            }));
+          } else {
+            tickables.push(new VF.StaveNote({
+              keys: ['b/4'],
+              duration: 'qr'
+            }));
+          }
+        }
+
+        const voice = new VF.Voice({ num_beats: notesPerStave, beat_value: 4 });
+        voice.setStrict(false);
+        voice.addTickables(tickables);
+        new VF.Formatter().joinVoices([voice]).format([voice], w - 20);
+        voice.draw(context, stave);
+
+        x += w;
+        noteIndex += notesPerStave;
       }
+    }
+  }
     });
 
     const score = factory.EasyScore();
