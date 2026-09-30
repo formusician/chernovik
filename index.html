@@ -13,7 +13,6 @@
     --muted: #837c6e; --line: #ddd6c8;
     --accent: #8a6f47; --accent-2: #b89b6b;
     --green: #5a7a5a; --red: #a05555;
-    /* Новая палитра сцены */
     --stage-bg-1: #1a1628;
     --stage-bg-2: #2a1f35;
     --stage-bg-3: #3a2530;
@@ -21,7 +20,6 @@
     --curtain-2: #8a2c3a;
     --curtain-3: #5a1520;
     --gold: #e8c878;
-    --gold-deep: #c9a14a;
     --mint: #8fc4b0;
     --amber: #e0a050;
     --copper: #c07850;
@@ -81,7 +79,6 @@
   .btn:disabled { opacity: .4; cursor: not-allowed; }
   .btn:disabled:hover { background: transparent; color: var(--ink); }
 
-  /* ПРАКТИКА */
   .practice-timer {
     font-family: 'Cormorant Garamond', serif;
     font-size: 96px; font-weight: 500; line-height: 1;
@@ -115,7 +112,6 @@
     margin-top: 22px; flex-wrap: wrap;
   }
 
-  /* СЦЕНА */
   .stage {
     position: relative;
     border-radius: 14px;
@@ -131,7 +127,6 @@
     height: auto;
     aspect-ratio: 800 / 300;
   }
-  /* Кулисы */
   .curtain {
     position: absolute; top: 0; bottom: 0;
     width: 8%; min-width: 40px; max-width: 70px;
@@ -152,7 +147,6 @@
     z-index: 3;
     box-shadow: 0 4px 20px rgba(0,0,0,.5);
   }
-  /* Пылинки в свете */
   .particle {
     animation: floatUp 6s ease-in-out infinite;
   }
@@ -160,7 +154,6 @@
     0%, 100% { transform: translateY(0); opacity: .3; }
     50% { transform: translateY(-12px); opacity: .7; }
   }
-  /* Появление музыканта */
   .musician {
     opacity: 0;
     transition: opacity .8s ease-out;
@@ -173,7 +166,6 @@
     0%, 100% { filter: drop-shadow(0 0 4px #fff); }
     50% { filter: drop-shadow(0 0 10px #fff); }
   }
-  /* Бейдж прогресса оркестра */
   .orchestra-count {
     position: absolute;
     top: 14px; right: 14px;
@@ -189,7 +181,6 @@
     z-index: 4;
   }
 
-  /* СТАТИСТИКА */
   .practice-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -260,7 +251,6 @@
   }
   .placeholder-desc { font-size: 14px; color: var(--muted); max-width: 460px; margin: 0 auto; line-height: 1.6; }
 
-  /* МЕТРОНОМ демо */
   .bpm-value {
     font-family: 'Cormorant Garamond', serif;
     font-size: 72px; font-weight: 500; line-height: 1;
@@ -397,7 +387,6 @@
 
         <svg class="stage-svg" viewBox="0 0 800 300" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <!-- Пучки света сверху -->
             <radialGradient id="glowTop" cx="50%" cy="0%" r="70%">
               <stop offset="0%" stop-color="#f8ecc8" stop-opacity="0.18"/>
               <stop offset="60%" stop-color="#c9a14a" stop-opacity="0.04"/>
@@ -407,66 +396,14 @@
               <stop offset="0%" stop-color="#f8ecc8" stop-opacity="0.12"/>
               <stop offset="100%" stop-color="#f8ecc8" stop-opacity="0"/>
             </linearGradient>
-
-            <!-- МУЗЫКАНТЫ -->
-            <!-- Скрипач / альтист -->
-            <symbol id="mus-violin" viewBox="0 0 24 48">
-              <circle cx="12" cy="8" r="4"/>
-              <rect x="8" y="13" width="8" height="33" rx="2.5"/>
-              <ellipse cx="6" cy="20" rx="3.2" ry="5"/>
-              <line x1="6" y1="18" x2="20" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-            </symbol>
-            <!-- Виолончелист (сидит) -->
-            <symbol id="mus-cello" viewBox="0 0 24 48">
-              <circle cx="12" cy="7" r="3.6"/>
-              <rect x="9" y="11" width="6" height="18" rx="2"/>
-              <ellipse cx="12" cy="36" rx="6.5" ry="10"/>
-              <rect x="4" y="28" width="16" height="3" rx="1.5"/>
-            </symbol>
-            <!-- Флейтист -->
-            <symbol id="mus-flute" viewBox="0 0 24 48">
-              <circle cx="11" cy="8" r="4"/>
-              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
-              <line x1="14" y1="15" x2="24" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </symbol>
-            <!-- Гобоист / кларнетист -->
-            <symbol id="mus-clar" viewBox="0 0 24 48">
-              <circle cx="11" cy="8" r="4"/>
-              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
-              <line x1="13" y1="14" x2="20" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </symbol>
-            <!-- Валторнист / трубач -->
-            <symbol id="mus-brass" viewBox="0 0 24 48">
-              <circle cx="11" cy="8" r="4"/>
-              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
-              <path d="M 15 18 Q 23 22 19 30 Q 17 32 15 30" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-            </symbol>
-            <!-- Литаврист -->
-            <symbol id="mus-timp" viewBox="0 0 32 48">
-              <circle cx="16" cy="6" r="4"/>
-              <rect x="12" y="11" width="8" height="24" rx="2.5"/>
-              <ellipse cx="7" cy="40" rx="7" ry="4"/>
-              <ellipse cx="25" cy="40" rx="7" ry="4"/>
-            </symbol>
-            <!-- Дирижёр -->
-            <symbol id="mus-cond" viewBox="0 0 36 48">
-              <circle cx="18" cy="8" r="4.5"/>
-              <rect x="14" y="14" width="8" height="32" rx="3"/>
-              <line x1="14" y1="18" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <line x1="22" y1="18" x2="32" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <line class="musician-baton" x1="32" y1="6" x2="36" y2="-1" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
-            </symbol>
           </defs>
 
-          <!-- Верхний свет -->
           <rect x="0" y="0" width="800" height="300" fill="url(#glowTop)"/>
 
-          <!-- Пучки софитов -->
           <polygon points="100,0 220,0 200,270 130,270" fill="url(#spotBeam)"/>
           <polygon points="300,0 420,0 390,270 330,270" fill="url(#spotBeam)"/>
           <polygon points="500,0 620,0 570,270 520,270" fill="url(#spotBeam)"/>
 
-          <!-- Пылинки в воздухе -->
           <g fill="#f8ecc8" opacity="0.5">
             <circle class="particle" cx="120" cy="70" r="1" style="animation-delay:0s"/>
             <circle class="particle" cx="250" cy="50" r="1.2" style="animation-delay:1.5s"/>
@@ -478,12 +415,53 @@
             <circle class="particle" cx="600" cy="140" r="1" style="animation-delay:3.5s"/>
           </g>
 
-          <!-- Группа музыкантов (динамически заполняется) -->
+          <!-- Скрытые определения музыкантов -->
+          <g id="musicianDefs" style="display:none">
+            <g id="mus-violin">
+              <circle cx="12" cy="8" r="4"/>
+              <rect x="8" y="13" width="8" height="33" rx="2.5"/>
+              <ellipse cx="6" cy="20" rx="3.2" ry="5"/>
+              <line x1="6" y1="18" x2="20" y2="16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            </g>
+            <g id="mus-cello">
+              <circle cx="12" cy="7" r="3.6"/>
+              <rect x="9" y="11" width="6" height="18" rx="2"/>
+              <ellipse cx="12" cy="36" rx="6.5" ry="10"/>
+              <rect x="4" y="28" width="16" height="3" rx="1.5"/>
+            </g>
+            <g id="mus-flute">
+              <circle cx="11" cy="8" r="4"/>
+              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
+              <line x1="14" y1="15" x2="24" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            </g>
+            <g id="mus-clar">
+              <circle cx="11" cy="8" r="4"/>
+              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
+              <line x1="13" y1="14" x2="20" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            </g>
+            <g id="mus-brass">
+              <circle cx="11" cy="8" r="4"/>
+              <rect x="7" y="13" width="8" height="33" rx="2.5"/>
+              <path d="M 15 18 Q 23 22 19 30 Q 17 32 15 30" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            </g>
+            <g id="mus-timp">
+              <circle cx="16" cy="6" r="4"/>
+              <rect x="12" y="11" width="8" height="24" rx="2.5"/>
+              <ellipse cx="7" cy="40" rx="7" ry="4"/>
+              <ellipse cx="25" cy="40" rx="7" ry="4"/>
+            </g>
+            <g id="mus-cond">
+              <circle cx="18" cy="8" r="4.5"/>
+              <rect x="14" y="14" width="8" height="32" rx="3"/>
+              <line x1="14" y1="18" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <line x1="22" y1="18" x2="32" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <line class="musician-baton" x1="32" y1="6" x2="36" y2="-1" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+            </g>
+          </g>
+
           <g id="musiciansGroup"></g>
 
-          <!-- Линия сцены -->
           <line x1="0" y1="272" x2="800" y2="272" stroke="#c9a14a" stroke-opacity="0.5" stroke-width="1.5"/>
-          <!-- Тень пола -->
           <rect x="0" y="272" width="800" height="28" fill="#1a0f14" opacity="0.7"/>
         </svg>
       </div>
@@ -534,7 +512,7 @@
         <li>— Через 2 минуты на сцену выйдет первый скрипач, через 4 — второй, и так далее.</li>
         <li>— Сверни браузер на пару минут и вернись — музыканты появятся за пропущенное время.</li>
         <li>— Обнови страницу — сессия и оркестр восстановятся с того же момента.</li>
-        <li>— Последним на сцену выходит дирижёр — через ~32 минуты.</li>
+        <li>— Последним на сцену выходит дирижёр — через ~24 минуты.</li>
         <li>— Заверши сессию — она попадёт в историю, обновятся статистика и график.</li>
       </ul>
     </div>
@@ -545,9 +523,6 @@
 <script>
 'use strict';
 
-/* ============================================================
-   АУДИО
-   ============================================================ */
 let audioCtx = null;
 function getCtx() {
   if (!audioCtx) {
@@ -563,9 +538,6 @@ document.addEventListener('click', () => getCtx());
 
 const midiToFreq = (midi, ref = 440) => ref * Math.pow(2, (midi - 69) / 12);
 
-/* ============================================================
-   НАВИГАЦИЯ
-   ============================================================ */
 const navItems = document.querySelectorAll('.nav-item');
 const panels = document.querySelectorAll('.panel');
 navItems.forEach(item => {
@@ -577,9 +549,6 @@ navItems.forEach(item => {
   });
 });
 
-/* ============================================================
-   МЕТРОНОМ (демо)
-   ============================================================ */
 const bpmSlider = document.getElementById('bpmSlider');
 const bpmValueEl = document.getElementById('bpmValue');
 const metroBtn = document.getElementById('metroToggle');
@@ -635,8 +604,8 @@ metroBtn.addEventListener('click', () => {
 /* ============================================================
    ПРАКТИКА
    ============================================================ */
-const LS_SESSIONS = 'demo-practice-sessions-v2';
-const LS_ACTIVE = 'demo-practice-active-v2';
+const LS_SESSIONS = 'demo-practice-sessions-v3';
+const LS_ACTIVE = 'demo-practice-active-v3';
 
 const practiceTimerEl = document.getElementById('practiceTimer');
 const practiceStatusEl = document.getElementById('practiceStatus');
@@ -659,20 +628,18 @@ let practiceActive = null;
 let practiceTickId = null;
 let lastMusicianCount = -1;
 
-// Расписание появления музыкантов. Время в миллисекундах.
-// Меняй 120000 на другое значение, чтобы ускорить/замедлить (например, 20000 = 20 сек).
+// Интервал появления музыкантов (в мс).
+// 120000 = 2 минуты (продакшн). Для быстрого теста поставь 15000 (15 сек).
 const MUSICIAN_INTERVAL_MS = 120000;
 
 const COLORS = {
-  strings: '#e8c878',   // тёплое золото
-  woods:   '#8fc4b0',   // мятно-зелёный
-  brass:   '#e0a050',   // янтарный
-  perc:    '#c07850',   // медь
-  cond:    '#f8ecc8'    // яркий крем
+  strings: '#e8c878',
+  woods:   '#8fc4b0',
+  brass:   '#e0a050',
+  perc:    '#c07850',
+  cond:    '#f8ecc8'
 };
 
-// Порядок выхода музыкантов на сцену.
-// x/y — координаты в SVG (viewBox 0 0 800 300).
 const ORCHESTRA = [
   { kind: 'violin', x: 110, y: 224, color: 'strings' },
   { kind: 'violin', x: 195, y: 224, color: 'strings' },
@@ -754,7 +721,8 @@ function createMusicianSVG(m) {
   g.setAttribute('transform', 'translate(' + m.x + ', ' + m.y + ')');
   const use = document.createElementNS(ns, 'use');
   use.setAttribute('href', '#mus-' + m.kind);
-  use.setAttribute('fill', COLORS[m.color] || COLORS.strings);
+  use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#mus-' + m.kind);
+  use.style.color = COLORS[m.color] || COLORS.strings;
   g.appendChild(use);
   return g;
 }
@@ -766,17 +734,14 @@ function renderOrchestra(ms) {
     return;
   }
 
-  // Если музыкантов стало меньше (например, очистили) — очистим всех
   if (count < lastMusicianCount || lastMusicianCount === -1) {
     musiciansGroup.innerHTML = '';
     lastMusicianCount = 0;
   }
 
-  // Добавим недостающих
   for (let i = musiciansGroup.children.length; i < count; i++) {
     const g = createMusicianSVG(ORCHESTRA[i]);
     musiciansGroup.appendChild(g);
-    // Обрабатываем появление в следующем кадре, чтобы сработала анимация opacity
     (function(el) {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => el.classList.add('visible'));
