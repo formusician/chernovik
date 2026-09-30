@@ -556,9 +556,25 @@
     border: 1px solid rgba(138,111,71,.3);
     font-size: 13px; color: var(--accent);
     letter-spacing: .02em;
+    transition: all .4s;
   }
   .streak-badge.muted {
     background: transparent; border-color: var(--line); color: var(--muted);
+  }
+  .streak-badge.warm {
+    background: linear-gradient(135deg, rgba(184,148,74,.15), rgba(192,120,80,.15));
+    border-color: rgba(184,148,74,.5);
+    color: #a07030;
+  }
+  .streak-badge.hot {
+    background: linear-gradient(135deg, rgba(220,120,60,.2), rgba(200,80,40,.2));
+    border-color: rgba(220,120,60,.6);
+    color: #c06030;
+    animation: streakGlow 2.4s ease-in-out infinite;
+  }
+  @keyframes streakGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(220,120,60,0); }
+    50%      { box-shadow: 0 0 16px rgba(220,120,60,.35); }
   }
   .streak-flame { font-size: 16px; margin-right: 2px; }
 
@@ -567,12 +583,14 @@
     font-size: 96px; font-weight: 500; line-height: 1;
     text-align: center; font-variant-numeric: tabular-nums;
     margin: 24px 0 20px; letter-spacing: -0.01em;
-    transition: color .3s;
+    transition: color .3s, text-shadow .3s;
   }
   .practice-timer.running {
     color: var(--accent);
     animation: timerGlow 2.4s ease-in-out infinite;
   }
+  .practice-timer.warm { color: #b8944a; }
+  .practice-timer.hot  { color: #c07850; }
   @keyframes timerGlow {
     0%, 100% { text-shadow: 0 0 0 rgba(138,111,71,0); }
     50%      { text-shadow: 0 0 32px rgba(138,111,71,.45); }
@@ -580,7 +598,7 @@
 
   .practice-staff-wrap {
     margin-top: 8px; padding: 4px 0;
-    background: var(--bg);
+    background: linear-gradient(135deg, var(--bg) 0%, rgba(184,155,107,.06) 100%);
     border: 1px solid var(--line);
     border-radius: 10px;
     overflow-x: auto; overflow-y: hidden;
@@ -588,7 +606,7 @@
     overscroll-behavior-x: contain;
   }
   .practice-staff {
-    display: block; height: 132px; min-width: 100%;
+    display: block; height: 160px; min-width: 100%;
     color: var(--accent);
   }
   .practice-staff .note-group { animation: noteAppear .55s cubic-bezier(.2,.9,.3,1.4); transform-origin: center; }
@@ -597,13 +615,15 @@
     55%  { opacity: 1; transform: scale(1.18); }
     100% { opacity: 1; transform: scale(1); }
   }
-  .practice-staff .note-group.highlight { animation: none; filter: drop-shadow(0 0 12px currentColor); }
-  .practice-staff .note-group.highlight ellipse { fill: var(--accent-2); }
+  .practice-staff .note-group.highlight {
+    animation: none;
+    filter: brightness(1.4) drop-shadow(0 0 14px currentColor);
+  }
 
   .melody-result {
     margin-top: 12px; padding: 14px 18px;
-    background: rgba(138,111,71,.08);
-    border: 1px solid rgba(138,111,71,.25);
+    background: linear-gradient(135deg, rgba(184,155,107,.14), rgba(138,111,71,.08));
+    border: 1px solid rgba(138,111,71,.35);
     border-radius: 10px;
     display: flex; flex-wrap: wrap; align-items: center;
     gap: 12px; justify-content: space-between;
@@ -623,10 +643,32 @@
   }
   .goal-bar-fill {
     height: 100%;
-    background: linear-gradient(to right, var(--accent-2), var(--accent));
+    background: linear-gradient(to right, #6a8090, var(--accent-2), var(--accent));
     transition: width .5s ease;
     border-radius: 4px;
   }
+  .goal-bar-fill.full {
+    background: linear-gradient(to right, #b8944a, #c07850, #a05030);
+    animation: goalFull 2s ease-in-out infinite;
+  }
+  @keyframes goalFull {
+    0%, 100% { filter: brightness(1); }
+    50%      { filter: brightness(1.25); }
+  }
+
+  .goal-input {
+    width: 56px; padding: 3px 8px;
+    border: 1px solid var(--line); background: var(--surface);
+    border-radius: 6px; color: var(--ink); outline: none;
+    font-family: inherit; font-size: 14px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    -webkit-appearance: none; appearance: textfield;
+    transition: border-color .15s;
+  }
+  .goal-input:focus { border-color: var(--accent); }
+  .goal-input::-webkit-outer-spin-button,
+  .goal-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   .session-toast {
     position: fixed; top: 24px; left: 50%;
@@ -643,6 +685,13 @@
   .session-toast.show { transform: translateX(-50%) translateY(0); }
   .session-toast .flame { font-size: 22px; }
   .session-toast .mins { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--accent); font-weight: 500; }
+
+  @media (max-width: 860px) {
+    .practice-timer { font-size: 68px; margin: 16px 0 14px; }
+    .practice-staff { height: 120px; }
+    .stat-value { font-size: 22px; }
+    .session-toast { top: 16px; padding: 12px 18px; }
+  }
 
   @media (max-width: 860px) {
     body { flex-direction: column; }
@@ -1026,12 +1075,12 @@
     <div class="panel-head">
       <div class="panel-eyebrow">Инструмент 04</div>
       <h1 class="panel-title">Занятия</h1>
-      <p class="panel-desc">Считайте время практики и собирайте секретную мелодию. Первая нота появится через 30 секунд, дальше — каждые 2 минуты.</p>
+      <p class="panel-desc">Считайте время практики и собирайте секретную мелодию. Первая нота — через 30 секунд, дальше — каждые 2 минуты.</p>
     </div>
 
     <div class="card">
       <div style="display:flex; justify-content:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
-        <div class="streak-badge"><span class="streak-flame">🔥</span>Streak: <strong id="streakCurrent">0</strong> дн.</div>
+        <div class="streak-badge" id="streakBadge"><span class="streak-flame">🔥</span>Streak: <strong id="streakCurrent">0</strong> дн.</div>
         <div class="streak-badge muted">Лучший: <strong id="streakBest">0</strong></div>
       </div>
 
@@ -1068,8 +1117,10 @@
 
       <div class="rhythm-header">
         <span class="bpm-label">Цель на сегодня</span>
-        <span style="font-size:13px;color:var(--muted);">
-          <span id="goalDone">0</span> / <span id="goalTarget">30</span> мин
+        <span style="font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:8px;">
+          <span id="goalDone">0</span> / 
+          <input type="number" id="goalInput" min="5" max="480" step="5" value="30" class="goal-input" title="Нажмите, чтобы изменить цель">
+          мин
         </span>
       </div>
       <div class="goal-bar"><div class="goal-bar-fill" id="goalFill" style="width:0%"></div></div>
@@ -3094,28 +3145,92 @@ renderComposers();
   const LS_ACTIVE   = 'maestro-practice-active';
   const LS_MELODY   = 'maestro-practice-melody';
 
-  const FIRST_NOTE_DELAY = 30;   // секунд до первой ноты
-  const NOTE_INTERVAL    = 120;  // секунд между нотами
+  const FIRST_NOTE_DELAY = 30;
+  const NOTE_INTERVAL    = 120;
 
-  // Пул мелодий — public domain, только белые клавиши C4–G5
+  // Мелодии с длительностями: d=2 — половинная, d=1 — четвертная
   const MELODIES = [
     { name: 'Ода к радости', composer: 'Людвиг ван Бетховен',
-      notes: [64, 64, 65, 67, 67, 65, 64, 62, 60, 60, 62, 64, 64, 62, 62] },
+      notes: [
+        {m:64,d:1},{m:64,d:1},{m:65,d:1},{m:67,d:1},
+        {m:67,d:1},{m:65,d:1},{m:64,d:1},{m:62,d:1},
+        {m:60,d:1},{m:60,d:1},{m:62,d:1},{m:64,d:1},
+        {m:64,d:2},{m:62,d:2}
+      ] },
     { name: 'Маленькая ночная серенада', composer: 'Вольфганг Амадей Моцарт',
-      notes: [67, 62, 67, 62, 67, 62, 67, 71, 74, 67, 62, 67, 71, 74, 67, 71, 74] },
+      notes: [
+        {m:67,d:1},{m:62,d:1},{m:67,d:1},{m:62,d:1},
+        {m:67,d:1},{m:62,d:1},{m:67,d:1},{m:71,d:1},
+        {m:74,d:2},{m:67,d:1},{m:62,d:1},{m:67,d:1},
+        {m:71,d:2},{m:74,d:2}
+      ] },
     { name: 'Ah vous dirai-je, Maman', composer: 'Французская народная',
-      notes: [60, 60, 67, 67, 69, 69, 67, 65, 65, 64, 64, 62, 62, 60] },
+      notes: [
+        {m:60,d:1},{m:60,d:1},{m:67,d:1},{m:67,d:1},
+        {m:69,d:1},{m:69,d:1},{m:67,d:2},
+        {m:65,d:1},{m:65,d:1},{m:64,d:1},{m:64,d:1},
+        {m:62,d:1},{m:62,d:1},{m:60,d:2}
+      ] },
     { name: 'Jingle Bells', composer: 'Джеймс Лорд Пьерпонт',
-      notes: [64, 64, 64, 64, 64, 64, 64, 67, 60, 62, 64, 65, 65, 65, 64, 64, 62, 62, 64, 62] },
+      notes: [
+        {m:64,d:1},{m:64,d:1},{m:64,d:2},
+        {m:64,d:1},{m:64,d:1},{m:64,d:2},
+        {m:64,d:1},{m:67,d:1},{m:60,d:1},{m:62,d:1},{m:64,d:4}
+      ] },
     { name: 'Колыбельная', composer: 'Иоганнес Брамс',
-      notes: [64, 64, 67, 64, 64, 67, 64, 67, 72, 71, 69, 69, 67] },
+      notes: [
+        {m:64,d:1},{m:64,d:1},{m:67,d:2},
+        {m:64,d:1},{m:64,d:1},{m:67,d:2},
+        {m:64,d:1},{m:67,d:1},{m:72,d:2},
+        {m:71,d:1},{m:69,d:1},{m:67,d:2}
+      ] },
     { name: 'Frère Jacques', composer: 'Французская народная',
-      notes: [60, 62, 64, 60, 60, 62, 64, 60, 64, 65, 67, 64, 65, 67] },
+      notes: [
+        {m:60,d:1},{m:62,d:1},{m:64,d:1},{m:60,d:1},
+        {m:60,d:1},{m:62,d:1},{m:64,d:1},{m:60,d:1},
+        {m:64,d:1},{m:65,d:1},{m:67,d:2},
+        {m:64,d:1},{m:65,d:1},{m:67,d:2}
+      ] },
     { name: 'Прелюдия до мажор, BWV 846', composer: 'Иоганн Себастьян Бах',
-      notes: [60, 64, 67, 72, 76, 79, 72, 76, 72, 67, 64, 60, 64, 67, 72] }
+      notes: [
+        {m:60,d:1},{m:64,d:1},{m:67,d:1},{m:72,d:1},
+        {m:76,d:1},{m:79,d:1},{m:72,d:1},{m:76,d:1},
+        {m:72,d:1},{m:67,d:1},{m:64,d:1},{m:60,d:1},
+        {m:64,d:1},{m:67,d:1},{m:72,d:2}
+      ] }
   ];
 
-  const DIA = { 60: -2, 62: -1, 64: 0, 65: 1, 67: 2, 69: 3, 71: 4, 72: 5, 74: 6, 76: 7, 77: 8, 79: 9 };
+  const DIA = { 60:-2, 62:-1, 64:0, 65:1, 67:2, 69:3, 71:4, 72:5, 74:6, 76:7, 77:8, 79:9 };
+
+  // Цвет ноты по высоте: тёплый терракот → синий
+  const COLOR_STOPS = [
+    { m: 60, c: [200, 118, 78] },   // терракот
+    { m: 64, c: [186, 148, 74] },   // золото
+    { m: 67, c: [138, 111, 71] },   // accent
+    { m: 72, c: [106, 128, 144] },  // серо-синий
+    { m: 79, c: [88, 118, 154] }    // синий
+  ];
+  function noteColor(midi) {
+    if (midi <= COLOR_STOPS[0].m) {
+      const c = COLOR_STOPS[0].c;
+      return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+    }
+    const last = COLOR_STOPS[COLOR_STOPS.length - 1];
+    if (midi >= last.m) {
+      return 'rgb(' + last.c[0] + ',' + last.c[1] + ',' + last.c[2] + ')';
+    }
+    for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
+      const a = COLOR_STOPS[i], b = COLOR_STOPS[i + 1];
+      if (midi >= a.m && midi <= b.m) {
+        const t = (midi - a.m) / (b.m - a.m);
+        const r = Math.round(a.c[0] + (b.c[0] - a.c[0]) * t);
+        const g = Math.round(a.c[1] + (b.c[1] - a.c[1]) * t);
+        const bl = Math.round(a.c[2] + (b.c[2] - a.c[2]) * t);
+        return 'rgb(' + r + ',' + g + ',' + bl + ')';
+      }
+    }
+    return '#8a6f47';
+  }
 
   const $ = id => document.getElementById(id);
   const $timer = $('practiceTimer');
@@ -3130,10 +3245,11 @@ renderComposers();
   const $soundToggle = $('practiceSoundToggle');
   const $melodyResult = $('melodyResult');
   const $melodyResultText = $('melodyResultText');
+  const $streakBadge = $('streakBadge');
   const $streakCur = $('streakCurrent');
   const $streakBest = $('streakBest');
   const $goalDone = $('goalDone');
-  const $goalTarget = $('goalTarget');
+  const $goalInput = $('goalInput');
   const $goalFill = $('goalFill');
   const $statTotal = $('statTotal');
   const $statSessions = $('statSessions');
@@ -3185,15 +3301,12 @@ renderComposers();
 
   function notesCountForSec(sec) {
     if (sec < FIRST_NOTE_DELAY) return 0;
-    return 1 + Math.floor((sec - FIRST_NOTE_DELAY) / NOTE_INTERVAL);
+    return Math.min(1 + Math.floor((sec - FIRST_NOTE_DELAY) / NOTE_INTERVAL), currentMelody().notes.length);
   }
 
   function persistActive() {
     if (running || accumulatedMs > 0) {
-      saveJSON(LS_ACTIVE, {
-        running, startedAtMs, accumulatedMs,
-        savedAt: Date.now(), savedElapsed: elapsedSec
-      });
+      saveJSON(LS_ACTIVE, { running, startedAtMs, accumulatedMs, savedAt: Date.now(), savedElapsed: elapsedSec });
     } else {
       try { localStorage.removeItem(LS_ACTIVE); } catch(e) {}
     }
@@ -3203,6 +3316,13 @@ renderComposers();
     let sec = Math.floor(accumulatedMs / 1000);
     if (running && startedAtMs) sec += Math.floor((Date.now() - startedAtMs) / 1000);
     return sec;
+  }
+
+  function applyTimerColor() {
+    const mins = elapsedSec / 60;
+    $timer.classList.remove('warm', 'hot');
+    if (mins >= 60) $timer.classList.add('hot');
+    else if (mins >= 30) $timer.classList.add('warm');
   }
 
   function tick() {
@@ -3216,6 +3336,7 @@ renderComposers();
     }
     elapsedSec = newElapsed;
     $timer.textContent = fmt(elapsedSec);
+    applyTimerColor();
     syncStaff();
     persistActive();
   }
@@ -3261,7 +3382,7 @@ renderComposers();
     running = false;
     persistActive();
     $timer.textContent = '00:00:00';
-    $timer.classList.remove('running');
+    $timer.classList.remove('running', 'warm', 'hot');
     $start.textContent = 'Начать занятие';
     $start.classList.add('accent');
     $start.classList.remove('ghost');
@@ -3292,7 +3413,7 @@ renderComposers();
     lastElapsedSec = 0;
     persistActive();
     $timer.textContent = '00:00:00';
-    $timer.classList.remove('running');
+    $timer.classList.remove('running', 'warm', 'hot');
     $start.textContent = 'Начать занятие';
     $start.classList.add('accent');
     $start.classList.remove('ghost');
@@ -3321,18 +3442,23 @@ renderComposers();
     const s = getStreak();
     $streakCur.textContent = s.current;
     $streakBest.textContent = s.best;
+    $streakBadge.classList.remove('warm', 'hot');
+    if (s.current >= 30) $streakBadge.classList.add('hot');
+    else if (s.current >= 7) $streakBadge.classList.add('warm');
   }
 
   function renderStats() {
     const sessions = getSessions();
     const goal = parseInt(localStorage.getItem(LS_GOAL) || '30', 10);
-    $goalTarget.textContent = goal;
+    if ($goalInput.value !== String(goal)) $goalInput.value = goal;
 
     const today = dayKey();
     const todaySec = sessions.filter(s => s.date === today).reduce((a, s) => a + s.duration, 0);
     const todayMin = Math.round(todaySec / 60);
     $goalDone.textContent = todayMin;
-    $goalFill.style.width = Math.min(100, (todayMin / goal) * 100) + '%';
+    const pct = Math.min(100, (todayMin / goal) * 100);
+    $goalFill.style.width = pct + '%';
+    $goalFill.classList.toggle('full', todayMin >= goal);
 
     const totalSec = sessions.reduce((a, s) => a + s.duration, 0);
     $statTotal.textContent = Math.round(totalSec / 60) + ' мин';
@@ -3354,38 +3480,55 @@ renderComposers();
     setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 500); }, 3200);
   }
 
+  // ---------- SVG стана ----------
   function renderStaff() {
-    const H = 132;
-    const leftPad = 70;
-    const spacing = 27;
-    const staffTop = 36;
+    const H = 170;
+    const leftPad = 92;
+    const spacing = 30;
+    const staffTop = 52;
     const lineGap = 12;
     const bottomY = staffTop + 4 * lineGap;
-
-    const total = currentMelody().notes.length;
-    const totalWidth = leftPad + total * spacing + 30;
+    const totalWidth = leftPad + currentMelody().notes.length * spacing + 40;
 
     let svg = '<svg viewBox="0 0 ' + totalWidth + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMid meet" style="width:' + totalWidth + 'px;height:' + H + 'px;">';
 
+    // 5 линий стана
     for (let i = 0; i < 5; i++) {
       const y = staffTop + i * lineGap;
-      svg += '<line x1="30" y1="' + y + '" x2="' + (totalWidth - 20) + '" y2="' + y + '" stroke="currentColor" stroke-width="1" opacity="0.35"/>';
+      svg += '<line x1="30" y1="' + y + '" x2="' + (totalWidth - 20) + '" y2="' + y + '" stroke="currentColor" stroke-width="1" opacity="0.32"/>';
     }
-    svg += '<text x="48" y="' + (bottomY - 8) + '" font-family="Noto Music, serif" font-size="58" fill="currentColor" text-anchor="middle" dominant-baseline="central">\u{1D11E}</text>';
 
-    playedNotes.forEach((midi, i) => {
+    // Скрипичный ключ — центр на 2-й линейке снизу (нота соль)
+    const clefCenterY = staffTop + 3 * lineGap;
+    svg += '<text x="62" y="' + clefCenterY + '" font-family="Noto Music, serif" font-size="72" fill="currentColor" text-anchor="middle" dominant-baseline="central">\u{1D11E}</text>';
+
+    // Ноты
+    playedNotes.forEach((note, i) => {
+      const midi = note.m, dur = note.d;
       const x = leftPad + i * spacing;
       const y = bottomY - (DIA[midi] || 0) * (lineGap / 2);
       const isLast = i === playedNotes.length - 1;
+      const col = noteColor(midi);
 
+      // добавочная линейка для до первой октавы
       if (midi === 60) {
-        svg += '<line x1="' + (x - 12) + '" y1="' + y + '" x2="' + (x + 12) + '" y2="' + y + '" stroke="currentColor" stroke-width="1.2"/>';
+        svg += '<line x1="' + (x - 13) + '" y1="' + y + '" x2="' + (x + 13) + '" y2="' + y + '" stroke="currentColor" stroke-width="1.2"/>';
       }
 
       const cls = 'note-group' + (isLast ? ' new' : '');
-      svg += '<g class="' + cls + '" data-note-index="' + i + '" transform="translate(' + x + ',' + y + ')">';
-      svg += '<ellipse cx="0" cy="0" rx="6.2" ry="4.6" fill="currentColor" transform="rotate(-20)"/>';
-      svg += '<line x1="5" y1="0" x2="5" y2="-28" stroke="currentColor" stroke-width="1.6"/>';
+      const isHollow = dur >= 2;
+      const hasFlag = dur <= 0.5;
+
+      svg += '<g class="' + cls + '" data-note-index="' + i + '" transform="translate(' + x + ',' + y + ')" style="color:' + col + '">';
+      if (isHollow) {
+        svg += '<ellipse cx="0" cy="0" rx="7" ry="5" fill="none" stroke="' + col + '" stroke-width="2" transform="rotate(-20)"/>';
+      } else {
+        svg += '<ellipse cx="0" cy="0" rx="6.5" ry="4.8" fill="' + col + '" transform="rotate(-20)"/>';
+      }
+      svg += '<line x1="5.5" y1="0" x2="5.5" y2="-32" stroke="' + col + '" stroke-width="1.7"/>';
+      if (hasFlag) {
+        svg += '<path d="M 5.5 -32 Q 14 -24 12 -14" fill="none" stroke="' + col + '" stroke-width="1.7"/>';
+      }
       svg += '</g>';
     });
 
@@ -3406,7 +3549,7 @@ renderComposers();
     if (count > previousCount && count > 0) {
       const isInTracker = document.getElementById('panel-tracker').classList.contains('active');
       if ($soundToggle.checked && !document.hidden && isInTracker) {
-        playNoteTick(currentMelody().notes[count - 1]);
+        playNoteTick(currentMelody().notes[count - 1].m);
       }
     }
     previousCount = count;
@@ -3419,6 +3562,16 @@ renderComposers();
     const m = currentMelody();
     $melodyResultText.textContent = '🎉 Мелодия собрана! Это «' + m.name + '» — ' + m.composer;
     $melodyResult.style.display = 'flex';
+  }
+
+  async function ensureRunningCtx() {
+    const ctx = getCtx();
+    if (!ctx) return null;
+    if (ctx.state === 'suspended') {
+      try { await ctx.resume(); } catch(e) {}
+    }
+    ensureAudioAlive();
+    return ctx;
   }
 
   function playNoteTick(midi) {
@@ -3438,43 +3591,60 @@ renderComposers();
     osc.start(now); osc.stop(now + 0.55);
   }
 
-  function playPreview() {
+  async function playPreview() {
     if (playingPreview || playedNotes.length === 0) return;
     playingPreview = true;
-    const ctx = getCtx();
+
+    const ctx = await ensureRunningCtx();
     if (!ctx) { playingPreview = false; return; }
-    if (ctx.state === 'suspended') ctx.resume();
-    ensureAudioAlive();
+
+    // Прогрев: тихий короткий сигнал, чтобы iOS точно проснулся
+    try {
+      const warm = ctx.createOscillator();
+      const warmG = ctx.createGain();
+      warmG.gain.value = 0.001;
+      warm.frequency.value = 880;
+      warm.connect(warmG).connect(ctx.destination);
+      warm.start(ctx.currentTime);
+      warm.stop(ctx.currentTime + 0.01);
+    } catch(e) {}
 
     const noteEls = $staff.querySelectorAll('.note-group');
-    const startTime = ctx.currentTime + 0.1;
-    const noteDur = 0.42;
-    const gap = 0.02;
+    const baseDur = 0.5; // четвертная в секундах (~120 BPM)
+    const startTime = ctx.currentTime + 0.08;
+    const tailGap = 0.06;
 
-    playedNotes.forEach((midi, i) => {
-      const t = startTime + i * (noteDur + gap);
-      const freq = midiToFreq(midi, 440);
+    let cumTime = 0;
+    playedNotes.forEach((note, i) => {
+      const dur = baseDur * note.d;
+      const t = startTime + cumTime;
+      const sounding = Math.max(0.12, dur - tailGap);
+      const freq = midiToFreq(note.m, 440);
+
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.type = 'triangle';
       osc.frequency.value = freq;
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.22, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + noteDur);
+      g.gain.linearRampToValueAtTime(0.28, t + 0.02);
+      g.gain.setValueAtTime(0.28, t + sounding - 0.08);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + sounding);
       osc.connect(g).connect(ctx.destination);
-      osc.start(t); osc.stop(t + noteDur + 0.05);
+      osc.start(t); osc.stop(t + sounding + 0.05);
 
       const el = noteEls[i];
       if (el) {
         const delay = (t - ctx.currentTime) * 1000;
         setTimeout(() => {
           el.classList.add('highlight');
-          setTimeout(() => el.classList.remove('highlight'), noteDur * 1000);
+          setTimeout(() => el.classList.remove('highlight'), sounding * 1000);
         }, Math.max(0, delay));
       }
+
+      cumTime += dur;
     });
 
-    const totalMs = playedNotes.length * (noteDur + gap) * 1000 + 400;
+    const totalMs = (cumTime + 0.5) * 1000;
     setTimeout(() => { playingPreview = false; }, totalMs);
   }
 
@@ -3502,6 +3672,22 @@ renderComposers();
   $play.addEventListener('click', playPreview);
   $next.addEventListener('click', nextMelody);
 
+  $goalInput.addEventListener('change', () => {
+    const v = Math.max(5, Math.min(480, parseInt($goalInput.value, 10) || 30));
+    $goalInput.value = v;
+    try { localStorage.setItem(LS_GOAL, v); } catch(e) {}
+    renderStats();
+  });
+  $goalInput.addEventListener('blur', () => {
+    const v = Math.max(5, Math.min(480, parseInt($goalInput.value, 10) || 30));
+    $goalInput.value = v;
+    try { localStorage.setItem(LS_GOAL, v); } catch(e) {}
+    renderStats();
+  });
+  $goalInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); $goalInput.blur(); }
+  });
+
   function restore() {
     const active = loadJSON(LS_ACTIVE, null);
     if (!active) return;
@@ -3519,6 +3705,7 @@ renderComposers();
       elapsedSec = computeElapsedSec();
       lastElapsedSec = elapsedSec;
       $timer.textContent = fmt(elapsedSec);
+      applyTimerColor();
       $timer.classList.add('running');
       $start.textContent = 'Пауза';
       $start.classList.add('ghost');
@@ -3533,6 +3720,7 @@ renderComposers();
       elapsedSec = Math.floor(accumulatedMs / 1000);
       lastElapsedSec = elapsedSec;
       $timer.textContent = fmt(elapsedSec);
+      applyTimerColor();
       $start.textContent = 'Продолжить';
       $finish.style.display = 'inline-block';
       $reset.style.display = 'inline-block';
