@@ -865,15 +865,15 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
   // ---------- SVG стана ----------
   function renderStaff() {
-    const lineGap      = 12;       // расстояние между линейками
+    const lineGap      = 12;
     const staffHeight  = lineGap * 4;
-    const clefWidth    = 68;       // место под скрипичный ключ
-    const leftPad      = 24;       // отступ слева
-    const rightPad     = 24;       // отступ справа
-    const topPad       = 56;       // запас сверху (для хвостов нот)
-    const bottomPad    = 44;       // запас снизу (для нот под станом)
-    const noteSpacing  = 34;       // расстояние между нотами
-    const firstNotePad = 16;       // отступ от ключа до первой ноты
+    const leftPad      = 22;
+    const rightPad     = 22;
+    const topPad       = 50;
+    const bottomPad    = 50;
+    const noteSpacing  = 34;
+    const clefWidth    = 60;
+    const firstNotePad = 14;
 
     const total = currentMelody().notes.length;
     const staffLeft  = leftPad + clefWidth;
@@ -884,9 +884,16 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     const topLineY = topPad;
     const bottomLineY = topPad + staffHeight;
     const stepY = lineGap / 2;
-    // Нота G4 (dia=2) — на 2-й линейке снизу (bottomLineY - lineGap).
-    // Формула: y = bottomLineY - (dia - 2) * stepY
     const yForDia = dia => bottomLineY - (dia - 2) * stepY;
+
+    // Формулы для скрипичного ключа (рисуем вручную, не через шрифт)
+    // Спираль ключа охватывает ноту G4 = 2-ю линейку снизу (y = bottomLineY - lineGap)
+    const gY = bottomLineY - lineGap;
+    // Размер ключа: от G4 вниз 3.5 шага, вверх 4.5 шага
+    const clefScale = stepY; // 1 единица = полшага ноты
+    const cx = leftPad + clefWidth / 2; // центр ключа по X
+    // Смещения относительно точки на G4-линейке (gY): умножаем на clefScale
+    const c = clefScale;
 
     let svg = '<svg viewBox="0 0 ' + totalWidth + ' ' + totalHeight + '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">';
 
@@ -896,9 +903,29 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
       svg += '<line x1="' + staffLeft + '" y1="' + y + '" x2="' + staffRight + '" y2="' + y + '" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>';
     }
 
-    // Скрипичный ключ — центрируем по 2-й линейке снизу
-    const clefCenterY = bottomLineY - lineGap;
-    svg += '<text x="' + (leftPad + clefWidth / 2) + '" y="' + clefCenterY + '" font-family="Noto Music, serif" font-size="76" fill="currentColor" text-anchor="middle" dominant-baseline="central">\u{1D11E}</text>';
+    // ---- Скрипичный ключ (нарисован вручную в локальных координатах) ----
+    // Локальная система: 0,0 — точка на 2-й линейке снизу (нота соль)
+    // Масштаб: 1 единица = полшага нотного стана (stepY = 6px)
+    // Верх ключа примерно +9, низ -7, ширина +-4
+    svg += '<g transform="translate(' + cx + ',' + gY + ') scale(' + c + ')" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">';
+    // Основная спираль (охватывает G4) + вертикаль + крючок внизу + хвост справа сверху
+    svg += '<path d="M 0 0 '
+         + 'C -3.6 -0.4 -3.8 -4.6 0 -5 '
+         + 'C 4 -5.4 5.4 -1.4 5.4 1.6 '
+         + 'C 5.4 6.4 3 9 0 10 '
+         + 'C -2.6 10.8 -4.6 9.4 -4.6 7.4 '
+         + 'C -4.6 5.8 -3.2 4.6 -1.6 4.6 '
+         + 'C -0.2 4.6 0.8 5.6 0.8 6.8 '
+         + 'C 0.8 8 -0.2 8.8 -1.4 8.8 '
+         + '" stroke-width="1.6"/>';
+    // Вертикальная стойка
+    svg += '<path d="M 0 -5 L 0 11 C 0 13.4 -2 14.6 -4 14 '
+         + 'C -5.6 13.5 -6.4 12 -6.4 10.4" stroke-width="1.6"/>';
+    // Верхний загиб вправо
+    svg += '<path d="M 0 -5 C -1.8 -8 -3 -10.4 -1.6 -12.6 '
+         + 'C -0.4 -14.4 1.6 -14.4 2.8 -12.8 '
+         + 'C 3.8 -11.4 3.8 -9.6 3 -8" stroke-width="1.6"/>';
+    svg += '</g>';
 
     // Ноты
     playedNotes.forEach((note, i) => {
@@ -910,14 +937,12 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
       const isLast = i === playedNotes.length - 1;
       const col = noteColor(midi);
 
-      // Добавочные линейки (снизу)
       if (dia <= -2) {
         for (let d = -2; d >= dia; d -= 2) {
           const ly = yForDia(d);
           svg += '<line x1="' + (x - 14) + '" y1="' + ly + '" x2="' + (x + 14) + '" y2="' + ly + '" stroke="currentColor" stroke-width="1.1"/>';
         }
       }
-      // Добавочные линейки (сверху)
       if (dia >= 10) {
         for (let d = 10; d <= dia; d += 2) {
           const ly = yForDia(d);
@@ -948,33 +973,6 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
     svg += '</svg>';
     $staff.innerHTML = svg;
-  }
-
-  function syncStaff() {
-    const total = currentMelody().notes.length;
-    const count = Math.min(notesCountForSec(melodyState.progressSec), total);
-    if (count === playedNotes.length) return;
-
-    playedNotes = currentMelody().notes.slice(0, count);
-    renderStaff();
-    $noteCount.textContent = count;
-    $noteTotal.textContent = total;
-
-    if (count > previousCount && count > 0) {
-      if ($soundToggle.checked && !document.hidden) {
-        playNoteTick(currentMelody().notes[count - 1].m);
-      }
-    }
-    previousCount = count;
-
-    if (count >= total && total > 0) showMelodyCompleted();
-  }
-
-  function showMelodyCompleted() {
-    if ($melodyResult.classList.contains('show')) return;
-    const m = currentMelody();
-    $melodyResultText.textContent = '🎉 Мелодия собрана! Это «' + m.name + '» — ' + m.composer;
-    $melodyResult.classList.add('show');
   }
 
   // ---------- Звук ----------
