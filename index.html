@@ -548,7 +548,6 @@
     -webkit-box-decoration-break: clone;
   }
 
-  
   /* ===== ТРЕКЕР ЗАНЯТИЙ ===== */
   .streak-badge {
     display: inline-flex; align-items: center; gap: 6px;
@@ -607,7 +606,7 @@
     overscroll-behavior-x: contain;
   }
   .practice-staff {
-    display: block; height: 160px; min-width: 100%;
+    display: block; height: 180px; min-width: 100%;
     color: var(--accent);
   }
   .practice-staff .note-group { animation: noteAppear .55s cubic-bezier(.2,.9,.3,1.4); transform-origin: center; }
@@ -688,13 +687,6 @@
   .session-toast .mins { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--accent); font-weight: 500; }
 
   @media (max-width: 860px) {
-    .practice-timer { font-size: 68px; margin: 16px 0 14px; }
-    .practice-staff { height: 120px; }
-    .stat-value { font-size: 22px; }
-    .session-toast { top: 16px; padding: 12px 18px; }
-  }
-
-  @media (max-width: 860px) {
     body { flex-direction: column; }
     .sidebar {
       width: 100%; padding: 20px 0 0;
@@ -754,7 +746,7 @@
     .composer-list li { font-size: 12.5px; }
     .contacts-bar { padding: 8px 12px; gap: 14px; font-size: 11px; }
     .practice-timer { font-size: 68px; margin: 16px 0 14px; }
-    .practice-staff { height: 100px; }
+    .practice-staff { height: 140px; }
     .stat-value { font-size: 22px; }
     .session-toast { top: 16px; padding: 12px 18px; }
   }
