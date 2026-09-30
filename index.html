@@ -465,7 +465,7 @@
   </p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+<script src="https://unpkg.com/vexflow@4.2.2/build/cjs/vexflow.js"></script>
 <script>
 'use strict';
 
@@ -804,7 +804,7 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     $scoreOutput.innerHTML = '';
 
     // Создаём Factory
-    const factory = new VexFlow.Factory({
+    const factory = new Vex.Flow.Factory({
       renderer: {
         elementId: 'score-output',
         width: 700,
@@ -1016,19 +1016,23 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
   // ---------- Инициализация ----------
   // Ждём загрузки VexFlow
-  if (typeof VexFlow !== 'undefined') {
-    VexFlow.loadFonts('Bravura', 'Academico').then(() => {
-      VexFlow.setFonts('Bravura', 'Academico');
-      vexFlowReady = true;
-      restore();
-      renderStreak();
-      renderStats();
-      $noteTotal.textContent = MELODY.length;
-      renderScore();
-    });
+  function bootVexFlow() {
+    if (typeof Vex === 'undefined' || !Vex.Flow) {
+      document.getElementById('score-output').innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">Не удалось загрузить VexFlow. Проверьте подключение к интернету.</p>';
+      return;
+    }
+    vexFlowReady = true;
+    restore();
+    renderStreak();
+    renderStats();
+    $noteTotal.textContent = MELODY.length;
+    renderScore();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootVexFlow);
   } else {
-    // Фолбэк, если VexFlow не загрузился
-    document.getElementById('score-output').innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">Не удалось загрузить VexFlow. Проверьте подключение к интернету.</p>';
+    bootVexFlow();
   }
 
 })();
