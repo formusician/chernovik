@@ -548,6 +548,7 @@
     -webkit-box-decoration-break: clone;
   }
 
+  
   /* ===== ТРЕКЕР ЗАНЯТИЙ ===== */
   .streak-badge {
     display: inline-flex; align-items: center; gap: 6px;
@@ -3202,13 +3203,12 @@ renderComposers();
 
   const DIA = { 60:-2, 62:-1, 64:0, 65:1, 67:2, 69:3, 71:4, 72:5, 74:6, 76:7, 77:8, 79:9 };
 
-  // Цвет ноты по высоте: тёплый терракот → синий
   const COLOR_STOPS = [
-    { m: 60, c: [200, 118, 78] },   // терракот
-    { m: 64, c: [186, 148, 74] },   // золото
-    { m: 67, c: [138, 111, 71] },   // accent
-    { m: 72, c: [106, 128, 144] },  // серо-синий
-    { m: 79, c: [88, 118, 154] }    // синий
+    { m: 60, c: [200, 118, 78] },
+    { m: 64, c: [186, 148, 74] },
+    { m: 67, c: [138, 111, 71] },
+    { m: 72, c: [106, 128, 144] },
+    { m: 79, c: [88, 118, 154] }
   ];
   function noteColor(midi) {
     if (midi <= COLOR_STOPS[0].m) {
@@ -3380,6 +3380,16 @@ renderComposers();
     elapsedSec = 0;
     lastElapsedSec = 0;
     running = false;
+
+    // Сброс прогресса текущей мелодии
+    melodyState.progressSec = 0;
+    playedNotes = [];
+    previousCount = 0;
+    saveMelodyState();
+    $melodyResult.style.display = 'none';
+    $noteCount.textContent = '0';
+    renderStaff();
+
     persistActive();
     $timer.textContent = '00:00:00';
     $timer.classList.remove('running', 'warm', 'hot');
@@ -3492,17 +3502,14 @@ renderComposers();
 
     let svg = '<svg viewBox="0 0 ' + totalWidth + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMid meet" style="width:' + totalWidth + 'px;height:' + H + 'px;">';
 
-    // 5 линий стана
     for (let i = 0; i < 5; i++) {
       const y = staffTop + i * lineGap;
       svg += '<line x1="30" y1="' + y + '" x2="' + (totalWidth - 20) + '" y2="' + y + '" stroke="currentColor" stroke-width="1" opacity="0.32"/>';
     }
 
-    // Скрипичный ключ — центр на 2-й линейке снизу (нота соль)
     const clefCenterY = staffTop + 3 * lineGap;
     svg += '<text x="62" y="' + clefCenterY + '" font-family="Noto Music, serif" font-size="72" fill="currentColor" text-anchor="middle" dominant-baseline="central">\u{1D11E}</text>';
 
-    // Ноты
     playedNotes.forEach((note, i) => {
       const midi = note.m, dur = note.d;
       const x = leftPad + i * spacing;
@@ -3510,7 +3517,6 @@ renderComposers();
       const isLast = i === playedNotes.length - 1;
       const col = noteColor(midi);
 
-      // добавочная линейка для до первой октавы
       if (midi === 60) {
         svg += '<line x1="' + (x - 13) + '" y1="' + y + '" x2="' + (x + 13) + '" y2="' + y + '" stroke="currentColor" stroke-width="1.2"/>';
       }
@@ -3598,7 +3604,6 @@ renderComposers();
     const ctx = await ensureRunningCtx();
     if (!ctx) { playingPreview = false; return; }
 
-    // Прогрев: тихий короткий сигнал, чтобы iOS точно проснулся
     try {
       const warm = ctx.createOscillator();
       const warmG = ctx.createGain();
@@ -3610,7 +3615,7 @@ renderComposers();
     } catch(e) {}
 
     const noteEls = $staff.querySelectorAll('.note-group');
-    const baseDur = 0.5; // четвертная в секундах (~120 BPM)
+    const baseDur = 0.5;
     const startTime = ctx.currentTime + 0.08;
     const tailGap = 0.06;
 
