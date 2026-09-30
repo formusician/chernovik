@@ -105,6 +105,13 @@
     text-decoration: underline; cursor: pointer; font-family: inherit;
   }
   .btn.small { padding: 8px 14px; font-size: 11px; }
+  .btn.tempo {
+    padding: 7px 11px;
+    font-size: 10px;
+    letter-spacing: .05em;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
   .switch {
     display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
     user-select: none; -webkit-user-select: none; font-size: 13px; color: var(--muted);
@@ -417,7 +424,7 @@
     margin-top: 14px;
     color: var(--accent);
     width: 100%;
-    max-width: 220px;
+    max-width: 210px;
   }
   .term-staff svg { width: 100%; height: auto; display: block; }
   .term-word { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; font-style: italic; margin-bottom: 2px; }
@@ -562,6 +569,7 @@
     .card { padding: 22px; }
     .piano { height: 160px; }
     .metro-row { gap: 16px; }
+    .btn.tempo { padding: 6px 8px; font-size: 9px; letter-spacing: .03em; }
     .rhythm-item { padding: 10px; gap: 8px; }
     .rhythm-num { font-size: 16px; min-width: 20px; }
     .sub-btn { height: 40px; padding: 2px 6px; }
@@ -603,8 +611,7 @@
     body:has(#panel-piano.active) .audio-indicator,
     body:has(#panel-piano.active) .panel-head,
     body:has(#panel-piano.active) .piano-toolbar,
-    body:has(#panel-piano.active) .scroll-hint,
-    body:has(#panel-piano.active) .scroll-arrow { display: none !important; }
+    body:has(#panel-piano.active) .scroll-hint { display: none !important; }
     body:has(#panel-piano.active) main { padding: 0; max-width: none; }
     body:has(#panel-piano.active) .panel { max-width: none; }
     body:has(#panel-piano.active) .piano-wrap {
@@ -622,6 +629,19 @@
       align-self: stretch;
       border-radius: 0; padding: 4px;
     }
+    body:has(#panel-piano.active) .scroll-arrow {
+      display: flex !important;
+      width: 52px; height: 52px;
+      font-size: 26px;
+      background: rgba(251,249,244,.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 18px rgba(0,0,0,.45);
+      z-index: 20;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    body:has(#panel-piano.active) .scroll-arrow.left { left: 14px; }
+    body:has(#panel-piano.active) .scroll-arrow.right { right: 14px; }
   }
 </style>
 </head>
@@ -689,13 +709,13 @@
           </select>
         </div>
       </div>
-      <div class="metro-row" style="margin-top:6px;">
-        <span class="bpm-label" style="margin-right:6px;">Быстрый темп</span>
-        <button type="button" class="btn ghost" data-bpm="40">Grave 40</button>
-        <button type="button" class="btn ghost" data-bpm="66">Adagio 66</button>
-        <button type="button" class="btn ghost" data-bpm="90">Andante 90</button>
-        <button type="button" class="btn ghost" data-bpm="120">Allegro 120</button>
-        <button type="button" class="btn ghost" data-bpm="168">Presto 168</button>
+      <div class="metro-row" style="margin-top:4px; gap:6px;">
+        <span class="bpm-label" style="margin-right:2px;">Быстрый темп</span>
+        <button type="button" class="btn ghost tempo" data-bpm="40">Grave 40</button>
+        <button type="button" class="btn ghost tempo" data-bpm="66">Adagio 66</button>
+        <button type="button" class="btn ghost tempo" data-bpm="90">Andante 90</button>
+        <button type="button" class="btn ghost tempo" data-bpm="120">Allegro 120</button>
+        <button type="button" class="btn ghost tempo" data-bpm="168">Presto 168</button>
       </div>
       <div class="divider"></div>
       <div class="rhythm-header">
@@ -1196,53 +1216,54 @@ function makeRhythmSVG(count) {
 }
 
 function makeClefStaffSVG(kind, c4Pos) {
-  const W = 190, H = 90;
-  const staffLeft = 42, staffRight = 178;
-  const lineSpacing = 9;
-  const staffTop = 18;
-  const bottomLineY = staffTop + 4 * lineSpacing;
+  const W = 210, H = 130;
+  const staffLeft = 52, staffRight = 198;
+  const lineSpacing = 10;
+  const staffTop = 40;
+  const bottomLineY = staffTop + 4 * lineSpacing; // 80
   const yForPos = p => bottomLineY - p * (lineSpacing / 2);
 
   let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true">';
 
   for (let i = 0; i < 5; i++) {
     const y = staffTop + i * lineSpacing;
-    svg += '<line x1="' + staffLeft + '" y1="' + y + '" x2="' + staffRight + '" y2="' + y + '" stroke="currentColor" stroke-width="0.9"/>';
+    svg += '<line x1="' + staffLeft + '" y1="' + y + '" x2="' + staffRight + '" y2="' + y + '" stroke="currentColor" stroke-width="1"/>';
   }
 
-  let glyph = '\u{1D11E}', fontSize = 52, clefY = 36;
+  let glyph = '\u{1D11E}', fontSize = 62, clefY = 58;
   switch (kind) {
-    case 'treble':     glyph = '\u{1D11E}'; fontSize = 52; clefY = 36; break;
-    case 'bass':       glyph = '\u{1D122}'; fontSize = 40; clefY = 38; break;
-    case 'c-alto':     glyph = '\u{1D121}'; fontSize = 34; clefY = 36; break;
-    case 'c-tenor':    glyph = '\u{1D121}'; fontSize = 34; clefY = 27; break;
-    case 'c-soprano':  glyph = '\u{1D121}'; fontSize = 34; clefY = 54; break;
-    case 'c-mezzo':    glyph = '\u{1D121}'; fontSize = 34; clefY = 45; break;
-    case 'c-baritone': glyph = '\u{1D121}'; fontSize = 34; clefY = 18; break;
-    case 'f-baritone': glyph = '\u{1D122}'; fontSize = 40; clefY = 36; break;
-    case 'perc':       glyph = '\u{1D123}'; fontSize = 52; clefY = 36; break;
+    case 'treble':     glyph = '\u{1D11E}'; fontSize = 62; clefY = 58; break;
+    case 'bass':       glyph = '\u{1D122}'; fontSize = 48; clefY = 52; break;
+    case 'c-alto':     glyph = '\u{1D121}'; fontSize = 46; clefY = 60; break;
+    case 'c-tenor':    glyph = '\u{1D121}'; fontSize = 46; clefY = 50; break;
+    case 'c-soprano':  glyph = '\u{1D121}'; fontSize = 46; clefY = 80; break;
+    case 'c-mezzo':    glyph = '\u{1D121}'; fontSize = 46; clefY = 70; break;
+    case 'f-baritone': glyph = '\u{1D122}'; fontSize = 48; clefY = 60; break;
+    case 'perc':       glyph = '\u{1D123}'; fontSize = 52; clefY = 60; break;
   }
-  svg += '<text x="' + (staffLeft + 14) + '" y="' + clefY + '" font-family="Noto Music, serif" font-size="' + fontSize + '" fill="currentColor" text-anchor="middle" dominant-baseline="central">' + glyph + '</text>';
+  svg += '<text x="' + (staffLeft + 16) + '" y="' + clefY + '" font-family="Noto Music, serif" font-size="' + fontSize + '" fill="currentColor" text-anchor="middle" dominant-baseline="central">' + glyph + '</text>';
 
   if (c4Pos !== null && c4Pos !== undefined) {
     const ny = yForPos(c4Pos);
     if (ny < staffTop - 1) {
       for (let ly = staffTop - lineSpacing; ly >= ny - 1; ly -= lineSpacing) {
-        svg += '<line x1="' + (staffRight - 30) + '" y1="' + ly + '" x2="' + (staffRight - 6) + '" y2="' + ly + '" stroke="currentColor" stroke-width="0.9"/>';
+        svg += '<line x1="' + (staffRight - 32) + '" y1="' + ly + '" x2="' + (staffRight - 8) + '" y2="' + ly + '" stroke="currentColor" stroke-width="1"/>';
       }
     } else if (ny > bottomLineY + 1) {
       for (let ly = bottomLineY + lineSpacing; ly <= ny + 1; ly += lineSpacing) {
-        svg += '<line x1="' + (staffRight - 30) + '" y1="' + ly + '" x2="' + (staffRight - 6) + '" y2="' + ly + '" stroke="currentColor" stroke-width="0.9"/>';
+        svg += '<line x1="' + (staffRight - 32) + '" y1="' + ly + '" x2="' + (staffRight - 8) + '" y2="' + ly + '" stroke="currentColor" stroke-width="1"/>';
       }
     }
-    const nx = staffRight - 18;
-    svg += '<ellipse cx="' + nx + '" cy="' + ny + '" rx="6" ry="4.3" fill="none" stroke="currentColor" stroke-width="1.6" transform="rotate(-20 ' + nx + ' ' + ny + ')"/>';
+    const nx = staffRight - 20;
+    svg += '<ellipse cx="' + nx + '" cy="' + ny + '" rx="6.5" ry="4.6" fill="none" stroke="currentColor" stroke-width="1.7" transform="rotate(-20 ' + nx + ' ' + ny + ')"/>';
   }
 
   svg += '</svg>';
   return svg;
 }
 
+/* Только те ключи, для которых рисуем нотоносец.
+   Перкуссионный ключ исключён — у него нет стана. */
 const CLEF_STAFFS = {
   'Скрипичный ключ (соль)':      { kind: 'treble',     c4: -2 },
   'Басовый ключ (фа)':           { kind: 'bass',       c4: 10 },
@@ -1250,8 +1271,7 @@ const CLEF_STAFFS = {
   'Теноровый ключ (до)':         { kind: 'c-tenor',    c4: 6 },
   'Сопрановый ключ (до)':        { kind: 'c-soprano',  c4: 0 },
   'Меццо-сопрановый ключ (до)':  { kind: 'c-mezzo',    c4: 2 },
-  'Баритоновый ключ':            { kind: 'f-baritone', c4: 8 },
-  'Перкуссионный ключ':          { kind: 'perc',       c4: null }
+  'Баритоновый ключ':            { kind: 'f-baritone', c4: 8 }
 };
 
 const SYMBOLS = {
