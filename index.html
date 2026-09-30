@@ -71,7 +71,6 @@
   .btn.accent:hover { background: transparent; color: var(--accent); }
   .btn.small { padding: 8px 14px; font-size: 11px; }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
-  .btn:disabled:hover { background: transparent; color: var(--ink); }
 
   .storage-warning {
     display: none;
@@ -122,7 +121,7 @@
   /* СЦЕНА */
   .stage {
     position: relative;
-    height: 420px;
+    height: 380px;
     border-radius: 14px;
     overflow: hidden;
     background: #1a1628;
@@ -136,7 +135,7 @@
   }
   .curtain {
     position: absolute; top: 0; bottom: 0;
-    width: 6%; min-width: 34px; max-width: 60px;
+    width: 5%; min-width: 26px; max-width: 50px;
     background: repeating-linear-gradient(to right,
       #4a1018 0px,
       #8a2c3a 8px,
@@ -149,7 +148,7 @@
   .curtain.right { right: 0; }
   .curtain-top {
     position: absolute; top: 0; left: 0; right: 0;
-    height: 26px;
+    height: 22px;
     background: linear-gradient(to bottom, #8a2c3a 0%, #6b1f2a 60%, transparent 100%);
     z-index: 3;
     box-shadow: 0 4px 24px rgba(0,0,0,.6);
@@ -167,15 +166,15 @@
 
   .orchestra-count {
     position: absolute;
-    top: 34px; right: 14px;
-    background: rgba(0,0,0,.55);
+    top: 30px; right: 12px;
+    background: rgba(0,0,0,.6);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     border: 1px solid rgba(232,200,120,.4);
     color: var(--gold);
-    padding: 6px 12px;
+    padding: 5px 11px;
     border-radius: 20px;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: .1em;
     text-transform: uppercase;
     z-index: 4;
@@ -286,7 +285,7 @@
     .practice-timer { font-size: 60px; }
     .bpm-value { font-size: 56px; }
     .stage { height: 320px; }
-    .curtain { min-width: 24px; }
+    .curtain { min-width: 22px; }
   }
 </style>
 </head>
@@ -365,7 +364,7 @@
 
     <div class="card">
       <div class="storage-warning" id="storageWarning">
-        <strong>⚠ Внимание:</strong> браузер не позволяет сохранять данные (обычно так бывает, если открыть файл двойным кликом из «Файлов»). Используй кнопки «Скачать данные» и «Загрузить данные» ниже, чтобы не потерять прогресс.
+        <strong>⚠ Внимание:</strong> браузер не позволяет сохранять данные. Используй кнопки «Скачать/Загрузить данные», чтобы не потерять прогресс.
       </div>
 
       <div class="practice-timer" id="practiceTimer">00:00:00</div>
@@ -387,7 +386,7 @@
         <div class="curtain right"></div>
         <div class="orchestra-count" id="orchestraCount">На сцене: 0 / 12</div>
 
-        <svg class="stage-svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <svg class="stage-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="glowTop" cx="50%" cy="0%" r="75%">
               <stop offset="0%" stop-color="#f8ecc8" stop-opacity="0.22"/>
@@ -399,148 +398,37 @@
               <stop offset="100%" stop-color="#f8ecc8" stop-opacity="0"/>
             </linearGradient>
             <radialGradient id="floorGlow" cx="50%" cy="50%" r="60%">
-              <stop offset="0%" stop-color="#c9a14a" stop-opacity="0.15"/>
+              <stop offset="0%" stop-color="#c9a14a" stop-opacity="0.18"/>
               <stop offset="100%" stop-color="#c9a14a" stop-opacity="0"/>
             </radialGradient>
-
-            <!-- ОПРЕДЕЛЕНИЯ МУЗЫКАНТОВ (100 ед. высоты, base центр x=0 y=100) -->
-            <!-- Только filled-формы, без stroke="currentColor". Родительский <g fill=...> задаёт цвет. -->
-
-            <!-- СКРИПАЧ: скрипка и смычок -->
-            <g id="mus-violin">
-              <circle cx="0" cy="8" r="8"/>
-              <rect x="-3" y="14" width="6" height="6"/>
-              <path d="M -11 20 Q -14 40 -12 55 L 12 55 Q 14 40 11 20 Q 0 15 -11 20 Z"/>
-              <rect x="-9" y="55" width="7" height="45"/>
-              <rect x="2" y="55" width="7" height="45"/>
-              <!-- скрипка: наклонная овальная головка + шейка -->
-              <g transform="translate(-14, 30) rotate(-25)">
-                <ellipse cx="0" cy="0" rx="11" ry="7"/>
-                <rect x="9" y="-2" width="18" height="4"/>
-              </g>
-              <!-- смычок: тонкий параллелограмм -->
-              <polygon points="-32,42 14,10 17,13 -29,45"/>
-            </g>
-
-            <!-- ВИОЛОНЧЕЛИСТ: сидит, инструмент между колен -->
-            <g id="mus-cello">
-              <circle cx="0" cy="8" r="7"/>
-              <rect x="-3" y="14" width="6" height="5"/>
-              <path d="M -10 20 Q -12 36 -10 48 L 10 48 Q 12 36 10 20 Q 0 16 -10 20 Z"/>
-              <!-- ноги сидящего: бедра + голени -->
-              <polygon points="-10,48 -26,52 -26,68 -19,68 -19,56 -10,54"/>
-              <polygon points="10,48 26,52 26,68 19,68 19,56 10,54"/>
-              <!-- виолончель: большой вертикальный овал -->
-              <ellipse cx="0" cy="58" rx="13" ry="19"/>
-              <rect x="-3" y="22" width="6" height="20"/>
-              <!-- смычок -->
-              <polygon points="-20,42 20,74 18,77 -22,45"/>
-            </g>
-
-            <!-- ФЛЕЙТИСТ: флейта горизонтально у лица -->
-            <g id="mus-flute">
-              <circle cx="0" cy="8" r="8"/>
-              <rect x="-3" y="14" width="6" height="6"/>
-              <path d="M -11 20 Q -14 40 -12 55 L 12 55 Q 14 40 11 20 Q 0 15 -11 20 Z"/>
-              <rect x="-9" y="55" width="7" height="45"/>
-              <rect x="2" y="55" width="7" height="45"/>
-              <!-- флейта: длинный горизонтальный прямоугольник, от головы вправо -->
-              <rect x="4" y="13" width="48" height="4"/>
-              <!-- руки -->
-              <polygon points="-11,26 -20,28 -20,34 -11,32"/>
-              <polygon points="11,26 22,22 22,28 11,32"/>
-            </g>
-
-            <!-- КЛАРНЕТИСТ: инструмент под наклоном вниз -->
-            <g id="mus-clar">
-              <circle cx="0" cy="8" r="8"/>
-              <rect x="-3" y="14" width="6" height="6"/>
-              <path d="M -11 20 Q -14 40 -12 55 L 12 55 Q 14 40 11 20 Q 0 15 -11 20 Z"/>
-              <rect x="-9" y="55" width="7" height="45"/>
-              <rect x="2" y="55" width="7" height="45"/>
-              <!-- кларнет под наклоном вправо-вниз -->
-              <g transform="rotate(22 5 20)">
-                <rect x="4" y="16" width="5" height="52"/>
-                <ellipse cx="6.5" cy="70" rx="5" ry="4"/>
-              </g>
-              <polygon points="-11,28 -20,30 -20,36 -11,34"/>
-            </g>
-
-            <!-- ВАЛТОРНИСТ: круглый инструмент с раструбом вбок -->
-            <g id="mus-brass">
-              <circle cx="0" cy="8" r="8"/>
-              <rect x="-3" y="14" width="6" height="6"/>
-              <path d="M -11 20 Q -14 40 -12 55 L 12 55 Q 14 40 11 20 Q 0 15 -11 20 Z"/>
-              <rect x="-9" y="55" width="7" height="45"/>
-              <rect x="2" y="55" width="7" height="45"/>
-              <!-- круглый корпус инструмента -->
-              <circle cx="0" cy="34" r="13"/>
-              <circle cx="0" cy="34" r="6" fill="#1a1628"/>
-              <!-- раструб -->
-              <polygon points="13,28 30,42 26,50 11,38"/>
-              <ellipse cx="31" cy="48" rx="7" ry="5"/>
-              <polygon points="-11,28 -20,30 -20,36 -11,34"/>
-            </g>
-
-            <!-- ЛИТАВРИСТ: сидит, две литавры с палочками -->
-            <g id="mus-timp">
-              <circle cx="0" cy="8" r="7"/>
-              <rect x="-3" y="14" width="6" height="5"/>
-              <path d="M -10 20 Q -12 34 -10 46 L 10 46 Q 12 34 10 20 Q 0 16 -10 20 Z"/>
-              <polygon points="-10,46 -24,50 -24,64 -17,64 -17,52 -10,50"/>
-              <polygon points="10,46 24,50 24,64 17,64 17,52 10,50"/>
-              <!-- литавры: две чаши -->
-              <ellipse cx="-22" cy="78" rx="14" ry="6"/>
-              <polygon points="-36,78 -36,94 -8,94 -8,78"/>
-              <ellipse cx="22" cy="78" rx="14" ry="6"/>
-              <polygon points="8,78 8,94 36,94 36,78"/>
-              <!-- палочки -->
-              <polygon points="-3,24 -21,72 -19,73 -1,25"/>
-              <polygon points="3,24 21,72 19,73 1,25"/>
-            </g>
-
-            <!-- ДИРИЖЁР: одна рука вниз, другая с белой палочкой вверх -->
-            <g id="mus-cond">
-              <circle cx="0" cy="8" r="8"/>
-              <rect x="-3" y="14" width="6" height="6"/>
-              <path d="M -11 20 Q -14 40 -12 55 L 12 55 Q 14 40 11 20 Q 0 15 -11 20 Z"/>
-              <rect x="-9" y="55" width="7" height="45"/>
-              <rect x="2" y="55" width="7" height="45"/>
-              <!-- левая рука вниз -->
-              <polygon points="-11,26 -22,32 -22,38 -11,32"/>
-              <!-- правая рука вверх -->
-              <polygon points="11,24 24,12 26,16 13,28"/>
-              <!-- белая палочка -->
-              <polygon points="24,12 40,-4 42,-2 26,14" fill="#ffffff"/>
-            </g>
           </defs>
 
-          <!-- Фон сцены -->
-          <rect x="0" y="0" width="800" height="500" fill="url(#glowTop)"/>
+          <!-- Фон -->
+          <rect x="0" y="0" width="1000" height="500" fill="url(#glowTop)"/>
 
           <!-- Пучки софитов -->
-          <polygon points="130,0 250,0 230,440 160,440" fill="url(#spotBeam)"/>
-          <polygon points="330,0 470,0 450,440 350,440" fill="url(#spotBeam)"/>
-          <polygon points="550,0 670,0 650,440 570,440" fill="url(#spotBeam)"/>
+          <polygon points="180,0 320,0 300,450 200,450" fill="url(#spotBeam)"/>
+          <polygon points="430,0 570,0 550,450 450,450" fill="url(#spotBeam)"/>
+          <polygon points="680,0 820,0 800,450 700,450" fill="url(#spotBeam)"/>
 
           <!-- Пылинки -->
           <g fill="#f8ecc8" opacity="0.6">
-            <circle class="particle" cx="150" cy="80" r="1.5" style="animation-delay:0s"/>
-            <circle class="particle" cx="280" cy="60" r="1.8" style="animation-delay:1.5s"/>
-            <circle class="particle" cx="420" cy="100" r="1.4" style="animation-delay:3s"/>
-            <circle class="particle" cx="560" cy="70" r="1.6" style="animation-delay:2s"/>
-            <circle class="particle" cx="680" cy="90" r="1.5" style="animation-delay:4s"/>
-            <circle class="particle" cx="210" cy="160" r="1.3" style="animation-delay:.7s"/>
-            <circle class="particle" cx="500" cy="150" r="1.4" style="animation-delay:2.7s"/>
-            <circle class="particle" cx="640" cy="180" r="1.5" style="animation-delay:3.5s"/>
+            <circle class="particle" cx="200" cy="90" r="1.6" style="animation-delay:0s"/>
+            <circle class="particle" cx="350" cy="70" r="1.9" style="animation-delay:1.5s"/>
+            <circle class="particle" cx="520" cy="110" r="1.5" style="animation-delay:3s"/>
+            <circle class="particle" cx="680" cy="80" r="1.7" style="animation-delay:2s"/>
+            <circle class="particle" cx="820" cy="100" r="1.6" style="animation-delay:4s"/>
+            <circle class="particle" cx="280" cy="180" r="1.4" style="animation-delay:.7s"/>
+            <circle class="particle" cx="600" cy="160" r="1.5" style="animation-delay:2.7s"/>
+            <circle class="particle" cx="780" cy="200" r="1.6" style="animation-delay:3.5s"/>
           </g>
 
-          <!-- Пол сцены -->
-          <ellipse cx="400" cy="450" rx="380" ry="80" fill="url(#floorGlow)"/>
-          <rect x="0" y="450" width="800" height="50" fill="#0f0a12" opacity="0.8"/>
-          <line x1="0" y1="450" x2="800" y2="450" stroke="#c9a14a" stroke-opacity="0.55" stroke-width="2"/>
+          <!-- Пол -->
+          <ellipse cx="500" cy="450" rx="480" ry="90" fill="url(#floorGlow)"/>
+          <rect x="0" y="450" width="1000" height="50" fill="#0f0a12" opacity="0.85"/>
+          <line x1="0" y1="450" x2="1000" y2="450" stroke="#c9a14a" stroke-opacity="0.6" stroke-width="2"/>
 
-          <!-- Музыканты -->
+          <!-- МУЗЫКАНТЫ -->
           <g id="musiciansGroup"></g>
         </svg>
       </div>
@@ -611,9 +499,7 @@ try {
   localStorage.setItem('__maestro_test__', '1');
   localStorage.removeItem('__maestro_test__');
 } catch(e) { storageAvailable = false; }
-if (!storageAvailable) {
-  document.getElementById('storageWarning').classList.add('visible');
-}
+if (!storageAvailable) document.getElementById('storageWarning').classList.add('visible');
 
 const navItems = document.querySelectorAll('.nav-item');
 const panels = document.querySelectorAll('.panel');
@@ -651,7 +537,6 @@ function playClick(time) {
   osc.start(time);
   osc.stop(time + 0.06);
 }
-
 function metroSched() {
   const ctx = getCtx();
   if (!ctx) return;
@@ -660,7 +545,6 @@ function metroSched() {
     metroNext += 60.0 / metroBpm;
   }
 }
-
 metroBtn.addEventListener('click', () => {
   if (metroPlaying) {
     metroPlaying = false;
@@ -680,8 +564,8 @@ metroBtn.addEventListener('click', () => {
 });
 
 /* ПРАКТИКА */
-const LS_SESSIONS = 'demo-practice-sessions-v6';
-const LS_ACTIVE = 'demo-practice-active-v6';
+const LS_SESSIONS = 'demo-practice-sessions-v7';
+const LS_ACTIVE = 'demo-practice-active-v7';
 
 const practiceTimerEl = document.getElementById('practiceTimer');
 const practiceStatusEl = document.getElementById('practiceStatus');
@@ -707,7 +591,6 @@ let practiceActive = null;
 let practiceTickId = null;
 let lastMusicianCount = -1;
 
-// Интервал появления: 20 сек для быстрого теста. Для продакшена — 120000.
 const MUSICIAN_INTERVAL_MS = 20000;
 
 const COLORS = {
@@ -717,23 +600,35 @@ const COLORS = {
   perc:    '#c07850',
   cond:    '#f8ecc8'
 };
+const INSTRUMENT_COLOR = '#2a1f15';
 
-// Все фигуры стоят на полу. Размер: FIGURE_HEIGHT=100 × FIGURE_SCALE=3.5 = 350.
-// y — координата пола (низа фигуры). x — центр.
-// Соседние позиции чередуют y, чтобы создать глубину (задние — выше).
+// Порядок выхода музыкантов. x распределён по всей ширине сцены (1000).
+// y — координата пола; 450 = передний ряд, 400 = задний ряд.
 const ORCHESTRA = [
-  { kind: 'violin', x: 70,  y: 450, color: 'strings' },
-  { kind: 'flute',  x: 130, y: 415, color: 'woods' },
-  { kind: 'violin', x: 195, y: 450, color: 'strings' },
-  { kind: 'clar',   x: 260, y: 415, color: 'woods' },
-  { kind: 'cello',  x: 325, y: 455, color: 'strings' },
-  { kind: 'brass',  x: 390, y: 415, color: 'brass' },
-  { kind: 'brass',  x: 505, y: 415, color: 'brass' },
-  { kind: 'cello',  x: 575, y: 455, color: 'strings' },
-  { kind: 'timp',   x: 640, y: 425, color: 'perc' },
-  { kind: 'violin', x: 705, y: 450, color: 'strings' },
-  { kind: 'violin', x: 760, y: 450, color: 'strings' },
-  { kind: 'cond',   x: 448, y: 440, color: 'cond' }
+  // 1. Дирижёр — центр, чуть впереди
+  { kind: 'cond',   x: 500, y: 450, scale: 1.5, color: 'cond' },
+  // 2. Скрипка слева от дирижёра (передний ряд)
+  { kind: 'violin', x: 320, y: 450, scale: 1.5, color: 'strings' },
+  // 3. Скрипка справа (передний ряд)
+  { kind: 'violin', x: 680, y: 450, scale: 1.5, color: 'strings' },
+  // 4. Виолончель дальше влево (передний ряд)
+  { kind: 'cello',  x: 170, y: 450, scale: 1.5, color: 'strings' },
+  // 5. Виолончель дальше вправо (передний ряд)
+  { kind: 'cello',  x: 830, y: 450, scale: 1.5, color: 'strings' },
+  // 6. Флейта слева (задний ряд)
+  { kind: 'flute',  x: 250, y: 400, scale: 1.2, color: 'woods' },
+  // 7. Кларнет справа (задний ряд)
+  { kind: 'clar',   x: 750, y: 400, scale: 1.2, color: 'woods' },
+  // 8. Валторна по центру-слева (задний ряд)
+  { kind: 'brass',  x: 410, y: 400, scale: 1.2, color: 'brass' },
+  // 9. Валторна по центру-справа (задний ряд)
+  { kind: 'brass',  x: 590, y: 400, scale: 1.2, color: 'brass' },
+  // 10. Литавры по центру (задний ряд)
+  { kind: 'timp',   x: 500, y: 400, scale: 1.2, color: 'perc' },
+  // 11. Крайняя скрипка слева (передний ряд)
+  { kind: 'violin', x: 60,  y: 450, scale: 1.5, color: 'strings' },
+  // 12. Крайняя скрипка справа (передний ряд)
+  { kind: 'violin', x: 940, y: 450, scale: 1.5, color: 'strings' }
 ];
 
 function loadSessions() {
@@ -782,24 +677,197 @@ function musicianCountFromMs(ms) {
   return Math.min(ORCHESTRA.length, Math.floor(ms / MUSICIAN_INTERVAL_MS));
 }
 
+// Генератор простых чётких силуэтов. Каждая фигура ~60x100 в локальных координатах.
+// x=0 — центр, y=0 — верх головы, y=100 — низ (пол).
+function buildMusician(kind, bodyColor) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const g = document.createElementNS(ns, 'g');
+  const instrument = INSTRUMENT_COLOR;
+
+  const addRect = (x, y, w, h, fill) => {
+    const r = document.createElementNS(ns, 'rect');
+    r.setAttribute('x', x); r.setAttribute('y', y);
+    r.setAttribute('width', w); r.setAttribute('height', h);
+    r.setAttribute('fill', fill);
+    g.appendChild(r);
+  };
+  const addCircle = (cx, cy, r, fill) => {
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', r);
+    c.setAttribute('fill', fill);
+    g.appendChild(c);
+  };
+  const addPath = (d, fill) => {
+    const p = document.createElementNS(ns, 'path');
+    p.setAttribute('d', d); p.setAttribute('fill', fill);
+    g.appendChild(p);
+  };
+  const addPoly = (points, fill) => {
+    const p = document.createElementNS(ns, 'polygon');
+    p.setAttribute('points', points); p.setAttribute('fill', fill);
+    g.appendChild(p);
+  };
+  const addLine = (x1, y1, x2, y2, width, stroke) => {
+    const l = document.createElementNS(ns, 'line');
+    l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+    l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+    l.setAttribute('stroke', stroke);
+    l.setAttribute('stroke-width', width);
+    l.setAttribute('stroke-linecap', 'round');
+    g.appendChild(l);
+  };
+
+  // Общее тело для всех (кроме литавриста — он сидит)
+  const buildStandingBody = () => {
+    // Голова
+    addCircle(0, 10, 9, bodyColor);
+    // Шея
+    addRect(-4, 18, 8, 5, bodyColor);
+    // Туловище
+    addPath('M -13 23 Q -16 45 -14 66 L 14 66 Q 16 45 13 23 Q 0 20 -13 23 Z', bodyColor);
+    // Ноги
+    addRect(-11, 66, 7, 34, bodyColor);
+    addRect(4, 66, 7, 34, bodyColor);
+    // Ступни
+    addRect(-13, 96, 9, 4, bodyColor);
+    addRect(4, 96, 9, 4, bodyColor);
+  };
+
+  switch (kind) {
+    case 'violin': {
+      buildStandingBody();
+      // Скрипка — овал с шейкой, держится под углом влево-вверх
+      const violin = document.createElementNS(ns, 'g');
+      violin.setAttribute('transform', 'translate(-22, 40) rotate(-28)');
+      const vOval = document.createElementNS(ns, 'ellipse');
+      vOval.setAttribute('cx', 0); vOval.setAttribute('cy', 0);
+      vOval.setAttribute('rx', 13); vOval.setAttribute('ry', 7);
+      vOval.setAttribute('fill', instrument);
+      violin.appendChild(vOval);
+      const vNeck = document.createElementNS(ns, 'rect');
+      vNeck.setAttribute('x', 11); vNeck.setAttribute('y', -2.5);
+      vNeck.setAttribute('width', 22); vNeck.setAttribute('height', 5);
+      vNeck.setAttribute('fill', instrument);
+      violin.appendChild(vNeck);
+      g.appendChild(violin);
+      // Смычок — тонкая линия под небольшим углом
+      addLine(-38, 52, 18, 22, 2.5, instrument);
+      break;
+    }
+    case 'cello': {
+      buildStandingBody();
+      // Виолончель — большой вертикальный овал перед туловищем
+      const cello = document.createElementNS(ns, 'ellipse');
+      cello.setAttribute('cx', 0); cello.setAttribute('cy', 62);
+      cello.setAttribute('rx', 16); cello.setAttribute('ry', 24);
+      cello.setAttribute('fill', instrument);
+      g.appendChild(cello);
+      // Шейка виолончели
+      addRect(-3, 26, 6, 16, instrument);
+      // Смычок
+      addLine(-22, 40, 22, 82, 2.5, instrument);
+      break;
+    }
+    case 'flute': {
+      buildStandingBody();
+      // Флейта — горизонтальная тонкая трубка справа от лица
+      addRect(8, 14, 55, 4, instrument);
+      // Кисти рук
+      addCircle(-13, 40, 4, bodyColor);
+      addCircle(13, 40, 4, bodyColor);
+      break;
+    }
+    case 'clar': {
+      buildStandingBody();
+      // Кларнет — под наклоном вправо-вниз
+      const clar = document.createElementNS(ns, 'g');
+      clar.setAttribute('transform', 'translate(14, 30) rotate(30)');
+      const cBody = document.createElementNS(ns, 'rect');
+      cBody.setAttribute('x', -3); cBody.setAttribute('y', 0);
+      cBody.setAttribute('width', 6); cBody.setAttribute('height', 55);
+      cBody.setAttribute('fill', instrument);
+      clar.appendChild(cBody);
+      const cBell = document.createElementNS(ns, 'ellipse');
+      cBell.setAttribute('cx', 0); cBell.setAttribute('cy', 56);
+      cBell.setAttribute('rx', 6); cBell.setAttribute('ry', 5);
+      cBell.setAttribute('fill', instrument);
+      clar.appendChild(cBell);
+      g.appendChild(clar);
+      addCircle(-14, 40, 4, bodyColor);
+      break;
+    }
+    case 'brass': {
+      buildStandingBody();
+      // Валторна — круглый корпус инструмента + раструб вбок
+      const horn = document.createElementNS(ns, 'circle');
+      horn.setAttribute('cx', 0); horn.setAttribute('cy', 46);
+      horn.setAttribute('r', 16);
+      horn.setAttribute('fill', instrument);
+      g.appendChild(horn);
+      const hole = document.createElementNS(ns, 'circle');
+      hole.setAttribute('cx', 0); hole.setAttribute('cy', 46);
+      hole.setAttribute('r', 7);
+      hole.setAttribute('fill', bodyColor);
+      g.appendChild(hole);
+      // Раструб
+      addPoly('16,40 36,56 32,64 12,48', instrument);
+      const bell = document.createElementNS(ns, 'ellipse');
+      bell.setAttribute('cx', 37); bell.setAttribute('cy', 62);
+      bell.setAttribute('rx', 9); bell.setAttribute('ry', 7);
+      bell.setAttribute('fill', instrument);
+      g.appendChild(bell);
+      addCircle(-14, 40, 4, bodyColor);
+      break;
+    }
+    case 'timp': {
+      // Литаврист сидит
+      addCircle(0, 8, 8, bodyColor);
+      addRect(-4, 15, 8, 5, bodyColor);
+      addPath('M -11 20 Q -13 34 -11 46 L 11 46 Q 13 34 11 20 Q 0 17 -11 20 Z', bodyColor);
+      // Ноги согнуты
+      addPoly('-11,46 -26,52 -26,66 -19,66 -19,54 -11,52', bodyColor);
+      addPoly('11,46 26,52 26,66 19,66 19,54 11,52', bodyColor);
+      // Две литавры
+      const timp1 = document.createElementNS(ns, 'ellipse');
+      timp1.setAttribute('cx', -24); timp1.setAttribute('cy', 72);
+      timp1.setAttribute('rx', 15); timp1.setAttribute('ry', 7);
+      timp1.setAttribute('fill', instrument);
+      g.appendChild(timp1);
+      addPoly('-39,72 -39,90 -9,90 -9,72', instrument);
+      const timp2 = document.createElementNS(ns, 'ellipse');
+      timp2.setAttribute('cx', 24); timp2.setAttribute('cy', 72);
+      timp2.setAttribute('rx', 15); timp2.setAttribute('ry', 7);
+      timp2.setAttribute('fill', instrument);
+      g.appendChild(timp2);
+      addPoly('9,72 9,90 39,90 39,72', instrument);
+      // Палочки
+      addLine(-4, 26, -20, 66, 2, instrument);
+      addLine(4, 26, 20, 66, 2, instrument);
+      break;
+    }
+    case 'cond': {
+      buildStandingBody();
+      // Одна рука вниз
+      addPoly('-13,30 -24,38 -22,43 -11,35', bodyColor);
+      // Другая рука вверх с белой палочкой
+      addPoly('11,28 22,18 24,22 13,32', bodyColor);
+      addLine(22, 18, 36, 4, 2.5, '#ffffff');
+      break;
+    }
+  }
+
+  return g;
+}
+
 const FIGURE_HEIGHT = 100;
-const FIGURE_SCALE = 3.5;
 
 function createMusicianSVG(m) {
-  const ns = 'http://www.w3.org/2000/svg';
-  const template = document.getElementById('mus-' + m.kind);
-  if (!template) return null;
-  const g = document.createElementNS(ns, 'g');
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   g.setAttribute('class', 'musician');
-  // Низ фигуры (y=100 в локальных) должен оказаться на m.y
-  const ty = m.y - FIGURE_HEIGHT * FIGURE_SCALE;
-  g.setAttribute('transform', 'translate(' + m.x + ',' + ty + ') scale(' + FIGURE_SCALE + ')');
-  // Красим: fill наследуется всеми filled-формами. Белая палочка дирижёра имеет свой fill="white"
-  g.setAttribute('fill', COLORS[m.color] || COLORS.strings);
-  // Клонируем детей
-  Array.from(template.children).forEach(child => {
-    g.appendChild(child.cloneNode(true));
-  });
+  const ty = m.y - FIGURE_HEIGHT * m.scale;
+  g.setAttribute('transform', 'translate(' + m.x + ',' + ty + ') scale(' + m.scale + ')');
+  const body = buildMusician(m.kind, COLORS[m.color] || COLORS.strings);
+  g.appendChild(body);
   return g;
 }
 
@@ -815,7 +883,6 @@ function renderOrchestra(ms) {
   }
   for (let i = musiciansGroup.children.length; i < count; i++) {
     const g = createMusicianSVG(ORCHESTRA[i]);
-    if (!g) continue;
     musiciansGroup.appendChild(g);
     (function(el) {
       requestAnimationFrame(() => {
@@ -1061,7 +1128,7 @@ practicePauseBtn.addEventListener('click', pausePractice);
 practiceFinishBtn.addEventListener('click', finishPractice);
 practicePlayBtn.addEventListener('click', playLast);
 practiceClearBtn.addEventListener('click', () => {
-  if (!confirm('Очистить всю историю занятий? Это нельзя отменить.')) return;
+  if (!confirm('Очистить всю историю занятий?')) return;
   saveSessions([]);
   clearActive();
   if (practiceTickId) clearInterval(practiceTickId);
@@ -1078,12 +1145,7 @@ practiceClearBtn.addEventListener('click', () => {
 });
 
 practiceDownloadBtn.addEventListener('click', () => {
-  const data = {
-    version: 6,
-    exported: new Date().toISOString(),
-    sessions: loadSessions(),
-    active: loadActive()
-  };
+  const data = { version: 7, exported: new Date().toISOString(), sessions: loadSessions(), active: loadActive() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1109,9 +1171,7 @@ practiceFileInput.addEventListener('change', (e) => {
       if (data.active && typeof data.active === 'object') saveActive(data.active);
       alert('Данные загружены. Обнови страницу.');
       location.reload();
-    } catch(err) {
-      alert('Не удалось прочитать файл: ' + err.message);
-    }
+    } catch(err) { alert('Не удалось прочитать файл: ' + err.message); }
   };
   reader.readAsText(file);
   e.target.value = '';
