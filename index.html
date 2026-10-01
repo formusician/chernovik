@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Noto+Music&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/iosunmute"></script>
 <style>
   :root {
     --bg: #f4f1ea; --surface: #fbf9f4; --ink: #1c1a17;
@@ -1253,12 +1252,6 @@ function getCtx() {
     if (!AC) return null;
     audioCtx = new AC();
     setAudioSessionType('playback');
-    if (typeof iosunmute === 'function' && !audioCtx._iosunmuteApplied) {
-      try {
-        iosunmute(audioCtx, { allowBackgroundPlayback: true });
-        audioCtx._iosunmuteApplied = true;
-      } catch(e) { console.log('iosunmute error:', e); }
-    }
   }
   if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
   return audioCtx;
@@ -1762,8 +1755,6 @@ async function toggleMetronome(force) {
     if (ctx.state !== 'running') { try { await ctx.resume(); } catch(e) {} }
     ensureAudioAlive();
     audioUnlocked = true;
-    setupAudioSession();
-    startSilentBackgroundAudio();
     metronomePlaying = true;
     currentBeat = 0; currentSub = 0;
     nextNoteTime = ctx.currentTime + 0.08;
@@ -1778,7 +1769,6 @@ async function toggleMetronome(force) {
     document.querySelectorAll('.rhythm-dot').forEach(d => d.classList.remove('playing'));
     metroBtn.textContent = 'Старт';
     metroBtn.classList.add('accent');
-    if (!polyPlaying) stopSilentBackgroundAudio();
     updateSilentLoop();
   }
 }
@@ -1937,8 +1927,6 @@ async function togglePoly(force) {
     if (ctx.state !== 'running') { try { await ctx.resume(); } catch(e) {} }
     ensureAudioAlive();
     audioUnlocked = true;
-    setupAudioSession();
-    startSilentBackgroundAudio();
     polyPlaying = true;
     polyNextTime = ctx.currentTime + 0.1;
     polyCycleStart = polyNextTime;
@@ -1957,7 +1945,6 @@ async function togglePoly(force) {
     document.querySelectorAll('.poly-note').forEach(n => n.classList.remove('playing', 'first'));
     polyToggle.textContent = 'Играть';
     polyToggle.classList.add('accent');
-    if (!metronomePlaying) stopSilentBackgroundAudio();
     updateSilentLoop();
   }
 }
@@ -3183,7 +3170,7 @@ const CONSTELLATIONS = [
       [4,5],
       [4,2]
     ],
-    notes: [60, 62, 64, 65, 67, 69]
+    notes: [60, 62, 64, 67, 69, 72]
   },
   {
     id: "delfin",
@@ -3206,7 +3193,7 @@ const CONSTELLATIONS = [
       [5,3],
       [5,1]
     ],
-    notes: [60, 62, 64, 65, 67, 69]
+    notes: [67, 64, 62, 60, 64, 67]
   },
   {
     id: "lebed",
@@ -3234,7 +3221,7 @@ const CONSTELLATIONS = [
       [8,6],
       [6,7]
     ],
-    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74]
+    notes: [60, 64, 67, 69, 67, 64, 62, 60, 64]
   },
   {
     id: "key",
@@ -3262,7 +3249,7 @@ const CONSTELLATIONS = [
       [5,6],
       [0,7]
     ],
-    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74, 76]
+    notes: [60, 62, 64, 67, 69, 72, 69, 67, 64, 60]
   },
   {
     id: "twins",
@@ -3292,7 +3279,7 @@ const CONSTELLATIONS = [
       [0,1],[1,2],[1,3],[1,7],[7,8],[7,9],[9,11],[8,10],
       [3,4],[4,5],[4,6],[4,12],[12,13],[12,14],[14,15],[15,16]
     ],
-    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88]
+    notes: [60, 62, 64, 67, 69, 72, 74, 76, 74, 72, 69, 67, 64, 62, 60, 64, 67]
   },
   {
     id: "metronome",
@@ -3312,7 +3299,7 @@ const CONSTELLATIONS = [
       [5,11],[11,12],[12,13],[13,14],[14,10],
       [0,15]
     ],
-    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 76, 74, 72, 69, 67]
+    notes: [60, 62, 64, 67, 69, 67, 64, 62, 60, 62, 64, 67, 69, 67, 64, 62]
   },
   {
     id: "tuning-fork",
@@ -3332,7 +3319,7 @@ const CONSTELLATIONS = [
       [9,10],[10,11],[11,12],[12,13],
       [6,14],[14,15]
     ],
-    notes: [60, 62, 64, 67, 69, 72, 74, 72, 69, 67, 64, 62, 60, 62, 64, 67]
+    notes: [69, 72, 74, 72, 69, 67, 69, 72, 76, 72, 69, 67, 64, 67, 69, 72]
   }
 ];
 
