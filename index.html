@@ -10,19 +10,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f1ea;
-    --surface: #fbf9f4;
-    --ink: #1c1a17;
-    --muted: #837c6e;
-    --line: #ddd6c8;
-    --accent: #8a6f47;
-    --accent-2: #b89b6b;
-    --night-1: #0a0e1a;
-    --night-2: #131b2e;
-    --night-3: #1c2540;
-    --star: #ffd97a;
-    --star-glow: rgba(255, 217, 122, 0.55);
-    --green: #5a7a5a;
+    --bg: #f4f1ea; --surface: #fbf9f4; --ink: #1c1a17;
+    --muted: #837c6e; --line: #ddd6c8;
+    --accent: #8a6f47; --accent-2: #b89b6b;
+    --night-1: #0a0e1a; --night-2: #131b2e; --night-3: #1c2540;
+    --star: #ffd97a; --star-glow: rgba(255, 217, 122, 0.55);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -34,100 +26,40 @@
   }
   body { padding: 24px 16px 80px; display: flex; justify-content: center; }
   .wrap { width: 100%; max-width: 760px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 500; line-height: 1.1; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.55; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px 20px; }
 
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    line-height: 1.1;
-    margin-bottom: 6px;
-  }
-  .subtitle {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 24px;
-    line-height: 1.55;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 24px 20px;
-  }
-
-  /* ---- Streak ---- */
-  .streak-row {
-    display: flex; justify-content: center; gap: 10px;
-    flex-wrap: wrap; margin-bottom: 8px;
-  }
+  .streak-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
   .streak-badge {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 14px; border-radius: 20px;
-    background: rgba(138,111,71,.1);
-    border: 1px solid rgba(138,111,71,.3);
-    font-size: 13px; color: var(--accent);
-    letter-spacing: .02em;
-    transition: all .4s;
+    background: rgba(138,111,71,.1); border: 1px solid rgba(138,111,71,.3);
+    font-size: 13px; color: var(--accent); letter-spacing: .02em; transition: all .4s;
   }
-  .streak-badge.muted {
-    background: transparent; border-color: var(--line); color: var(--muted);
-  }
-  .streak-badge.warm {
-    background: linear-gradient(135deg, rgba(184,148,74,.15), rgba(192,120,80,.15));
-    border-color: rgba(184,148,74,.5);
-    color: #a07030;
-  }
-  .streak-badge.hot {
-    background: linear-gradient(135deg, rgba(220,120,60,.2), rgba(200,80,40,.2));
-    border-color: rgba(220,120,60,.6);
-    color: #c06030;
-    animation: streakGlow 2.4s ease-in-out infinite;
-  }
-  @keyframes streakGlow {
-    0%, 100% { box-shadow: 0 0 0 rgba(220,120,60,0); }
-    50%      { box-shadow: 0 0 16px rgba(220,120,60,.35); }
-  }
+  .streak-badge.muted { background: transparent; border-color: var(--line); color: var(--muted); }
+  .streak-badge.warm { background: linear-gradient(135deg, rgba(184,148,74,.15), rgba(192,120,80,.15)); border-color: rgba(184,148,74,.5); color: #a07030; }
+  .streak-badge.hot { background: linear-gradient(135deg, rgba(220,120,60,.2), rgba(200,80,40,.2)); border-color: rgba(220,120,60,.6); color: #c06030; animation: streakGlow 2.4s ease-in-out infinite; }
+  @keyframes streakGlow { 0%,100% { box-shadow: 0 0 0 rgba(220,120,60,0); } 50% { box-shadow: 0 0 16px rgba(220,120,60,.35); } }
   .streak-flame { font-size: 16px; margin-right: 2px; }
 
-  /* ---- Таймер ---- */
   .timer {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 88px;
-    font-weight: 500;
-    line-height: 1;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-    margin: 20px 0 18px;
-    letter-spacing: -0.01em;
+    font-size: 88px; font-weight: 500; line-height: 1;
+    text-align: center; font-variant-numeric: tabular-nums;
+    margin: 20px 0 18px; letter-spacing: -0.01em;
     transition: color .3s, text-shadow .3s;
   }
-  .timer.running {
-    color: var(--accent);
-    animation: timerGlow 2.4s ease-in-out infinite;
-  }
-  .timer.warm { color: #b8944a; }
-  .timer.hot  { color: #c07850; }
-  @keyframes timerGlow {
-    0%, 100% { text-shadow: 0 0 0 rgba(138,111,71,0); }
-    50%      { text-shadow: 0 0 32px rgba(138,111,71,.45); }
-  }
+  .timer.running { color: var(--accent); animation: timerGlow 2.4s ease-in-out infinite; }
+  .timer.warm { color: #b8944a; } .timer.hot { color: #c07850; }
+  @keyframes timerGlow { 0%,100% { text-shadow: 0 0 0 rgba(138,111,71,0); } 50% { text-shadow: 0 0 32px rgba(138,111,71,.45); } }
 
-  /* ---- Кнопки ---- */
   .btn {
-    font-family: inherit;
-    font-size: 13px;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    padding: 14px 28px;
-    border-radius: 8px;
-    border: 1px solid var(--ink);
-    background: var(--ink);
-    color: var(--surface);
-    cursor: pointer;
-    transition: background .15s, color .15s, border-color .15s;
-    -webkit-appearance: none;
-    appearance: none;
+    font-family: inherit; font-size: 13px; letter-spacing: .06em; text-transform: uppercase;
+    padding: 14px 28px; border-radius: 8px;
+    border: 1px solid var(--ink); background: var(--ink); color: var(--surface);
+    cursor: pointer; transition: background .15s, color .15s, border-color .15s;
+    -webkit-appearance: none; appearance: none;
   }
   .btn:hover { background: transparent; color: var(--ink); }
   .btn.ghost { background: transparent; color: var(--ink); }
@@ -136,323 +68,94 @@
   .btn.accent:hover { background: transparent; color: var(--accent); }
   .btn.small { padding: 8px 14px; font-size: 11px; }
 
-  .controls {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin: 6px 0 20px;
-  }
+  .controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 6px 0 20px; }
 
-  /* ---- Заголовок неба ---- */
-  .sky-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 18px 0 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .sky-label {
-    font-size: 11px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    font-size: 13px;
-    color: var(--muted);
-  }
+  .sky-header { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; flex-wrap: wrap; gap: 10px; }
+  .sky-label { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; -webkit-user-select: none; font-size: 13px; color: var(--muted); }
   .switch input { display: none; }
-  .switch-slider {
-    width: 40px; height: 22px;
-    background: var(--line);
-    border-radius: 11px;
-    position: relative;
-    transition: background .2s;
-    flex-shrink: 0;
-  }
-  .switch-slider::before {
-    content: '';
-    position: absolute;
-    left: 3px; top: 3px;
-    width: 16px; height: 16px;
-    background: var(--surface);
-    border-radius: 50%;
-    transition: transform .2s;
-  }
+  .switch-slider { width: 40px; height: 22px; background: var(--line); border-radius: 11px; position: relative; transition: background .2s; flex-shrink: 0; }
+  .switch-slider::before { content: ''; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; background: var(--surface); border-radius: 50%; transition: transform .2s; }
   .switch input:checked + .switch-slider { background: var(--accent); }
   .switch input:checked + .switch-slider::before { transform: translateX(18px); }
 
-  /* ---- Небо ---- */
   .sky-wrap {
-    position: relative;
-    margin-top: 6px;
-    border-radius: 14px;
-    overflow: hidden;
+    position: relative; margin-top: 6px; border-radius: 14px; overflow: hidden;
     background: radial-gradient(ellipse at 50% 30%, var(--night-3) 0%, var(--night-2) 40%, var(--night-1) 100%);
     border: 1px solid rgba(255,255,255,.06);
     box-shadow: inset 0 0 60px rgba(0,0,0,.5);
-    aspect-ratio: 1 / 1;
-    max-height: 520px;
+    aspect-ratio: 1 / 1; max-height: 520px;
   }
-  .sky-wrap.complete {
-    box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 40px rgba(255, 217, 122, .25);
-    animation: skyComplete 3s ease-in-out infinite;
-  }
+  .sky-wrap.complete { animation: skyComplete 3s ease-in-out infinite; }
   @keyframes skyComplete {
-    0%, 100% { box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 40px rgba(255, 217, 122, .25); }
-    50%      { box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 60px rgba(255, 217, 122, .45); }
+    0%,100% { box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 40px rgba(255,217,122,.25); }
+    50%     { box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 60px rgba(255,217,122,.45); }
   }
-  #sky-output {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  #sky-output svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  #sky-output { display: block; width: 100%; height: 100%; }
+  #sky-output svg { display: block; width: 100%; height: 100%; }
 
-  /* Звёзды */
-  .star-dot {
-    fill: var(--star);
-    opacity: 0;
-    transition: opacity .8s ease;
-    filter: drop-shadow(0 0 4px var(--star-glow));
-    animation: twinkle 3s ease-in-out infinite;
-  }
-  .star-dot.visible {
-    opacity: 1;
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.7; }
-  }
-  .star-dot.hint {
-    fill: rgba(255, 217, 122, 0.18);
-    opacity: 1 !important;
-    animation: none;
-    filter: none;
-  }
-  .star-link {
-    stroke: var(--star);
-    stroke-width: 0.5;
-    opacity: 0;
-    transition: opacity .8s ease;
-    filter: drop-shadow(0 0 3px var(--star-glow));
-  }
-  .star-link.visible {
-    opacity: 0.55;
-  }
-  .star-link.final {
-    opacity: 0.9;
-    stroke-width: 0.8;
-  }
+  .star-link { stroke: var(--star); stroke-width: 0.5; opacity: 0; transition: opacity .8s ease; filter: drop-shadow(0 0 3px var(--star-glow)); }
+  .star-link.visible { opacity: 0.55; }
+  .star-link.final { opacity: 0.9; stroke-width: 0.8; }
 
-  /* ---- Результат ---- */
+  .star-node { opacity: 0; animation: starAppear .8s cubic-bezier(.2,.9,.3,1.4) forwards; transform-box: fill-box; transform-origin: center; }
+  .star-node path { fill: var(--star); filter: drop-shadow(0 0 2px var(--star-glow)); }
+  .star-node .star-core { fill: #fff8d0; filter: drop-shadow(0 0 3px var(--star-glow)); }
+  @keyframes starAppear { 0% { opacity: 0; transform: scale(.2); } 60% { opacity: 1; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
+
   .sky-result {
-    margin-top: 14px;
-    padding: 16px 18px;
+    margin-top: 14px; padding: 16px 18px;
     background: linear-gradient(135deg, rgba(255,217,122,.14), rgba(255,217,122,.05));
-    border: 1px solid rgba(255, 217, 122, .35);
+    border: 1px solid rgba(255,217,122,.35);
     border-radius: 12px;
-    display: none;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-    justify-content: space-between;
+    display: none; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between;
     animation: fadeIn .6s ease;
   }
   .sky-result.show { display: flex; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .sky-result-text {
-    font-size: 15px;
-    color: var(--accent);
-    font-weight: 500;
-    line-height: 1.4;
-  }
-  .sky-result-text strong {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-style: italic;
-  }
+  .sky-result-text { font-size: 15px; color: var(--accent); font-weight: 500; line-height: 1.4; }
+  .sky-result-text strong { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; }
   .sky-result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  /* ---- Коллекция ---- */
-  .collection-title {
-    margin-top: 24px;
-    font-size: 11px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-  .collection {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 10px;
-  }
-  .collection-item {
-    background: radial-gradient(ellipse at 50% 30%, var(--night-3) 0%, var(--night-1) 100%);
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 10px;
-    padding: 10px;
-    text-align: center;
-    transition: border-color .2s, transform .2s;
-  }
-  .collection-item:hover {
-    border-color: rgba(255,217,122,.4);
-    transform: translateY(-2px);
-  }
-  .collection-item .mini {
-    width: 100%;
-    aspect-ratio: 1/1;
-    margin-bottom: 6px;
-  }
+  .collection-title { margin-top: 24px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .collection { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; }
+  .collection-item { background: radial-gradient(ellipse at 50% 30%, var(--night-3) 0%, var(--night-1) 100%); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 10px; text-align: center; transition: border-color .2s, transform .2s; }
+  .collection-item:hover { border-color: rgba(255,217,122,.4); transform: translateY(-2px); }
+  .collection-item .mini { width: 100%; aspect-ratio: 1/1; margin-bottom: 6px; }
   .collection-item .mini svg { width: 100%; height: 100%; display: block; }
-  .collection-item .name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 12px;
-    font-style: italic;
-    color: var(--star);
-    line-height: 1.2;
-  }
-  .collection-empty {
-    grid-column: 1 / -1;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    padding: 16px;
-    font-style: italic;
-  }
+  .collection-item .name { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: var(--star); line-height: 1.2; }
+  .collection-empty { grid-column: 1 / -1; text-align: center; font-size: 12px; color: var(--muted); padding: 16px; font-style: italic; }
 
-  /* ---- Цель ---- */
-  .divider {
-    height: 1px;
-    background: var(--line);
-    margin: 22px 0;
-  }
-  .goal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .goal-label {
-    font-size: 11px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .goal-values {
-    font-size: 13px;
-    color: var(--muted);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .goal-input {
-    width: 60px;
-    padding: 4px 8px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    border-radius: 6px;
-    color: var(--ink);
-    outline: none;
-    font-family: inherit;
-    font-size: 14px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-    -webkit-appearance: none;
-    appearance: textfield;
-    transition: border-color .15s;
-  }
+  .divider { height: 1px; background: var(--line); margin: 22px 0; }
+  .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+  .goal-label { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .goal-values { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+  .goal-input { width: 60px; padding: 4px 8px; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; color: var(--ink); outline: none; font-family: inherit; font-size: 14px; text-align: center; font-variant-numeric: tabular-nums; -webkit-appearance: none; appearance: textfield; transition: border-color .15s; }
   .goal-input:focus { border-color: var(--accent); }
-  .goal-input::-webkit-outer-spin-button,
-  .goal-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .goal-input::-webkit-outer-spin-button, .goal-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .goal-bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+  .goal-bar-fill { height: 100%; background: linear-gradient(to right, #6a8090, var(--accent-2), var(--accent)); transition: width .5s ease; border-radius: 4px; }
+  .goal-bar-fill.full { background: linear-gradient(to right, #b8944a, #c07850, #a05030); animation: goalFull 2s ease-in-out infinite; }
+  @keyframes goalFull { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.25); } }
 
-  .goal-bar {
-    height: 8px;
-    background: var(--line);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 4px;
-  }
-  .goal-bar-fill {
-    height: 100%;
-    background: linear-gradient(to right, #6a8090, var(--accent-2), var(--accent));
-    transition: width .5s ease;
-    border-radius: 4px;
-  }
-  .goal-bar-fill.full {
-    background: linear-gradient(to right, #b8944a, #c07850, #a05030);
-    animation: goalFull 2s ease-in-out infinite;
-  }
-  @keyframes goalFull {
-    0%, 100% { filter: brightness(1); }
-    50%      { filter: brightness(1.25); }
-  }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; margin-top: 8px; }
+  .stat-label { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 500; margin-top: 2px; font-variant-numeric: tabular-nums; }
 
-  /* ---- Статистика ---- */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px;
-    margin-top: 8px;
-  }
-  .stat-label {
-    font-size: 11px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .stat-value {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    font-weight: 500;
-    margin-top: 2px;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* ---- Toast ---- */
   .session-toast {
-    position: fixed;
-    top: 24px;
-    left: 50%;
+    position: fixed; top: 24px; left: 50%;
     transform: translateX(-50%) translateY(-140%);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 14px 22px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 14px 22px;
     box-shadow: 0 12px 40px rgba(0,0,0,.18);
-    z-index: 2000;
-    font-size: 15px;
+    z-index: 2000; font-size: 15px;
     transition: transform .4s cubic-bezier(.2,.9,.3,1.3);
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    pointer-events: none; display: flex; align-items: center; gap: 8px;
   }
   .session-toast.show { transform: translateX(-50%) translateY(0); }
   .session-toast .flame { font-size: 22px; }
-  .session-toast .mins {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    color: var(--accent);
-    font-weight: 500;
-  }
+  .session-toast .mins { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--accent); font-weight: 500; }
 
-  /* ---- Mobile ---- */
   @media (max-width: 600px) {
     body { padding: 16px 12px 60px; }
     h1 { font-size: 30px; }
@@ -473,7 +176,6 @@
 
   <div class="card">
 
-    <!-- Streak -->
     <div class="streak-row">
       <div class="streak-badge" id="streakBadge">
         <span class="streak-flame">🔥</span>Streak: <strong id="streakCurrent">0</strong> дн.
@@ -483,17 +185,14 @@
       </div>
     </div>
 
-    <!-- Таймер -->
     <div class="timer" id="practiceTimer">00:00:00</div>
 
-    <!-- Кнопки -->
     <div class="controls">
       <button type="button" class="btn accent" id="practiceStart">Начать занятие</button>
       <button type="button" class="btn ghost" id="practiceReset" style="display:none;">Сброс</button>
       <button type="button" class="btn ghost" id="practiceFinish" style="display:none;">Завершить</button>
     </div>
 
-    <!-- Заголовок неба -->
     <div class="sky-header">
       <span class="sky-label">✨ Звёзды: <span id="starCount">0</span> / <span id="starTotal">16</span></span>
       <label class="switch">
@@ -503,12 +202,10 @@
       </label>
     </div>
 
-    <!-- Небо -->
     <div class="sky-wrap" id="skyWrap">
       <div id="sky-output"></div>
     </div>
 
-    <!-- Результат -->
     <div class="sky-result" id="skyResult">
       <div class="sky-result-text" id="skyResultText"></div>
       <div class="sky-result-actions">
@@ -519,7 +216,6 @@
 
     <div class="divider"></div>
 
-    <!-- Цель -->
     <div class="goal-header">
       <span class="goal-label">Цель на сегодня</span>
       <span class="goal-values">
@@ -532,41 +228,24 @@
 
     <div class="divider"></div>
 
-    <!-- Статистика -->
     <div class="stat-label">Статистика</div>
     <div class="stats-grid">
-      <div>
-        <div class="stat-label">Всего</div>
-        <div class="stat-value" id="statTotal">0 мин</div>
-      </div>
-      <div>
-        <div class="stat-label">Сессий</div>
-        <div class="stat-value" id="statSessions">0</div>
-      </div>
-      <div>
-        <div class="stat-label">Средняя</div>
-        <div class="stat-value" id="statAvg">0 мин</div>
-      </div>
-      <div>
-        <div class="stat-label">За неделю</div>
-        <div class="stat-value" id="statWeek">0 мин</div>
-      </div>
+      <div><div class="stat-label">Всего</div><div class="stat-value" id="statTotal">0 мин</div></div>
+      <div><div class="stat-label">Сессий</div><div class="stat-value" id="statSessions">0</div></div>
+      <div><div class="stat-label">Средняя</div><div class="stat-value" id="statAvg">0 мин</div></div>
+      <div><div class="stat-label">За неделю</div><div class="stat-value" id="statWeek">0 мин</div></div>
     </div>
 
-    <!-- Коллекция -->
     <div class="collection-title">🗂 Коллекция созвездий</div>
     <div class="collection" id="collection"></div>
 
   </div>
-
 </div>
 
 <script>
 'use strict';
 
-/* ============================================================
-   АУДИО
-   ============================================================ */
+/* ---------- АУДИО ---------- */
 let audioCtx = null;
 function getCtx() {
   if (!audioCtx) {
@@ -579,24 +258,16 @@ function getCtx() {
 }
 const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
-/* ============================================================
-   ДАННЫЕ СОЗВЕЗДИЙ
-   ============================================================ */
-// Каждое созвездие: 16 точек в нормализованной системе [0..100, 0..100].
-// Точки рисуются последовательно, между уже появившимися соседями — линии.
+/* ---------- СОЗВЕЗДИЯ ---------- */
 const CONSTELLATIONS = [
   {
     id: 'eighth-note',
     name: 'Восьмая нота',
-    hint: 'Нота',
     stars: [
-      // головка
       { x: 32, y: 76 }, { x: 36, y: 82 }, { x: 44, y: 84 },
       { x: 50, y: 80 }, { x: 49, y: 72 }, { x: 41, y: 70 },
-      // штиль вверх
       { x: 50, y: 66 }, { x: 50, y: 56 }, { x: 50, y: 46 },
       { x: 50, y: 36 }, { x: 50, y: 26 },
-      // флажок
       { x: 55, y: 19 }, { x: 62, y: 22 }, { x: 65, y: 29 },
       { x: 60, y: 35 }, { x: 54, y: 30 }
     ],
@@ -610,16 +281,12 @@ const CONSTELLATIONS = [
   {
     id: 'treble-clef',
     name: 'Скрипичный ключ',
-    hint: 'Символ музыки',
     stars: [
-      // вертикальный штрих (сверху вниз)
       { x: 48, y: 22 }, { x: 48, y: 32 }, { x: 48, y: 42 },
       { x: 48, y: 52 }, { x: 48, y: 62 }, { x: 48, y: 72 },
-      // спираль сверху
       { x: 62, y: 40 }, { x: 58, y: 26 }, { x: 44, y: 22 },
       { x: 34, y: 30 }, { x: 34, y: 42 }, { x: 42, y: 50 },
       { x: 54, y: 50 }, { x: 60, y: 46 },
-      // нижнее закругление
       { x: 40, y: 80 }, { x: 32, y: 74 }
     ],
     links: [
@@ -632,18 +299,13 @@ const CONSTELLATIONS = [
   {
     id: 'metronome',
     name: 'Метроном',
-    hint: 'Хранитель ритма',
     stars: [
-      // вершина + левая грань
       { x: 50, y: 22 },
       { x: 45, y: 36 }, { x: 40, y: 50 }, { x: 35, y: 64 },
       { x: 30, y: 76 }, { x: 26, y: 88 },
-      // правая грань
       { x: 55, y: 36 }, { x: 60, y: 50 }, { x: 65, y: 64 },
       { x: 70, y: 76 }, { x: 74, y: 88 },
-      // основание
       { x: 34, y: 90 }, { x: 42, y: 90 }, { x: 58, y: 90 }, { x: 66, y: 90 },
-      // маятник
       { x: 52, y: 50 }
     ],
     links: [
@@ -657,17 +319,12 @@ const CONSTELLATIONS = [
   {
     id: 'tuning-fork',
     name: 'Камертон',
-    hint: 'Чистый звук',
     stars: [
-      // левая ветвь
       { x: 36, y: 18 }, { x: 36, y: 30 }, { x: 36, y: 42 },
       { x: 36, y: 54 }, { x: 36, y: 64 },
-      // замыкание U
       { x: 40, y: 72 }, { x: 46, y: 76 }, { x: 52, y: 76 }, { x: 58, y: 72 },
-      // правая ветвь (снизу вверх)
       { x: 58, y: 64 }, { x: 58, y: 54 }, { x: 58, y: 42 },
       { x: 58, y: 30 }, { x: 58, y: 18 },
-      // стержень вниз
       { x: 47, y: 84 }, { x: 47, y: 92 }
     ],
     links: [
@@ -678,9 +335,8 @@ const CONSTELLATIONS = [
     notes: [60, 62, 64, 67, 69, 72, 74, 72, 69, 67, 64, 62, 60, 62, 64, 67]
   }
 ];
-/* ============================================================
-   ТРЕКЕР
-   ============================================================ */
+
+/* ---------- ТРЕКЕР ---------- */
 (function initTracker() {
   const LS_SESSIONS = 'maestro-practice-sessions';
   const LS_STREAK   = 'maestro-practice-streak';
@@ -688,8 +344,8 @@ const CONSTELLATIONS = [
   const LS_ACTIVE   = 'maestro-practice-active';
   const LS_SKY      = 'maestro-practice-sky';
 
-  const FIRST_STAR_DELAY = 30;      // 30 секунд до первой звезды
-  const STAR_INTERVAL    = 150;     // 2.5 минуты между звёздами (16 звёзд = 40 минут)
+  const FIRST_STAR_DELAY = 30;
+  const STAR_INTERVAL    = 150;
 
   const $ = id => document.getElementById(id);
   const $timer = $('practiceTimer');
@@ -726,7 +382,6 @@ const CONSTELLATIONS = [
   let visibleStars = 0;
   let previousStars = 0;
   let playingPreview = false;
-  let skyState = loadSkyState();
 
   function loadJSON(k, f) {
     try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; }
@@ -737,18 +392,18 @@ const CONSTELLATIONS = [
   }
 
   function newSkyState() {
-    // выбираем случайное созвездие
     const idx = Math.floor(Math.random() * CONSTELLATIONS.length);
     return { constellationId: CONSTELLATIONS[idx].id, progressSec: 0, collected: [] };
   }
   function loadSkyState() {
     const s = loadJSON(LS_SKY, null);
     if (s && typeof s.constellationId === 'string' && typeof s.progressSec === 'number' && Array.isArray(s.collected)) {
-      // проверим, что такое созвездие существует
       if (CONSTELLATIONS.some(c => c.id === s.constellationId)) return s;
     }
     return newSkyState();
   }
+
+  let skyState = loadSkyState();
   function saveSkyState() { saveJSON(LS_SKY, skyState); }
   function currentConstellation() {
     return CONSTELLATIONS.find(c => c.id === skyState.constellationId) || CONSTELLATIONS[0];
@@ -798,7 +453,6 @@ const CONSTELLATIONS = [
     else if (mins >= 30) $timer.classList.add('warm');
   }
 
-  // ---------- Таймер ----------
   function tick() {
     if (!running) return;
     const newElapsed = computeElapsedSec();
@@ -855,7 +509,6 @@ const CONSTELLATIONS = [
     lastElapsedSec = 0;
     running = false;
 
-    // сбрасываем прогресс звёзд (созвездие то же)
     skyState.progressSec = 0;
     visibleStars = 0;
     previousStars = 0;
@@ -907,12 +560,11 @@ const CONSTELLATIONS = [
     $reset.style.display = 'none';
   }
 
-  // ---------- Streak ----------
   function updateStreak() {
     const s = getStreak();
     const today = dayKey();
     if (s.lastDate === today) {
-      // уже занимался
+      // уже
     } else if (s.lastDate === yesterdayKey()) {
       s.current += 1;
       if (s.current > s.best) s.best = s.current;
@@ -934,7 +586,6 @@ const CONSTELLATIONS = [
     else if (s.current >= 7) $streakBadge.classList.add('warm');
   }
 
-  // ---------- Статистика ----------
   function renderStats() {
     const sessions = getSessions();
     const goal = parseInt(localStorage.getItem(LS_GOAL) || '30', 10);
@@ -965,33 +616,41 @@ const CONSTELLATIONS = [
     t.innerHTML = '<span class="mins">+' + mins + ' мин</span> <span class="flame">🔥</span> Серия: ' + streak;
     document.body.appendChild(t);
     requestAnimationFrame(() => t.classList.add('show'));
-    setTimeout(() => {
-      t.classList.remove('show');
-      setTimeout(() => t.remove(), 500);
-    }, 3200);
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 500); }, 3200);
   }
 
-  // ---------- Отрисовка неба ----------
-  
-function renderSky() {
+  /* ---------- SVG неба ---------- */
+  function starPath(size) {
+    const inner = size * 0.18;
+    return 'M 0,' + (-size) +
+      ' L ' + inner + ',' + (-inner) +
+      ' L ' + size + ',0' +
+      ' L ' + inner + ',' + inner +
+      ' L 0,' + size +
+      ' L ' + (-inner) + ',' + inner +
+      ' L ' + (-size) + ',0' +
+      ' L ' + (-inner) + ',' + (-inner) + ' Z';
+  }
+
+  function renderSky() {
     const c = currentConstellation();
     const totalStars = c.stars.length;
 
     let svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">';
 
-    // Фоновые блёстки для атмосферы (простые точки — они не читаются как звёзды)
-    const bgStars = [
+    // фоновые блёстки
+    const bg = [
       [10,12],[22,8],[88,15],[92,42],[8,58],[15,80],[85,72],[78,88],
       [30,15],[70,10],[55,92],[42,6],[6,38],[94,62],[20,45],[80,32],
       [12,92],[88,90],[50,5],[35,95]
     ];
-    for (const [x, y] of bgStars) {
-      svg += '<circle cx="' + x + '" cy="' + y + '" r="0.18" fill="rgba(255,255,255,0.28)"/>';
+    for (let i = 0; i < bg.length; i++) {
+      svg += '<circle cx="' + bg[i][0] + '" cy="' + bg[i][1] + '" r="0.18" fill="rgba(255,255,255,0.28)"/>';
     }
 
-    // Связи (только между уже появившимися звёздами)
+    // связи
     c.links.forEach(pair => {
-      const [a, b] = pair;
+      const a = pair[0], b = pair[1];
       if (a < visibleStars && b < visibleStars) {
         const isFinal = visibleStars >= totalStars;
         const cls = 'star-link visible' + (isFinal ? ' final' : '');
@@ -999,54 +658,17 @@ function renderSky() {
       }
     });
 
-    // Звёзды (только появившиеся)
+    // звёзды
     for (let i = 0; i < visibleStars; i++) {
       const isLast = i === visibleStars - 1;
-      const { x, y } = c.stars[i];
-      const size = isLast ? 2.4 : 1.4;
-      const inner = size * 0.18;
-      const path4 = 'M 0,' + (-size) +
-        ' L ' + inner + ',' + (-inner) +
-        ' L ' + size + ',0' +
-        ' L ' + inner + ',' + inner +
-        ' L 0,' + size +
-        ' L ' + (-inner) + ',' + inner +
-        ' L ' + (-size) + ',0' +
-        ' L ' + (-inner) + ',' + (-inner) + ' Z';
-
-      svg += '<g class="star-node visible" transform="translate(' + x + ',' + y + ')" style="animation-delay:' + (isLast ? 0 : 0) + 's;">';
-      // 8-лучевая звезда: два наложенных 4-лучевых path, один повёрнут на 45°
-      svg += '<path d="' + path4 + '"/>';
-      svg += '<path d="' + path4 + '" transform="rotate(45)"/>';
-      // ядро
-      svg += '<circle class="star-core" cx="0" cy="0" r="' + (size * 0.35) + '"/>';
+      const star = c.stars[i];
+      const size = isLast ? 2.6 : 1.5;
+      const p = starPath(size);
+      svg += '<g class="star-node" transform="translate(' + star.x + ',' + star.y + ')">';
+      svg += '<path d="' + p + '"/>';
+      svg += '<path d="' + p + '" transform="rotate(45)"/>';
+      svg += '<circle class="star-core" cx="0" cy="0" r="' + (size * 0.32) + '"/>';
       svg += '</g>';
-    }
-
-    svg += '</svg>';
-    $skyOutput.innerHTML = svg;
-  }
-    // Связи (только между уже видимыми звёздами)
-    c.links.forEach(pair => {
-      const [a, b] = pair;
-      if (a < visibleStars && b < visibleStars) {
-        const isFinal = visibleStars >= totalStars;
-        const cls = 'star-link visible' + (isFinal ? ' final' : '');
-        svg += '<line class="' + cls + '" x1="' + c.stars[a].x + '" y1="' + c.stars[a].y + '" x2="' + c.stars[b].x + '" y2="' + c.stars[b].y + '"/>';
-      }
-    });
-
-    // Звёзды-подсказки (бледные) для ещё не появившихся точек
-    for (let i = visibleStars; i < totalStars; i++) {
-      svg += '<circle class="star-dot hint" cx="' + c.stars[i].x + '" cy="' + c.stars[i].y + '" r="0.8"/>';
-    }
-
-    // Яркие звёзды
-    for (let i = 0; i < visibleStars; i++) {
-      const isLast = i === visibleStars - 1;
-      const twinkleDelay = (i * 0.17).toFixed(2);
-      const r = isLast ? 1.6 : 1.2;
-      svg += '<circle class="star-dot visible" cx="' + c.stars[i].x + '" cy="' + c.stars[i].y + '" r="' + r + '" style="animation-delay:' + twinkleDelay + 's;"/>';
     }
 
     svg += '</svg>';
@@ -1080,7 +702,6 @@ function renderSky() {
     $skyResult.classList.add('show');
     $skyWrap.classList.add('complete');
 
-    // добавляем в коллекцию, если ещё нет
     if (skyState.collected.indexOf(c.id) === -1) {
       skyState.collected.push(c.id);
       saveSkyState();
@@ -1088,7 +709,7 @@ function renderSky() {
     }
   }
 
-  // ---------- Коллекция ----------
+  /* ---------- Коллекция ---------- */
   function renderCollection() {
     const collected = skyState.collected || [];
     if (collected.length === 0) {
@@ -1109,19 +730,18 @@ function renderSky() {
 
   function miniConstellationSVG(c) {
     let svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">';
-    // линии
-    c.links.forEach(([a, b]) => {
-      svg += '<line x1="' + c.stars[a].x + '" y1="' + c.stars[a].y + '" x2="' + c.stars[b].x + '" y2="' + c.stars[b].y + '" stroke="#ffd97a" stroke-width="0.8" opacity="0.6"/>';
+    c.links.forEach(pair => {
+      const a = pair[0], b = pair[1];
+      svg += '<line x1="' + c.stars[a].x + '" y1="' + c.stars[a].y + '" x2="' + c.stars[b].x + '" y2="' + c.stars[b].y + '" stroke="#ffd97a" stroke-width="0.8" opacity="0.55"/>';
     });
-    // звёзды
-    c.stars.forEach((s, i) => {
-      svg += '<circle cx="' + s.x + '" cy="' + s.y + '" r="1.4" fill="#ffd97a" filter="drop-shadow(0 0 2px rgba(255,217,122,0.8))"/>';
+    c.stars.forEach(s => {
+      svg += '<circle cx="' + s.x + '" cy="' + s.y + '" r="1.3" fill="#ffd97a"/>';
     });
     svg += '</svg>';
     return svg;
   }
 
-  // ---------- Звук ----------
+  /* ---------- Звук ---------- */
   function playStarSound(index) {
     const ctx = getCtx();
     if (!ctx) return;
@@ -1176,13 +796,11 @@ function renderSky() {
   }
 
   function newConstellation() {
-    // Помечаем текущее как собранное (если оно собрано)
     if (visibleStars >= currentConstellation().stars.length) {
       if (skyState.collected.indexOf(skyState.constellationId) === -1) {
         skyState.collected.push(skyState.constellationId);
       }
     }
-    // Выбираем новое, не из собранных
     const remaining = CONSTELLATIONS.filter(c => skyState.collected.indexOf(c.id) === -1);
     const pool = remaining.length > 0 ? remaining : CONSTELLATIONS;
     const next = pool[Math.floor(Math.random() * pool.length)];
@@ -1201,8 +819,8 @@ function renderSky() {
     renderCollection();
   }
 
-  // ---------- События ----------
-  $start.addEventListener('click', () => running ? pauseTimer() : startTimer());
+  /* ---------- События ---------- */
+  $start.addEventListener('click', () => { running ? pauseTimer() : startTimer(); });
   $finish.addEventListener('click', finishTimer);
   $reset.addEventListener('click', resetTimer);
   $play.addEventListener('click', playPreview);
@@ -1224,7 +842,7 @@ function renderSky() {
     if (e.key === 'Enter') { e.preventDefault(); $goalInput.blur(); }
   });
 
-  // ---------- Восстановление ----------
+  /* ---------- Восстановление ---------- */
   function restore() {
     const active = loadJSON(LS_ACTIVE, null);
     if (active) {
@@ -1263,7 +881,6 @@ function renderSky() {
       }
     }
 
-    // Восстановить видимые звёзды по прогрессу
     const total = currentConstellation().stars.length;
     visibleStars = Math.min(starsCountForSec(skyState.progressSec), total);
     previousStars = visibleStars;
@@ -1280,7 +897,7 @@ function renderSky() {
   window.addEventListener('beforeunload', persistActive);
   document.addEventListener('visibilitychange', () => { if (document.hidden) persistActive(); });
 
-  // ---------- Инициализация ----------
+  /* ---------- Старт ---------- */
   restore();
   renderStreak();
   renderStats();
