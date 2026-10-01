@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Noto+Music&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/iosunmute"></script>
 <style>
   :root {
     --bg: #f4f1ea; --surface: #fbf9f4; --ink: #1c1a17;
@@ -1253,6 +1254,12 @@ function getCtx() {
     if (!AC) return null;
     audioCtx = new AC();
     setAudioSessionType('playback');
+    if (typeof iosunmute === 'function' && !audioCtx._iosunmuteApplied) {
+      try {
+        iosunmute(audioCtx, { allowBackgroundPlayback: true });
+        audioCtx._iosunmuteApplied = true;
+      } catch(e) { console.log('iosunmute error:', e); }
+    }
   }
   if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
   return audioCtx;
@@ -1747,7 +1754,6 @@ function scheduler() {
     if (currentSub >= beat.subdivision) { currentSub = 0; currentBeat = (currentBeat + 1) % beatsConfig.length; }
   }
 }
-
 async function toggleMetronome(force) {
   const ctx = getCtx();
   if (!ctx) return;
@@ -1777,6 +1783,7 @@ async function toggleMetronome(force) {
     updateSilentLoop();
   }
 }
+
 metroBtn.addEventListener('click', () => toggleMetronome());
 
 /* ============================================================
@@ -1931,6 +1938,8 @@ async function togglePoly(force) {
     if (ctx.state !== 'running') { try { await ctx.resume(); } catch(e) {} }
     ensureAudioAlive();
     audioUnlocked = true;
+    setupAudioSession();
+    startSilentBackgroundAudio();
     polyPlaying = true;
     polyNextTime = ctx.currentTime + 0.1;
     polyCycleStart = polyNextTime;
@@ -1949,6 +1958,7 @@ async function togglePoly(force) {
     document.querySelectorAll('.poly-note').forEach(n => n.classList.remove('playing', 'first'));
     polyToggle.textContent = 'Играть';
     polyToggle.classList.add('accent');
+    if (!metronomePlaying) stopSilentBackgroundAudio();
     updateSilentLoop();
   }
 }
