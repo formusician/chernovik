@@ -1205,7 +1205,43 @@ let audioUnlocked = false;
 let metroVolume = 1.0;
 let silentLoopSource = null;
 let silentLoopGain = null;
+/* === ФОНОВЫЙ РЕЖИМ ДЛЯ iOS === */
+let silentAudioElement = null;
 
+function setupAudioSession() {
+  if (navigator.audioSession) {
+    try { navigator.audioSession.type = 'playback'; } catch(e) {}
+  }
+}
+
+function startSilentBackgroundAudio() {
+  const ctx = audioCtx;
+  if (!ctx || silentAudioElement) return;
+  try {
+    const bufferSize = 2 * ctx.sampleRate;
+    const emptyBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const source = ctx.createBufferSource();
+    source.buffer = emptyBuffer;
+    source.loop = true;
+    const dest = ctx.createMediaStreamDestination();
+    source.connect(dest);
+    silentAudioElement = document.createElement('audio');
+    silentAudioElement.srcObject = dest.stream;
+    silentAudioElement.style.display = 'none';
+    silentAudioElement.setAttribute('playsinline', '');
+    document.body.appendChild(silentAudioElement);
+    silentAudioElement.play().catch(e => console.log('Фоновое аудио не запущено:', e));
+    source.start();
+  } catch(e) { silentAudioElement = null; }
+}
+
+function stopSilentBackgroundAudio() {
+  if (silentAudioElement) {
+    try { silentAudioElement.pause(); } catch(e) {}
+    try { silentAudioElement.remove(); } catch(e) {}
+    silentAudioElement = null;
+  }
+}
 function setAudioSessionType(type) {
   if (!navigator.audioSession) return;
   try { if (navigator.audioSession.type !== type) navigator.audioSession.type = type; } catch(e) {}
@@ -1721,6 +1757,8 @@ async function toggleMetronome(force) {
     if (ctx.state !== 'running') { try { await ctx.resume(); } catch(e) {} }
     ensureAudioAlive();
     audioUnlocked = true;
+    setupAudioSession();
+    startSilentBackgroundAudio();
     metronomePlaying = true;
     currentBeat = 0; currentSub = 0;
     nextNoteTime = ctx.currentTime + 0.08;
@@ -1735,6 +1773,7 @@ async function toggleMetronome(force) {
     document.querySelectorAll('.rhythm-dot').forEach(d => d.classList.remove('playing'));
     metroBtn.textContent = 'Старт';
     metroBtn.classList.add('accent');
+    if (!polyPlaying) stopSilentBackgroundAudio();
     updateSilentLoop();
   }
 }
