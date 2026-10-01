@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#f4f1ea">
-<title>Maestro — Трекер занятий (VexFlow demo)</title>
+<meta name="theme-color" content="#0a0e1a">
+<title>Maestro — Трекер занятий (звёзды)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,8 +17,12 @@
     --line: #ddd6c8;
     --accent: #8a6f47;
     --accent-2: #b89b6b;
+    --night-1: #0a0e1a;
+    --night-2: #131b2e;
+    --night-3: #1c2540;
+    --star: #ffd97a;
+    --star-glow: rgba(255, 217, 122, 0.55);
     --green: #5a7a5a;
-    --red: #a05555;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -140,8 +144,8 @@
     margin: 6px 0 20px;
   }
 
-  /* ---- Заголовок партитуры ---- */
-  .score-header {
+  /* ---- Заголовок неба ---- */
+  .sky-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -149,7 +153,7 @@
     flex-wrap: wrap;
     gap: 10px;
   }
-  .score-label {
+  .sky-label {
     font-size: 11px;
     letter-spacing: .18em;
     text-transform: uppercase;
@@ -186,59 +190,149 @@
   .switch input:checked + .switch-slider { background: var(--accent); }
   .switch input:checked + .switch-slider::before { transform: translateX(18px); }
 
-  /* ---- Партитура ---- */
-  .score-wrap {
+  /* ---- Небо ---- */
+  .sky-wrap {
+    position: relative;
     margin-top: 6px;
-    padding: 12px 8px;
-    background: linear-gradient(135deg, var(--bg) 0%, rgba(184,155,107,.06) 100%);
-    border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    transition: box-shadow .6s ease, border-color .6s ease;
-    min-height: 220px;
+    background: radial-gradient(ellipse at 50% 30%, var(--night-3) 0%, var(--night-2) 40%, var(--night-1) 100%);
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: inset 0 0 60px rgba(0,0,0,.5);
+    aspect-ratio: 1 / 1;
+    max-height: 520px;
   }
-  .score-wrap.complete {
-    border-color: rgba(184,148,74,.5);
-    box-shadow: 0 0 40px rgba(184,148,74,.25), inset 0 0 30px rgba(184,148,74,.08);
-    animation: scorePulse 3s ease-in-out infinite;
+  .sky-wrap.complete {
+    box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 40px rgba(255, 217, 122, .25);
+    animation: skyComplete 3s ease-in-out infinite;
   }
-  @keyframes scorePulse {
-    0%, 100% { box-shadow: 0 0 40px rgba(184,148,74,.25), inset 0 0 30px rgba(184,148,74,.08); }
-    50%      { box-shadow: 0 0 60px rgba(184,148,74,.4), inset 0 0 40px rgba(184,148,74,.15); }
+  @keyframes skyComplete {
+    0%, 100% { box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 40px rgba(255, 217, 122, .25); }
+    50%      { box-shadow: inset 0 0 60px rgba(0,0,0,.5), 0 0 60px rgba(255, 217, 122, .45); }
   }
-  #score-output {
-    width: 100%;
-    min-height: 200px;
-  }
-  #score-output svg {
+  #sky-output {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+  }
+  #sky-output svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Звёзды */
+  .star-dot {
+    fill: var(--star);
+    opacity: 0;
+    transition: opacity .8s ease;
+    filter: drop-shadow(0 0 4px var(--star-glow));
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  .star-dot.visible {
+    opacity: 1;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.7; }
+  }
+  .star-dot.hint {
+    fill: rgba(255, 217, 122, 0.18);
+    opacity: 1 !important;
+    animation: none;
+    filter: none;
+  }
+  .star-link {
+    stroke: var(--star);
+    stroke-width: 0.5;
+    opacity: 0;
+    transition: opacity .8s ease;
+    filter: drop-shadow(0 0 3px var(--star-glow));
+  }
+  .star-link.visible {
+    opacity: 0.55;
+  }
+  .star-link.final {
+    opacity: 0.9;
+    stroke-width: 0.8;
   }
 
   /* ---- Результат ---- */
-  .score-result {
+  .sky-result {
     margin-top: 14px;
     padding: 16px 18px;
-    background: linear-gradient(135deg, rgba(184,155,107,.18), rgba(138,111,71,.1));
-    border: 1px solid rgba(184,148,74,.45);
+    background: linear-gradient(135deg, rgba(255,217,122,.14), rgba(255,217,122,.05));
+    border: 1px solid rgba(255, 217, 122, .35);
     border-radius: 12px;
     display: none;
     flex-wrap: wrap;
     align-items: center;
     gap: 12px;
     justify-content: space-between;
-    animation: fadeIn .5s ease;
+    animation: fadeIn .6s ease;
   }
-  .score-result.show { display: flex; }
+  .sky-result.show { display: flex; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .score-result-text {
-    font-size: 14px;
+  .sky-result-text {
+    font-size: 15px;
     color: var(--accent);
     font-weight: 500;
     line-height: 1.4;
   }
-  .score-result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sky-result-text strong {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+  }
+  .sky-result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ---- Коллекция ---- */
+  .collection-title {
+    margin-top: 24px;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .collection {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+  }
+  .collection-item {
+    background: radial-gradient(ellipse at 50% 30%, var(--night-3) 0%, var(--night-1) 100%);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: border-color .2s, transform .2s;
+  }
+  .collection-item:hover {
+    border-color: rgba(255,217,122,.4);
+    transform: translateY(-2px);
+  }
+  .collection-item .mini {
+    width: 100%;
+    aspect-ratio: 1/1;
+    margin-bottom: 6px;
+  }
+  .collection-item .mini svg { width: 100%; height: 100%; display: block; }
+  .collection-item .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--star);
+    line-height: 1.2;
+  }
+  .collection-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 16px;
+    font-style: italic;
+  }
 
   /* ---- Цель ---- */
   .divider {
@@ -367,6 +461,7 @@
     .stat-value { font-size: 22px; }
     .session-toast { top: 16px; padding: 12px 18px; }
     .btn { padding: 12px 20px; font-size: 12px; }
+    .collection { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); }
   }
 </style>
 </head>
@@ -374,7 +469,7 @@
 <div class="wrap">
 
   <h1>Занятия</h1>
-  <p class="subtitle">Считайте время практики и собирайте секретную мелодию. Первая нота появится через 30 секунд, дальше — каждые 2.5 минуты. Таймер продолжает считать, даже если вы закроете страницу.</p>
+  <p class="subtitle">Считайте время практики и зажигайте созвездие. Первая звезда появится через 30 секунд, дальше — каждые 2.5 минуты. За полный цикл (40 минут) созвездие соберётся полностью.</p>
 
   <div class="card">
 
@@ -398,27 +493,27 @@
       <button type="button" class="btn ghost" id="practiceFinish" style="display:none;">Завершить</button>
     </div>
 
-    <!-- Заголовок партитуры -->
-    <div class="score-header">
-      <span class="score-label">🎼 Партитура: <span id="noteCount">0</span> / <span id="noteTotal">16</span> нот</span>
+    <!-- Заголовок неба -->
+    <div class="sky-header">
+      <span class="sky-label">✨ Звёзды: <span id="starCount">0</span> / <span id="starTotal">16</span></span>
       <label class="switch">
-        <input type="checkbox" id="practiceSoundToggle">
+        <input type="checkbox" id="soundToggle" checked>
         <span class="switch-slider"></span>
-        <span>Звук нот</span>
+        <span>Звук звёзд</span>
       </label>
     </div>
 
-    <!-- Партитура -->
-    <div class="score-wrap" id="scoreWrap">
-      <div id="score-output"></div>
+    <!-- Небо -->
+    <div class="sky-wrap" id="skyWrap">
+      <div id="sky-output"></div>
     </div>
 
     <!-- Результат -->
-    <div class="score-result" id="melodyResult">
-      <div class="score-result-text" id="melodyResultText"></div>
-      <div class="score-result-actions">
+    <div class="sky-result" id="skyResult">
+      <div class="sky-result-text" id="skyResultText"></div>
+      <div class="sky-result-actions">
         <button type="button" class="btn accent small" id="practicePlay">▶ Прослушать</button>
-        <button type="button" class="btn ghost small" id="practiceNext">Новая мелодия</button>
+        <button type="button" class="btn ghost small" id="practiceNext">Новое созвездие</button>
       </div>
     </div>
 
@@ -458,14 +553,14 @@
       </div>
     </div>
 
+    <!-- Коллекция -->
+    <div class="collection-title">🗂 Коллекция созвездий</div>
+    <div class="collection" id="collection"></div>
+
   </div>
 
-  <p class="info" style="margin-top:28px;font-size:12px;color:var(--muted);line-height:1.6;text-align:center;font-style:italic;">
-    Демо-версия трекера с VexFlow. Данные хранятся локально в браузере.
-  </p>
 </div>
 
-<script src="https://unpkg.com/vexflow@4.2.2/build/cjs/vexflow.js"></script>
 <script>
 'use strict';
 
@@ -485,46 +580,138 @@ function getCtx() {
 const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
 /* ============================================================
-   ТРЕКЕР С VEXFLOW
+   ДАННЫЕ СОЗВЕЗДИЙ
+   ============================================================ */
+// Каждое созвездие: 16 точек в нормализованной системе [0..100, 0..100].
+// Точки рисуются последовательно, между уже появившимися соседями — линии.
+const CONSTELLATIONS = [
+  {
+    id: 'eighth-note',
+    name: 'Восьмая нота',
+    hint: 'Ноты на пяти линиях',
+    stars: [
+      { x: 43, y: 20 }, { x: 43, y: 34 }, { x: 43, y: 48 }, { x: 43, y: 62 }, { x: 43, y: 74 },
+      { x: 37, y: 74 }, { x: 30, y: 76 }, { x: 27, y: 81 }, { x: 30, y: 86 }, { x: 37, y: 87 },
+      { x: 43, y: 84 }, { x: 47, y: 27 }, { x: 53, y: 32 }, { x: 58, y: 40 }, { x: 55, y: 48 },
+      { x: 48, y: 53 }
+    ],
+    // Порядок связей: массив пар индексов. Точки соединяются по контуру.
+    links: [
+      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,4],
+      [0,11],[11,12],[12,13],[13,14],[14,15],[15,2]
+    ],
+    // Какая "нота" (для прослушивания) соответствует каждой звезде
+    notes: [64,64,65,67,67,65,64,62,60,60,62,64,64,62,62,60]
+  },
+  {
+    id: 'treble-clef',
+    name: 'Скрипичный ключ',
+    hint: 'Символ музыки',
+    stars: [
+      { x: 50, y: 8 }, { x: 56, y: 14 }, { x: 55, y: 24 }, { x: 48, y: 28 },
+      { x: 41, y: 25 }, { x: 40, y: 17 }, { x: 45, y: 11 }, { x: 53, y: 12 },
+      { x: 57, y: 22 }, { x: 57, y: 36 }, { x: 54, y: 50 }, { x: 49, y: 64 },
+      { x: 44, y: 78 }, { x: 42, y: 88 }, { x: 48, y: 92 }, { x: 55, y: 87 }
+    ],
+    links: [
+      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15]
+    ],
+    notes: [60,62,64,65,67,69,71,72,74,72,71,69,67,65,64,62]
+  },
+  {
+    id: 'trumpet',
+    name: 'Труба',
+    hint: 'Медный духовой',
+    stars: [
+      { x: 14, y: 52 }, { x: 24, y: 52 }, { x: 34, y: 52 }, { x: 44, y: 52 },
+      { x: 54, y: 52 }, { x: 62, y: 50 }, { x: 70, y: 44 }, { x: 78, y: 34 },
+      { x: 84, y: 52 }, { x: 78, y: 70 }, { x: 70, y: 60 }, { x: 62, y: 54 },
+      { x: 30, y: 42 }, { x: 30, y: 34 }, { x: 42, y: 42 }, { x: 42, y: 34 }
+    ],
+    links: [
+      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,5],
+      [12,13],[13,2],[14,15],[15,3]
+    ],
+    notes: [60,62,64,65,67,69,71,72,74,76,74,72,71,69,67,65]
+  },
+  {
+    id: 'guitar',
+    name: 'Гитара',
+    hint: 'Шестиструнная',
+    stars: [
+      { x: 50, y: 8 }, { x: 50, y: 20 }, { x: 48, y: 32 }, { x: 46, y: 42 },
+      { x: 40, y: 48 }, { x: 34, y: 50 }, { x: 28, y: 54 }, { x: 24, y: 62 },
+      { x: 24, y: 72 }, { x: 30, y: 80 }, { x: 40, y: 86 }, { x: 52, y: 86 },
+      { x: 62, y: 82 }, { x: 68, y: 72 }, { x: 68, y: 60 }, { x: 60, y: 50 }
+    ],
+    links: [
+      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,4]
+    ],
+    notes: [60,64,67,72,76,79,76,72,67,64,60,62,64,67,71,72]
+  },
+  {
+    id: 'harp',
+    name: 'Арфа',
+    hint: 'Струнный инструмент',
+    stars: [
+      { x: 24, y: 88 }, { x: 27, y: 74 }, { x: 31, y: 58 }, { x: 36, y: 44 },
+      { x: 42, y: 32 }, { x: 48, y: 22 }, { x: 54, y: 15 }, { x: 61, y: 22 },
+      { x: 66, y: 34 }, { x: 70, y: 50 }, { x: 72, y: 66 }, { x: 73, y: 84 },
+      { x: 60, y: 78 }, { x: 48, y: 72 }, { x: 38, y: 66 }, { x: 64, y: 55 }
+    ],
+    links: [
+      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],
+      [11,12],[12,13],[13,14],[14,2],
+      [6,15],[15,9]
+    ],
+    notes: [60,62,64,67,69,72,74,72,69,67,64,62,60,62,64,67]
+  },
+  {
+    id: 'metronome',
+    name: 'Метроном',
+    hint: 'Хранитель ритма',
+    stars: [
+      { x: 30, y: 86 }, { x: 36, y: 78 }, { x: 42, y: 70 }, { x: 46, y: 62 },
+      { x: 50, y: 54 }, { x: 54, y: 62 }, { x: 58, y: 70 }, { x: 64, y: 78 },
+      { x: 70, y: 86 }, { x: 50, y: 44 }, { x: 50, y: 34 }, { x: 50, y: 24 },
+      { x: 50, y: 14 }, { x: 44, y: 44 }, { x: 56, y: 44 }, { x: 50, y: 4 }
+    ],
+    links: [
+      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],
+      [4,9],[9,10],[10,11],[11,12],[12,15],
+      [9,13],[9,14]
+    ],
+    notes: [60,62,64,67,69,72,74,76,77,76,74,72,69,67,64,62]
+  }
+];
+
+/* ============================================================
+   ТРЕКЕР
    ============================================================ */
 (function initTracker() {
   const LS_SESSIONS = 'maestro-practice-sessions';
   const LS_STREAK   = 'maestro-practice-streak';
   const LS_GOAL     = 'maestro-practice-goal';
   const LS_ACTIVE   = 'maestro-practice-active';
-  const LS_MELODY   = 'maestro-practice-melody';
+  const LS_SKY      = 'maestro-practice-sky';
 
-  const FIRST_NOTE_DELAY = 30;      // 30 секунд до первой ноты
-  const NOTE_INTERVAL    = 150;     // 2.5 минуты между нотами
-
-  // Пентатоническая мелодия (16 нот, C-dur, только белые клавиши)
-  const MELODY = [
-    'C4', 'D4', 'E4', 'G4',
-    'A4', 'G4', 'E4', 'D4',
-    'C4', 'D4', 'E4', 'G4',
-    'A4', 'C5', 'A4', 'G4'
-  ];
-
-  // Соответствие нот нотам MIDI для прослушивания
-  const NOTE_TO_MIDI = {
-    'C4': 60, 'D4': 62, 'E4': 64, 'F4': 65, 'G4': 67, 'A4': 69, 'B4': 71,
-    'C5': 72, 'D5': 74, 'E5': 76, 'F5': 77, 'G5': 79, 'A5': 81
-  };
+  const FIRST_STAR_DELAY = 30;      // 30 секунд до первой звезды
+  const STAR_INTERVAL    = 150;     // 2.5 минуты между звёздами (16 звёзд = 40 минут)
 
   const $ = id => document.getElementById(id);
   const $timer = $('practiceTimer');
   const $start = $('practiceStart');
   const $finish = $('practiceFinish');
   const $reset = $('practiceReset');
-  const $scoreOutput = $('score-output');
-  const $scoreWrap = $('scoreWrap');
-  const $noteCount = $('noteCount');
-  const $noteTotal = $('noteTotal');
+  const $skyOutput = $('sky-output');
+  const $skyWrap = $('skyWrap');
+  const $starCount = $('starCount');
+  const $starTotal = $('starTotal');
   const $play = $('practicePlay');
   const $next = $('practiceNext');
-  const $soundToggle = $('practiceSoundToggle');
-  const $melodyResult = $('melodyResult');
-  const $melodyResultText = $('melodyResultText');
+  const $soundToggle = $('soundToggle');
+  const $skyResult = $('skyResult');
+  const $skyResultText = $('skyResultText');
   const $streakBadge = $('streakBadge');
   const $streakCur = $('streakCurrent');
   const $streakBest = $('streakBest');
@@ -535,6 +722,7 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   const $statSessions = $('statSessions');
   const $statAvg = $('statAvg');
   const $statWeek = $('statWeek');
+  const $collection = $('collection');
 
   let running = false;
   let startedAtMs = null;
@@ -542,13 +730,11 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   let elapsedSec = 0;
   let lastElapsedSec = 0;
   let tickId = null;
-  let playedNotes = [];
-  let previousCount = 0;
+  let visibleStars = 0;
+  let previousStars = 0;
   let playingPreview = false;
-  let melodyState = loadMelodyState();
-  let vexFlowReady = false;
+  let skyState = loadSkyState();
 
-  // ---------- Storage ----------
   function loadJSON(k, f) {
     try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; }
     catch(e) { return f; }
@@ -557,15 +743,23 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
   }
 
-  function newMelodyState() {
-    return { melodyId: 0, progressSec: 0 };
+  function newSkyState() {
+    // выбираем случайное созвездие
+    const idx = Math.floor(Math.random() * CONSTELLATIONS.length);
+    return { constellationId: CONSTELLATIONS[idx].id, progressSec: 0, collected: [] };
   }
-  function loadMelodyState() {
-    const s = loadJSON(LS_MELODY, null);
-    if (s && typeof s.progressSec === 'number') return s;
-    return newMelodyState();
+  function loadSkyState() {
+    const s = loadJSON(LS_SKY, null);
+    if (s && typeof s.constellationId === 'string' && typeof s.progressSec === 'number' && Array.isArray(s.collected)) {
+      // проверим, что такое созвездие существует
+      if (CONSTELLATIONS.some(c => c.id === s.constellationId)) return s;
+    }
+    return newSkyState();
   }
-  function saveMelodyState() { saveJSON(LS_MELODY, melodyState); }
+  function saveSkyState() { saveJSON(LS_SKY, skyState); }
+  function currentConstellation() {
+    return CONSTELLATIONS.find(c => c.id === skyState.constellationId) || CONSTELLATIONS[0];
+  }
 
   function dayKey(d) {
     d = d || new Date();
@@ -585,9 +779,9 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
   }
 
-  function notesCountForSec(sec) {
-    if (sec < FIRST_NOTE_DELAY) return 0;
-    return Math.min(1 + Math.floor((sec - FIRST_NOTE_DELAY) / NOTE_INTERVAL), MELODY.length);
+  function starsCountForSec(sec) {
+    if (sec < FIRST_STAR_DELAY) return 0;
+    return Math.min(1 + Math.floor((sec - FIRST_STAR_DELAY) / STAR_INTERVAL), currentConstellation().stars.length);
   }
 
   function persistActive() {
@@ -617,14 +811,14 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     const newElapsed = computeElapsedSec();
     const delta = newElapsed - lastElapsedSec;
     if (delta > 0) {
-      melodyState.progressSec += delta;
+      skyState.progressSec += delta;
       lastElapsedSec = newElapsed;
-      saveMelodyState();
+      saveSkyState();
     }
     elapsedSec = newElapsed;
     $timer.textContent = fmt(elapsedSec);
     applyTimerColor();
-    syncScore();
+    syncSky();
     persistActive();
   }
 
@@ -668,15 +862,16 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     lastElapsedSec = 0;
     running = false;
 
-    melodyState.progressSec = 0;
-    playedNotes = [];
-    previousCount = 0;
-    saveMelodyState();
+    // сбрасываем прогресс звёзд (созвездие то же)
+    skyState.progressSec = 0;
+    visibleStars = 0;
+    previousStars = 0;
+    saveSkyState();
 
-    $melodyResult.classList.remove('show');
-    $scoreWrap.classList.remove('complete');
-    $noteCount.textContent = '0';
-    renderScore();
+    $skyResult.classList.remove('show');
+    $skyWrap.classList.remove('complete');
+    $starCount.textContent = '0';
+    renderSky();
 
     persistActive();
     $timer.textContent = '00:00:00';
@@ -783,166 +978,125 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     }, 3200);
   }
 
-  // ---------- VexFlow ----------
-  function initVexFlow() {
-    if (vexFlowReady) return;
-    if (typeof Vex === 'undefined' || !Vex.Flow) {
-      document.getElementById('score-output').innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">Не удалось загрузить VexFlow. Проверьте подключение к интернету.</p>';
+  // ---------- Отрисовка неба ----------
+  function renderSky() {
+    const c = currentConstellation();
+    const totalStars = c.stars.length;
+
+    let svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">';
+
+    // Фоновые блёстки (просто мелкие звёзды, для атмосферы)
+    const bgStars = [
+      [10,12],[22,8],[88,15],[92,42],[8,58],[15,80],[85,72],[78,88],
+      [30,15],[70,10],[55,92],[42,6],[6,38],[94,62],[20,45],[80,32],
+      [12,92],[88,90],[50,5],[35,95]
+    ];
+    for (const [x, y] of bgStars) {
+      svg += '<circle cx="' + x + '" cy="' + y + '" r="0.25" fill="rgba(255,255,255,0.35)"/>';
+    }
+
+    // Связи (только между уже видимыми звёздами)
+    c.links.forEach(pair => {
+      const [a, b] = pair;
+      if (a < visibleStars && b < visibleStars) {
+        const isFinal = visibleStars >= totalStars;
+        const cls = 'star-link visible' + (isFinal ? ' final' : '');
+        svg += '<line class="' + cls + '" x1="' + c.stars[a].x + '" y1="' + c.stars[a].y + '" x2="' + c.stars[b].x + '" y2="' + c.stars[b].y + '"/>';
+      }
+    });
+
+    // Звёзды-подсказки (бледные) для ещё не появившихся точек
+    for (let i = visibleStars; i < totalStars; i++) {
+      svg += '<circle class="star-dot hint" cx="' + c.stars[i].x + '" cy="' + c.stars[i].y + '" r="0.8"/>';
+    }
+
+    // Яркие звёзды
+    for (let i = 0; i < visibleStars; i++) {
+      const isLast = i === visibleStars - 1;
+      const twinkleDelay = (i * 0.17).toFixed(2);
+      const r = isLast ? 1.6 : 1.2;
+      svg += '<circle class="star-dot visible" cx="' + c.stars[i].x + '" cy="' + c.stars[i].y + '" r="' + r + '" style="animation-delay:' + twinkleDelay + 's;"/>';
+    }
+
+    svg += '</svg>';
+    $skyOutput.innerHTML = svg;
+  }
+
+  function syncSky() {
+    const total = currentConstellation().stars.length;
+    const count = Math.min(starsCountForSec(skyState.progressSec), total);
+    if (count === visibleStars) return;
+
+    visibleStars = count;
+    renderSky();
+    $starCount.textContent = count;
+    $starTotal.textContent = total;
+
+    if (count > previousStars && count > 0) {
+      if ($soundToggle.checked && !document.hidden) {
+        playStarSound(count - 1);
+      }
+    }
+    previousStars = count;
+
+    if (count >= total && total > 0) showSkyCompleted();
+  }
+
+  function showSkyCompleted() {
+    if ($skyResult.classList.contains('show')) return;
+    const c = currentConstellation();
+    $skyResultText.innerHTML = '🎉 Созвездие собрано! Это <strong>«' + c.name + '»</strong>';
+    $skyResult.classList.add('show');
+    $skyWrap.classList.add('complete');
+
+    // добавляем в коллекцию, если ещё нет
+    if (skyState.collected.indexOf(c.id) === -1) {
+      skyState.collected.push(c.id);
+      saveSkyState();
+      renderCollection();
+    }
+  }
+
+  // ---------- Коллекция ----------
+  function renderCollection() {
+    const collected = skyState.collected || [];
+    if (collected.length === 0) {
+      $collection.innerHTML = '<div class="collection-empty">Пока пусто. Соберите первое созвездие — оно появится здесь.</div>';
       return;
     }
-    vexFlowReady = true;
-    restore();
-    renderStreak();
-    renderStats();
-    $noteTotal.textContent = MELODY.length;
-    // Небольшая задержка, чтобы контейнер получил реальные размеры
-    requestAnimationFrame(() => {
-      renderScore();
+    let html = '';
+    collected.forEach(id => {
+      const c = CONSTELLATIONS.find(x => x.id === id);
+      if (!c) return;
+      html += '<div class="collection-item">';
+      html += '<div class="mini">' + miniConstellationSVG(c) + '</div>';
+      html += '<div class="name">' + c.name + '</div>';
+      html += '</div>';
     });
+    $collection.innerHTML = html;
   }
 
-  function renderScore() {
-    if (!vexFlowReady || !$scoreOutput) return;
-
-    const VF = Vex.Flow;
-    const element = $scoreOutput;
-    element.innerHTML = '';
-
-    const width = Math.max(300, element.clientWidth || 700);
-    const height = 240;
-
-    const renderer = new VF.Renderer(element, VF.Renderer.Backends.SVG);
-    renderer.resize(width, height);
-    const context = renderer.getContext();
-
-    // 16 нот = 4 такта по 4 четвертных.
-    // Раскладка: 2 строки по 2 такта.
-    const notesPerStave = 4;
-    const stavesPerRow = 2;
-    const rows = 2;
-    const clefPad = 70;              // место под ключ и размер в первом такте
-    const outerPad = 20;
-    const innerWidth = width - outerPad * 2;
-    const rowY = [40, 140];
-
-    let noteIndex = 0;
-    const visibleNotes = playedNotes.length;
-
-    for (let row = 0; row < rows; row++) {
-      const availableForRow = innerWidth - clefPad;
-      const staveWidth = availableForRow / stavesPerRow;
-      let x = outerPad;
-
-      for (let s = 0; s < stavesPerRow; s++) {
-        const w = (row === 0 && s === 0)
-          ? staveWidth + clefPad
-          : staveWidth;
-
-        const stave = new VF.Stave(x, rowY[row], w);
-        if (row === 0 && s === 0) {
-          stave.addClef('treble');
-          stave.addTimeSignature('4/4');
-        }
-        stave.setContext(context).draw();
-
-        const tickables = [];
-        for (let j = 0; j < notesPerStave; j++) {
-          const idx = noteIndex + j;
-          if (idx < visibleNotes) {
-            tickables.push(new VF.StaveNote({
-              keys: [MELODY[idx]],
-              duration: 'q'
-            }));
-          } else {
-            tickables.push(new VF.StaveNote({
-              keys: ['b/4'],
-              duration: 'qr'
-            }));
-          }
-        }
-
-        const voice = new VF.Voice({ num_beats: notesPerStave, beat_value: 4 });
-        voice.setStrict(false);
-        voice.addTickables(tickables);
-        new VF.Formatter().joinVoices([voice]).format([voice], w - 20);
-        voice.draw(context, stave);
-
-        x += w;
-        noteIndex += notesPerStave;
-      }
-    }
-  }
+  function miniConstellationSVG(c) {
+    let svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">';
+    // линии
+    c.links.forEach(([a, b]) => {
+      svg += '<line x1="' + c.stars[a].x + '" y1="' + c.stars[a].y + '" x2="' + c.stars[b].x + '" y2="' + c.stars[b].y + '" stroke="#ffd97a" stroke-width="0.8" opacity="0.6"/>';
     });
-
-    const score = factory.EasyScore();
-
-    // 4 строки по 4 ноты
-    const notesPerLine = 4;
-    const lines = Math.ceil(totalNotes / notesPerLine);
-
-    for (let i = 0; i < lines; i++) {
-      const start = i * notesPerLine;
-      const end = Math.min(start + notesPerLine, totalNotes);
-      const lineNotes = [];
-
-      for (let j = start; j < end; j++) {
-        if (j < visibleNotes.length) {
-          lineNotes.push(visibleNotes[j] + '/w');
-        } else {
-          // Пустой такт — используем целую паузу
-          lineNotes.push('b/4/w/r');
-        }
-      }
-
-      const system = factory.System({ width: 650, y: 40 + i * 90 });
-
-      system
-        .addStave({
-          voices: [
-            score.voice(score.notes(lineNotes.join(', ')))
-          ]
-        })
-        .addClef('treble')
-        .addKeySignature('C')
-        .addTimeSignature('4/4');
-    }
-
-    factory.draw();
-  }
-
-  function syncScore() {
-    const total = MELODY.length;
-    const count = Math.min(notesCountForSec(melodyState.progressSec), total);
-    if (count === playedNotes.length) return;
-
-    playedNotes = MELODY.slice(0, count);
-    renderScore();
-    $noteCount.textContent = count;
-    $noteTotal.textContent = total;
-
-    if (count > previousCount && count > 0) {
-      if ($soundToggle.checked && !document.hidden) {
-        playNoteTick(MELODY[count - 1]);
-      }
-    }
-    previousCount = count;
-
-    if (count >= total && total > 0) showMelodyCompleted();
-  }
-
-  function showMelodyCompleted() {
-    if ($melodyResult.classList.contains('show')) return;
-    $melodyResultText.textContent = '🎉 Партитура дописана!';
-    $melodyResult.classList.add('show');
-    $scoreWrap.classList.add('complete');
+    // звёзды
+    c.stars.forEach((s, i) => {
+      svg += '<circle cx="' + s.x + '" cy="' + s.y + '" r="1.4" fill="#ffd97a" filter="drop-shadow(0 0 2px rgba(255,217,122,0.8))"/>';
+    });
+    svg += '</svg>';
+    return svg;
   }
 
   // ---------- Звук ----------
-  function playNoteTick(noteName) {
+  function playStarSound(index) {
     const ctx = getCtx();
     if (!ctx) return;
     if (ctx.state === 'suspended') ctx.resume();
-    const midi = NOTE_TO_MIDI[noteName] || 60;
+    const c = currentConstellation();
+    const midi = c.notes[index] || 60;
     const freq = midiToFreq(midi, 440);
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -950,27 +1104,27 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
     osc.type = 'sine';
     osc.frequency.value = freq;
     g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(0.12, now + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+    g.gain.linearRampToValueAtTime(0.14, now + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
     osc.connect(g).connect(ctx.destination);
-    osc.start(now); osc.stop(now + 0.55);
+    osc.start(now); osc.stop(now + 0.75);
   }
 
   async function playPreview() {
-    if (playingPreview || playedNotes.length === 0) return;
+    if (playingPreview || visibleStars === 0) return;
     playingPreview = true;
-
     const ctx = getCtx();
     if (!ctx) { playingPreview = false; return; }
     if (ctx.state === 'suspended') {
       try { await ctx.resume(); } catch(e) {}
     }
 
-    const noteDur = 0.6;
+    const c = currentConstellation();
+    const noteDur = 0.5;
     const startTime = ctx.currentTime + 0.1;
 
-    playedNotes.forEach((noteName, i) => {
-      const midi = NOTE_TO_MIDI[noteName] || 60;
+    for (let i = 0; i < visibleStars; i++) {
+      const midi = c.notes[i] || 60;
       const freq = midiToFreq(midi, 440);
       const t = startTime + i * noteDur;
 
@@ -984,23 +1138,36 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
       osc.connect(g).connect(ctx.destination);
       osc.start(t);
       osc.stop(t + noteDur + 0.05);
-    });
+    }
 
-    const totalMs = playedNotes.length * noteDur * 1000 + 500;
+    const totalMs = visibleStars * noteDur * 1000 + 500;
     setTimeout(() => { playingPreview = false; }, totalMs);
   }
 
-  function newMelody() {
-    // Сбрасываем партитуру
-    melodyState.progressSec = 0;
-    playedNotes = [];
-    previousCount = 0;
-    saveMelodyState();
-    $melodyResult.classList.remove('show');
-    $scoreWrap.classList.remove('complete');
-    $noteCount.textContent = '0';
-    $noteTotal.textContent = MELODY.length;
-    renderScore();
+  function newConstellation() {
+    // Помечаем текущее как собранное (если оно собрано)
+    if (visibleStars >= currentConstellation().stars.length) {
+      if (skyState.collected.indexOf(skyState.constellationId) === -1) {
+        skyState.collected.push(skyState.constellationId);
+      }
+    }
+    // Выбираем новое, не из собранных
+    const remaining = CONSTELLATIONS.filter(c => skyState.collected.indexOf(c.id) === -1);
+    const pool = remaining.length > 0 ? remaining : CONSTELLATIONS;
+    const next = pool[Math.floor(Math.random() * pool.length)];
+
+    skyState.constellationId = next.id;
+    skyState.progressSec = 0;
+    visibleStars = 0;
+    previousStars = 0;
+    saveSkyState();
+
+    $skyResult.classList.remove('show');
+    $skyWrap.classList.remove('complete');
+    $starCount.textContent = '0';
+    $starTotal.textContent = next.stars.length;
+    renderSky();
+    renderCollection();
   }
 
   // ---------- События ----------
@@ -1008,7 +1175,7 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   $finish.addEventListener('click', finishTimer);
   $reset.addEventListener('click', resetTimer);
   $play.addEventListener('click', playPreview);
-  $next.addEventListener('click', newMelody);
+  $next.addEventListener('click', newConstellation);
 
   $goalInput.addEventListener('change', () => {
     const v = Math.max(5, Math.min(480, parseInt($goalInput.value, 10) || 30));
@@ -1029,46 +1196,52 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   // ---------- Восстановление ----------
   function restore() {
     const active = loadJSON(LS_ACTIVE, null);
-    if (!active) return;
-
-    if (active.running && active.startedAtMs) {
-      const now = Date.now();
-      const closedDuration = Math.max(0, Math.floor((now - (active.savedAt || now)) / 1000));
-      if (closedDuration > 0) {
-        melodyState.progressSec += closedDuration;
-        saveMelodyState();
+    if (active) {
+      if (active.running && active.startedAtMs) {
+        const now = Date.now();
+        const closedDuration = Math.max(0, Math.floor((now - (active.savedAt || now)) / 1000));
+        if (closedDuration > 0) {
+          skyState.progressSec += closedDuration;
+          saveSkyState();
+        }
+        running = true;
+        startedAtMs = active.startedAtMs;
+        accumulatedMs = active.accumulatedMs || 0;
+        elapsedSec = computeElapsedSec();
+        lastElapsedSec = elapsedSec;
+        $timer.textContent = fmt(elapsedSec);
+        applyTimerColor();
+        $timer.classList.add('running');
+        $start.textContent = 'Пауза';
+        $start.classList.add('ghost');
+        $start.classList.remove('accent');
+        $finish.style.display = 'inline-block';
+        $reset.style.display = 'inline-block';
+        if (!tickId) tickId = setInterval(tick, 500);
+      } else if ((active.accumulatedMs || 0) > 0) {
+        accumulatedMs = active.accumulatedMs || 0;
+        startedAtMs = null;
+        running = false;
+        elapsedSec = Math.floor(accumulatedMs / 1000);
+        lastElapsedSec = elapsedSec;
+        $timer.textContent = fmt(elapsedSec);
+        applyTimerColor();
+        $start.textContent = 'Продолжить';
+        $finish.style.display = 'inline-block';
+        $reset.style.display = 'inline-block';
       }
-      running = true;
-      startedAtMs = active.startedAtMs;
-      accumulatedMs = active.accumulatedMs || 0;
-      elapsedSec = computeElapsedSec();
-      lastElapsedSec = elapsedSec;
-      $timer.textContent = fmt(elapsedSec);
-      applyTimerColor();
-      $timer.classList.add('running');
-      $start.textContent = 'Пауза';
-      $start.classList.add('ghost');
-      $start.classList.remove('accent');
-      $finish.style.display = 'inline-block';
-      $reset.style.display = 'inline-block';
-      if (!tickId) tickId = setInterval(tick, 500);
-    } else if ((active.accumulatedMs || 0) > 0) {
-      accumulatedMs = active.accumulatedMs || 0;
-      startedAtMs = null;
-      running = false;
-      elapsedSec = Math.floor(accumulatedMs / 1000);
-      lastElapsedSec = elapsedSec;
-      $timer.textContent = fmt(elapsedSec);
-      applyTimerColor();
-      $start.textContent = 'Продолжить';
-      $finish.style.display = 'inline-block';
-      $reset.style.display = 'inline-block';
     }
 
-    syncScore();
-    previousCount = playedNotes.length;
-    if (playedNotes.length >= MELODY.length && MELODY.length > 0) {
-      showMelodyCompleted();
+    // Восстановить видимые звёзды по прогрессу
+    const total = currentConstellation().stars.length;
+    visibleStars = Math.min(starsCountForSec(skyState.progressSec), total);
+    previousStars = visibleStars;
+    renderSky();
+    $starCount.textContent = visibleStars;
+    $starTotal.textContent = total;
+
+    if (visibleStars >= total && total > 0) {
+      showSkyCompleted();
     }
   }
 
@@ -1077,25 +1250,11 @@ const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
   document.addEventListener('visibilitychange', () => { if (document.hidden) persistActive(); });
 
   // ---------- Инициализация ----------
-  // Ждём загрузки VexFlow
-  function bootVexFlow() {
-    if (typeof Vex === 'undefined' || !Vex.Flow) {
-      document.getElementById('score-output').innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">Не удалось загрузить VexFlow. Проверьте подключение к интернету.</p>';
-      return;
-    }
-    vexFlowReady = true;
-    restore();
-    renderStreak();
-    renderStats();
-    $noteTotal.textContent = MELODY.length;
-    renderScore();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bootVexFlow);
-  } else {
-    bootVexFlow();
-  }
+  restore();
+  renderStreak();
+  renderStats();
+  renderCollection();
+  $starTotal.textContent = currentConstellation().stars.length;
 
 })();
 </script>
