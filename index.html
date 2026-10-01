@@ -130,6 +130,61 @@
   .collection-item .mini svg { width: 100%; height: 100%; display: block; }
   .collection-item .name { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: var(--star); line-height: 1.2; }
   .collection-empty { grid-column: 1 / -1; text-align: center; font-size: 12px; color: var(--muted); padding: 16px; font-style: italic; }
+  .collection { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; }
+  .collection-item {
+    position: relative;
+    background: radial-gradient(ellipse at 50% 30%, var(--night-3) 0%, var(--night-1) 100%);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: border-color .2s, transform .2s, box-shadow .3s;
+  }
+  .collection-item.collected {
+    border-color: rgba(255,217,122,.35);
+    box-shadow: 0 0 12px rgba(255,217,122,.12);
+  }
+  .collection-item.collected:hover {
+    border-color: rgba(255,217,122,.6);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255,217,122,.25);
+  }
+  .collection-item.locked {
+    border-color: rgba(255,255,255,.05);
+  }
+  .collection-item.locked:hover {
+    transform: none;
+  }
+  .collection-item.current {
+    border-color: rgba(255,217,122,.5);
+    box-shadow: 0 0 16px rgba(255,217,122,.2);
+  }
+  .collection-item .mini { width: 100%; aspect-ratio: 1/1; margin-bottom: 6px; }
+  .collection-item .mini svg { width: 100%; height: 100%; display: block; }
+  .collection-item .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--star);
+    line-height: 1.2;
+  }
+  .collection-item.locked .name {
+    color: var(--muted);
+    opacity: 0.7;
+  }
+  .collection-item .badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 2px 6px;
+    opacity: 0.85;
+  }
+  .collection-empty { grid-column: 1 / -1; text-align: center; font-size: 12px; color: var(--muted); padding: 16px; font-style: italic; }
 
   .divider { height: 1px; background: var(--line); margin: 22px 0; }
   .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
@@ -200,11 +255,7 @@
 
     <div class="sky-header">
       <span class="sky-label">✨ Звёзды: <span id="starCount">0</span> / <span id="starTotal">16</span></span>
-      <label class="switch">
-        <input type="checkbox" id="soundToggle" checked>
-        <span class="switch-slider"></span>
-        <span>Звук звёзд</span>
-      </label>
+      <span class="sky-label" id="constellationHint" style="text-transform:none; letter-spacing:.05em; font-size:12px;"></span>
     </div>
 
     <div class="sky-wrap" id="skyWrap">
@@ -477,7 +528,7 @@ const CONSTELLATIONS = [
   const $starTotal = $('starTotal');
   const $play = $('practicePlay');
   const $next = $('practiceNext');
-  const $soundToggle = $('soundToggle');
+  const $constellationHint = $('constellationHint');
   const $skyResult = $('skyResult');
   const $skyResultText = $('skyResultText');
   const $streakBadge = $('streakBadge');
@@ -793,6 +844,11 @@ const CONSTELLATIONS = [
 
     svg += '</svg>';
     $skyOutput.innerHTML = svg;
+    // Обновляем подпись
+    if ($constellationHint) {
+      const isComplete = visibleStars >= totalStars;
+      $constellationHint.textContent = isComplete ? c.name : '???';
+    }
   }
 
   function syncSky() {
@@ -806,7 +862,7 @@ const CONSTELLATIONS = [
     $starTotal.textContent = total;
 
     if (count > previousStars && count > 0) {
-      if ($soundToggle.checked && !document.hidden) {
+      if (!document.hidden) {
         playStarSound(count - 1);
       }
     }
@@ -832,35 +888,36 @@ const CONSTELLATIONS = [
   /* ---------- Коллекция ---------- */
   function renderCollection() {
     const collected = skyState.collected || [];
-    if (collected.length === 0) {
-      $collection.innerHTML = '<div class="collection-empty">Пока пусто. Соберите первое созвездие — оно появится здесь.</div>';
-      return;
-    }
     let html = '';
-    collected.forEach(id => {
-      const c = CONSTELLATIONS.find(x => x.id === id);
-      if (!c) return;
-      html += '<div class="collection-item">';
-      html += '<div class="mini">' + miniConstellationSVG(c) + '</div>';
-      html += '<div class="name">' + c.name + '</div>';
+    CONSTELLATIONS.forEach(c => {
+      const isCollected = collected.indexOf(c.id) !== -1;
+      const isCurrent = c.id === skyState.constellationId;
+      const cls = 'collection-item' + (isCollected ? ' collected' : ' locked') + (isCurrent ? ' current' : '');
+      html += '<div class="' + cls + '">';
+      html += '<div class="mini">' + miniConstellationSVG(c, isCollected) + '</div>';
+      html += '<div class="name">' + (isCollected ? c.name : '???') + '</div>';
+      if (isCurrent && !isCollected) {
+        html += '<div class="badge">собирается</div>';
+      }
       html += '</div>';
     });
     $collection.innerHTML = html;
   }
 
-  function miniConstellationSVG(c) {
-    let svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">';
+  function miniConstellationSVG(c, isCollected) {
+    const opacity = isCollected ? 1 : 0.22;
+    const starFill = isCollected ? '#ffd97a' : '#ffd97a';
+    let svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="opacity:' + opacity + ';">';
     c.links.forEach(pair => {
       const a = pair[0], b = pair[1];
       svg += '<line x1="' + c.stars[a].x + '" y1="' + c.stars[a].y + '" x2="' + c.stars[b].x + '" y2="' + c.stars[b].y + '" stroke="#ffd97a" stroke-width="0.8" opacity="0.55"/>';
     });
     c.stars.forEach(s => {
-      svg += '<circle cx="' + s.x + '" cy="' + s.y + '" r="1.3" fill="#ffd97a"/>';
+      svg += '<circle cx="' + s.x + '" cy="' + s.y + '" r="1.3" fill="' + starFill + '"/>';
     });
     svg += '</svg>';
     return svg;
   }
-
   /* ---------- Звук ---------- */
   function playStarSound(index) {
     const ctx = getCtx();
