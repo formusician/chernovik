@@ -98,10 +98,15 @@
   .star-link.visible { opacity: 0.55; }
   .star-link.final { opacity: 0.9; stroke-width: 0.8; }
 
-  .star-node { opacity: 0; animation: starAppear .8s cubic-bezier(.2,.9,.3,1.4) forwards; transform-box: fill-box; transform-origin: center; }
-  .star-node path { fill: var(--star); filter: drop-shadow(0 0 2px var(--star-glow)); }
-  .star-node .star-core { fill: #fff8d0; filter: drop-shadow(0 0 3px var(--star-glow)); }
-  @keyframes starAppear { 0% { opacity: 0; transform: scale(.2); } 60% { opacity: 1; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
+  .star-node { opacity: 1; }
+  .star-node path { fill: var(--star); filter: drop-shadow(0 0 3px var(--star-glow)); }
+  .star-node .star-core { fill: #fff8d0; filter: drop-shadow(0 0 4px rgba(255,217,122,0.9)); }
+  .star-node.new-star { animation: starPop 1.2s ease-out; }
+  @keyframes starPop {
+    0%   { opacity: 0; }
+    30%  { opacity: 1; }
+    100% { opacity: 1; }
+  }
 
   .sky-result {
     margin-top: 14px; padding: 16px 18px;
@@ -662,12 +667,13 @@ const CONSTELLATIONS = [
     for (let i = 0; i < visibleStars; i++) {
       const isLast = i === visibleStars - 1;
       const star = c.stars[i];
-      const size = isLast ? 2.6 : 1.5;
+      const size = isLast ? 3.4 : 2.4;
       const p = starPath(size);
-      svg += '<g class="star-node" transform="translate(' + star.x + ',' + star.y + ')">';
+      const cls = 'star-node' + (isLast ? ' new-star' : '');
+      svg += '<g class="' + cls + '" transform="translate(' + star.x + ',' + star.y + ')">';
       svg += '<path d="' + p + '"/>';
       svg += '<path d="' + p + '" transform="rotate(45)"/>';
-      svg += '<circle class="star-core" cx="0" cy="0" r="' + (size * 0.32) + '"/>';
+      svg += '<circle class="star-core" cx="0" cy="0" r="' + (size * 0.38) + '"/>';
       svg += '</g>';
     }
 
