@@ -30,7 +30,7 @@
   .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.55; }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px 20px; }
 
-  .streak-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .streak-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .streak-badge {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 14px; border-radius: 20px;
@@ -43,11 +43,42 @@
   @keyframes streakGlow { 0%,100% { box-shadow: 0 0 0 rgba(220,120,60,0); } 50% { box-shadow: 0 0 16px rgba(220,120,60,.35); } }
   .streak-flame { font-size: 16px; margin-right: 2px; }
 
+  /* Выбор длительности */
+  .duration-picker {
+    margin-bottom: 20px;
+  }
+  .duration-label {
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted); text-align: center; margin-bottom: 10px;
+  }
+  .duration-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .duration-btn {
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    padding: 14px 8px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface);
+    color: var(--ink); cursor: pointer;
+    transition: all .15s; -webkit-appearance: none;
+    text-align: center; line-height: 1.3;
+  }
+  .duration-btn:hover:not(:disabled) { border-color: var(--accent-2); }
+  .duration-btn.active {
+    background: var(--ink); border-color: var(--ink); color: var(--surface);
+  }
+  .duration-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .duration-btn small {
+    display: block; font-size: 10px; font-weight: 400;
+    letter-spacing: .04em; opacity: 0.65; margin-top: 3px;
+  }
+  .duration-btn.active small { opacity: 0.75; }
+
   .timer {
     font-family: 'Cormorant Garamond', serif;
     font-size: 88px; font-weight: 500; line-height: 1;
     text-align: center; font-variant-numeric: tabular-nums;
-    margin: 20px 0 18px; letter-spacing: -0.01em;
+    margin: 18px 0;
     transition: color .3s, text-shadow .3s;
   }
   .timer.running { color: var(--accent); animation: timerGlow 2.4s ease-in-out infinite; }
@@ -139,7 +170,6 @@
     font-size: 9px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--accent); background: var(--surface); border-radius: 8px; padding: 2px 6px; opacity: 0.85;
   }
-  .collection-empty { grid-column: 1 / -1; text-align: center; font-size: 12px; color: var(--muted); padding: 16px; font-style: italic; }
 
   .divider { height: 1px; background: var(--line); margin: 22px 0; }
   .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
@@ -175,10 +205,11 @@
     body { padding: 16px 12px 60px; }
     h1 { font-size: 30px; }
     .card { padding: 22px 16px; }
-    .timer { font-size: 68px; margin: 16px 0 14px; }
+    .timer { font-size: 68px; margin: 14px 0; }
     .stat-value { font-size: 22px; }
     .session-toast { top: 16px; padding: 12px 18px; }
     .btn { padding: 12px 20px; font-size: 12px; }
+    .duration-btn { padding: 12px 6px; font-size: 12px; }
     .collection { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); }
   }
 </style>
@@ -187,7 +218,7 @@
 <div class="wrap">
 
   <h1>Занятия</h1>
-  <p class="subtitle">Считайте время практики и зажигайте созвездие. Первая звезда появится через 30 секунд, за полный цикл (40 минут) созвездие соберётся полностью.</p>
+  <p class="subtitle">Считайте время практики и собирайте созвездие. Выберите длительность — в конце узнаете, что за созвездие вам выпало.</p>
 
   <div class="card">
 
@@ -200,6 +231,15 @@
       </div>
     </div>
 
+    <div class="duration-picker">
+      <div class="duration-label">Выберите длительность</div>
+      <div class="duration-row">
+        <button type="button" class="duration-btn" data-duration="30m">30 минут<small>небольшое</small></button>
+        <button type="button" class="duration-btn" data-duration="1h">1 час<small>среднее</small></button>
+        <button type="button" class="duration-btn" data-duration="2h">2 часа<small>большое</small></button>
+      </div>
+    </div>
+
     <div class="timer" id="practiceTimer">00:00:00</div>
 
     <div class="controls">
@@ -209,8 +249,8 @@
     </div>
 
     <div class="sky-header">
-      <span class="sky-label">✨ Звёзды: <span id="starCount">0</span> / <span id="starTotal">16</span></span>
-      <span class="sky-label" id="constellationHint" style="text-transform:none; letter-spacing:.05em; font-size:12px;"></span>
+      <span class="sky-label">✨ Звёзды: <span id="starCount">0</span> / <span id="starTotal">—</span></span>
+      <span class="sky-label" id="constellationHint" style="text-transform:none; letter-spacing:.05em; font-size:12px;">Созвездие: ???</span>
     </div>
 
     <div class="sky-wrap" id="skyWrap">
@@ -270,84 +310,74 @@ function getCtx() {
 const midiToFreq = (midi, ref) => (ref || 440) * Math.pow(2, (midi - 69) / 12);
 
 /* ---------- СОЗВЕЗДИЯ ---------- */
+/* Поле duration: '30m' | '1h' | '2h' — к какому пулу относится */
 const CONSTELLATIONS = [
   {
     id: "lyra",
     name: "Лира",
     description: "В этом созвездии сияет Вега — одна из ярчайших звёзд неба. По мифу, это лира Орфея — музыканта, чья игра укрощала диких зверей и двигала скалы.",
     stars: [
-      { x: 62.0, y: 22.0 },
-      { x: 50.0, y: 38.0 },
-      { x: 64.0, y: 34.0 },
-      { x: 68.0, y: 44.0 },
-      { x: 42.0, y: 46.0 },
-      { x: 46.0, y: 58.0 },
-      { x: 44.0, y: 70.0 }
+      { x: 49.0, y: 15.2 },
+      { x: 67.5, y: 20.6 },
+      { x: 46.6, y: 33.3 },
+      { x: 46.3, y: 73.3 },
+      { x: 29.1, y: 36.3 },
+      { x: 27.1, y: 82.1 }
     ],
     links: [
-      [0,1],[1,2],[2,3],[1,4],[4,3],[4,5],[5,6]
-    ],
-    notes: [60, 62, 64, 65, 67, 69, 71]
-  },
-  {
-    id: "lebed",
-    name: "Лебедь",
-    description: "Древние греки видели в этом созвездии самого Орфея, превращённого в лебедя после смерти. Птица летит по небу рядом с Лирой — так музыкант остался рядом со своим инструментом навсегда.",
-    stars: [
-      { x: 28.1, y: 23.5 },
-      { x: 23.6, y: 50.7 },
-      { x: 3.0, y: 55.9 },
-      { x: 63.8, y: 27.7 },
-      { x: 70.2, y: 10.0 },
-      { x: 82.0, y: 9.1 },
-      { x: 54.7, y: 64.5 },
-      { x: 74.4, y: 77.9 },
-      { x: 35.0, y: 38.7 }
-    ],
-    links: [
-      [0,8],[8,3],[3,4],[4,5],[8,1],[1,2],[8,6],[6,7]
-    ],
-    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74]
-  },
-  {
-    id: "delfin",
-    name: "Дельфин",
-    description: "По легенде, дельфины спасли кифареда Ариона от пиратов. Его последняя песня привлекла их к кораблю, и один из них вынес музыканта на берег.",
-    stars: [
-      { x: 98.0, y: 48.5 },
-      { x: 4.4, y: 39.5 },
-      { x: 31.0, y: 42.6 },
-      { x: 46.6, y: 27.9 },
-      { x: 76.4, y: 31.6 },
-      { x: 24.9, y: 21.3 }
-    ],
-    links: [
-      [1,2],[2,3],[3,4],[4,0],[5,3],[5,1]
+      [0,2],
+      [1,2],
+      [0,1],
+      [3,2],
+      [5,3],
+      [4,5],
+      [4,2]
     ],
     notes: [60, 62, 64, 65, 67, 69]
   },
   {
-    id: "twins",
-    name: "Близнецы",
+    id: "delfin", name: "Дельфин", duration: "30m",
+    description: "По легенде, дельфины спасли кифареда Ариона от пиратов. Его последняя песня привлекла их к кораблю, и один из них вынес музыканта на берег.",
+    stars: [
+      { x: 98.0, y: 48.5 }, { x: 4.4, y: 39.5 }, { x: 31.0, y: 42.6 },
+      { x: 46.6, y: 27.9 }, { x: 76.4, y: 31.6 }, { x: 24.9, y: 21.3 }
+    ],
+    links: [[1,2],[2,3],[3,4],[4,0],[5,3],[5,1]],
+    notes: [60, 62, 64, 65, 67, 69]
+  },
+  {
+    id: "lebed", name: "Лебедь", duration: "1h",
+    description: "Древние греки видели в этом созвездии самого Орфея, превращённого в лебедя после смерти. Птица летит по небу рядом с Лирой — так музыкант остался рядом со своим инструментом навсегда.",
+    stars: [
+      { x: 28.1, y: 23.5 }, { x: 23.6, y: 50.7 }, { x: 3.0, y: 55.9 },
+      { x: 63.8, y: 27.7 }, { x: 70.2, y: 10.0 }, { x: 82.0, y: 9.1 },
+      { x: 54.7, y: 64.5 }, { x: 74.4, y: 77.9 }, { x: 35.0, y: 38.7 }
+    ],
+    links: [[0,8],[8,3],[3,4],[4,5],[8,1],[1,2],[8,6],[6,7]],
+    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74]
+  },
+  {
+    id: "key", name: "Басовый ключ", duration: "1h",
+    description: "Басовый ключ используется для низких инструментов — виолончели, контрабаса, фагота, левой руки пианиста.",
+    stars: [
+      { x: 24.6, y: 28.4 }, { x: 31.8, y: 15.2 }, { x: 48.0, y: 12.0 },
+      { x: 64.3, y: 19.6 }, { x: 69.2, y: 36.5 }, { x: 54.7, y: 55.1 },
+      { x: 39.9, y: 72.3 }, { x: 32.3, y: 30.9 }, { x: 82.8, y: 26.5 },
+      { x: 82.8, y: 47.5 }
+    ],
+    links: [[0,1],[2,3],[2,1],[3,4],[4,5],[5,6],[0,7]],
+    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74, 76]
+  },
+  {
+    id: "twins", name: "Близнецы", duration: "2h",
     description: "Амфион получил лиру в дар от Гермеса. Его игра была так гармонична, что камни сами складывались в стены Фив.",
     stars: [
-      { x: 17.7, y: 21.3 },
-      { x: 24.1, y: 25.7 },
-      { x: 18.2, y: 35.3 },
-      { x: 35.0, y: 25.5 },
-      { x: 53.0, y: 15.2 },
-      { x: 32.8, y: 6.9 },
-      { x: 73.4, y: 2.9 },
-      { x: 40.4, y: 45.1 },
-      { x: 38.2, y: 63.0 },
-      { x: 53.0, y: 47.8 },
-      { x: 68.7, y: 80.1 },
-      { x: 74.9, y: 67.4 },
-      { x: 74.6, y: 30.1 },
-      { x: 82.8, y: 51.0 },
-      { x: 88.7, y: 36.5 },
-      { x: 93.6, y: 33.6 },
-      { x: 98.0, y: 30.6 }
+      { x: 17.7, y: 21.3 }, { x: 24.1, y: 25.7 }, { x: 18.2, y: 35.3 },
+      { x: 35.0, y: 25.5 }, { x: 53.0, y: 15.2 }, { x: 32.8, y: 6.9 },
+      { x: 73.4, y: 2.9 }, { x: 40.4, y: 45.1 }, { x: 38.2, y: 63.0 },
+      { x: 53.0, y: 47.8 }, { x: 68.7, y: 80.1 }, { x: 74.9, y: 67.4 },
+      { x: 74.6, y: 30.1 }, { x: 82.8, y: 51.0 }, { x: 88.7, y: 36.5 },
+      { x: 93.6, y: 33.6 }, { x: 98.0, y: 30.6 }
     ],
     links: [
       [0,1],[1,2],[1,3],[1,7],[7,8],[7,9],[9,11],[8,10],
@@ -356,36 +386,12 @@ const CONSTELLATIONS = [
     notes: [60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88]
   },
   {
-    id: "key",
-    name: "Басовый ключ",
-    description: "Басовый ключ используется для низких инструментов — виолончели, контрабаса, фагота, левой руки пианиста.",
+    id: "metronome", name: "Метроном", duration: "2h",
+    description: "Символ ритма и точного пульса. Хранитель времени твоей практики — каждая доля, как удар маятника, приближает тебя к мастерству.",
     stars: [
-      { x: 24.6, y: 28.4 },
-      { x: 31.8, y: 15.2 },
-      { x: 48.0, y: 12.0 },
-      { x: 64.3, y: 19.6 },
-      { x: 69.2, y: 36.5 },
-      { x: 54.7, y: 55.1 },
-      { x: 39.9, y: 72.3 },
-      { x: 32.3, y: 30.9 },
-      { x: 82.8, y: 26.5 },
-      { x: 82.8, y: 47.5 }
-    ],
-    links: [
-      [0,1],[2,3],[2,1],[3,4],[4,5],[5,6],[0,7]
-    ],
-    notes: [60, 62, 64, 65, 67, 69, 71, 72, 74, 76]
-  },
-  {
-    id: 'metronome',
-    name: 'Метроном',
-    description: 'Символ ритма и точного пульса. Хранитель времени твоей практики — каждая доля, как удар маятника, приближает тебя к мастерству.',
-    stars: [
-      { x: 50, y: 18 },
-      { x: 44, y: 34 }, { x: 38, y: 50 }, { x: 32, y: 66 },
-      { x: 28, y: 80 }, { x: 24, y: 90 },
-      { x: 56, y: 34 }, { x: 62, y: 50 }, { x: 68, y: 66 },
-      { x: 72, y: 80 }, { x: 76, y: 90 },
+      { x: 50, y: 18 }, { x: 44, y: 34 }, { x: 38, y: 50 }, { x: 32, y: 66 },
+      { x: 28, y: 80 }, { x: 24, y: 90 }, { x: 56, y: 34 }, { x: 62, y: 50 },
+      { x: 68, y: 66 }, { x: 72, y: 80 }, { x: 76, y: 90 },
       { x: 32, y: 92 }, { x: 44, y: 92 }, { x: 56, y: 92 }, { x: 68, y: 92 },
       { x: 50, y: 50 }
     ],
@@ -398,13 +404,12 @@ const CONSTELLATIONS = [
     notes: [60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 76, 74, 72, 69, 67]
   },
   {
-    id: 'tuning-fork',
-    name: 'Камертон',
-    description: 'Эталон звука ля — 440 Гц. Небольшой инструмент, который настраивает весь оркестр. Его чистый тон — точка отсчёта для любого музыканта.',
+    id: "tuning-fork", name: "Камертон", duration: "2h",
+    description: "Эталон звука ля — 440 Гц. Небольшой инструмент, который настраивает весь оркестр. Его чистый тон — точка отсчёта для любого музыканта.",
     stars: [
       { x: 34, y: 16 }, { x: 34, y: 28 }, { x: 34, y: 40 },
-      { x: 34, y: 52 }, { x: 34, y: 62 },
-      { x: 38, y: 70 }, { x: 44, y: 74 }, { x: 50, y: 74 }, { x: 56, y: 70 },
+      { x: 34, y: 52 }, { x: 34, y: 62 }, { x: 38, y: 70 },
+      { x: 44, y: 74 }, { x: 50, y: 74 }, { x: 56, y: 70 },
       { x: 60, y: 62 }, { x: 60, y: 52 }, { x: 60, y: 40 },
       { x: 60, y: 28 }, { x: 60, y: 16 },
       { x: 47, y: 84 }, { x: 47, y: 92 }
@@ -418,6 +423,13 @@ const CONSTELLATIONS = [
   }
 ];
 
+/* Длительности */
+const DURATIONS = {
+  '30m': { seconds: 30 * 60,  label: '30 минут' },
+  '1h':  { seconds: 60 * 60,  label: '1 час' },
+  '2h':  { seconds: 120 * 60, label: '2 часа' }
+};
+
 /* ---------- ТРЕКЕР ---------- */
 (function initTracker() {
   const LS_SESSIONS = 'maestro-practice-sessions';
@@ -428,7 +440,6 @@ const CONSTELLATIONS = [
 
   const SHOW_ALL_PREVIEW = true;   // демо-режим: все карточки открыты
   const FIRST_STAR_DELAY = 30;      // 30 сек до первой звезды
-  const FULL_CYCLE_SEC   = 2400;    // 40 минут на полное созвездие
 
   const $ = id => document.getElementById(id);
   const $timer = $('practiceTimer');
@@ -455,6 +466,7 @@ const CONSTELLATIONS = [
   const $statAvg = $('statAvg');
   const $statWeek = $('statWeek');
   const $collection = $('collection');
+  const durationBtns = document.querySelectorAll('.duration-btn');
 
   let running = false;
   let startedAtMs = null;
@@ -474,22 +486,54 @@ const CONSTELLATIONS = [
     try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
   }
 
-  function newSkyState() {
-    const idx = Math.floor(Math.random() * CONSTELLATIONS.length);
-    return { constellationId: CONSTELLATIONS[idx].id, progressSec: 0, collected: [] };
+  /* Пул созвездий для выбранной длительности */
+  function poolForDuration(d) {
+    return CONSTELLATIONS.filter(c => c.duration === d);
   }
+
+  /* Случайное созвездие из пула, не из собранных (если возможно) */
+  function pickConstellation(duration, collected) {
+    const pool = poolForDuration(duration);
+    const fresh = pool.filter(c => !collected || collected.indexOf(c.id) === -1);
+    const candidates = fresh.length > 0 ? fresh : pool;
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  }
+
+  function newSkyState(duration) {
+    const d = duration || '30m';
+    const c = pickConstellation(d, []);
+    return {
+      duration: d,
+      constellationId: c.id,
+      progressSec: 0,
+      collected: []
+    };
+  }
+
   function loadSkyState() {
     const s = loadJSON(LS_SKY, null);
-    if (s && typeof s.constellationId === 'string' && typeof s.progressSec === 'number' && Array.isArray(s.collected)) {
-      if (CONSTELLATIONS.some(c => c.id === s.constellationId)) return s;
+    if (
+      s &&
+      typeof s.duration === 'string' &&
+      DURATIONS[s.duration] &&
+      typeof s.constellationId === 'string' &&
+      typeof s.progressSec === 'number' &&
+      Array.isArray(s.collected) &&
+      CONSTELLATIONS.some(c => c.id === s.constellationId)
+    ) {
+      return s;
     }
-    return newSkyState();
+    return newSkyState('30m');
   }
 
   let skyState = loadSkyState();
   function saveSkyState() { saveJSON(LS_SKY, skyState); }
   function currentConstellation() {
     return CONSTELLATIONS.find(c => c.id === skyState.constellationId) || CONSTELLATIONS[0];
+  }
+  function currentDurationSec() {
+    const d = DURATIONS[skyState.duration];
+    return d ? d.seconds : 30 * 60;
   }
 
   function dayKey(d) {
@@ -510,13 +554,18 @@ const CONSTELLATIONS = [
     return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
   }
 
+  /* Сколько звёзд должно быть видно на моменте sec
+     Первая — через FIRST_STAR_DELAY, последняя — ровно в конце цикла. */
   function starsCountForSec(sec) {
-    if (sec < FIRST_STAR_DELAY) return 0;
     const total = currentConstellation().stars.length;
+    if (total <= 1) return sec >= FIRST_STAR_DELAY ? total : 0;
+    if (sec < FIRST_STAR_DELAY) return 0;
+    const totalDur = currentDurationSec();
+    if (sec >= totalDur) return total;
     const workSec = sec - FIRST_STAR_DELAY;
-    const cycleSec = FULL_CYCLE_SEC - FIRST_STAR_DELAY;
-    const progress = Math.min(workSec / cycleSec, 1);
-    return Math.min(Math.floor(progress * total) + 1, total);
+    const workTotal = totalDur - FIRST_STAR_DELAY;
+    const progress = workSec / workTotal;
+    return Math.min(total, Math.floor(progress * (total - 1)) + 1);
   }
 
   function persistActive() {
@@ -536,8 +585,8 @@ const CONSTELLATIONS = [
   function applyTimerColor() {
     const mins = elapsedSec / 60;
     $timer.classList.remove('warm', 'hot');
-    if (mins >= 60) $timer.classList.add('hot');
-    else if (mins >= 30) $timer.classList.add('warm');
+    if (mins >= 90) $timer.classList.add('hot');
+    else if (mins >= 45) $timer.classList.add('warm');
   }
 
   function tick() {
@@ -569,6 +618,7 @@ const CONSTELLATIONS = [
     $start.classList.remove('accent');
     $finish.style.display = 'inline-block';
     $reset.style.display = 'inline-block';
+    setDurationButtonsEnabled(false);
   }
 
   function pauseTimer() {
@@ -583,6 +633,7 @@ const CONSTELLATIONS = [
     $start.textContent = 'Продолжить';
     $start.classList.add('accent');
     $start.classList.remove('ghost');
+    setDurationButtonsEnabled(true);
   }
 
   function resetTimer() {
@@ -614,6 +665,7 @@ const CONSTELLATIONS = [
     $start.classList.remove('ghost');
     $finish.style.display = 'none';
     $reset.style.display = 'none';
+    setDurationButtonsEnabled(true);
   }
 
   function finishTimer() {
@@ -645,13 +697,14 @@ const CONSTELLATIONS = [
     $start.classList.remove('ghost');
     $finish.style.display = 'none';
     $reset.style.display = 'none';
+    setDurationButtonsEnabled(true);
   }
 
   function updateStreak() {
     const s = getStreak();
     const today = dayKey();
     if (s.lastDate === today) {
-      // уже занимался
+      // уже
     } else if (s.lastDate === yesterdayKey()) {
       s.current += 1;
       if (s.current > s.best) s.best = s.current;
@@ -761,7 +814,7 @@ const CONSTELLATIONS = [
 
     if ($constellationHint) {
       const isComplete = visibleStars >= totalStars;
-      $constellationHint.textContent = isComplete ? c.name : '???';
+      $constellationHint.textContent = isComplete ? 'Созвездие: ' + c.name : 'Созвездие: ???';
     }
   }
 
@@ -776,9 +829,7 @@ const CONSTELLATIONS = [
     $starTotal.textContent = total;
 
     if (count > previousStars && count > 0) {
-      if (!document.hidden) {
-        playStarSound(count - 1);
-      }
+      if (!document.hidden) playStarSound(count - 1);
     }
     previousStars = count;
 
@@ -863,16 +914,13 @@ const CONSTELLATIONS = [
     if (ctx.state === 'suspended') {
       try { await ctx.resume(); } catch(e) {}
     }
-
     const c = currentConstellation();
     const noteDur = 0.5;
     const startTime = ctx.currentTime + 0.1;
-
     for (let i = 0; i < visibleStars; i++) {
       const midi = c.notes[i] || 60;
       const freq = midiToFreq(midi, 440);
       const t = startTime + i * noteDur;
-
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.type = 'triangle';
@@ -884,7 +932,6 @@ const CONSTELLATIONS = [
       osc.start(t);
       osc.stop(t + noteDur + 0.05);
     }
-
     const totalMs = visibleStars * noteDur * 1000 + 500;
     setTimeout(() => { playingPreview = false; }, totalMs);
   }
@@ -895,10 +942,7 @@ const CONSTELLATIONS = [
         skyState.collected.push(skyState.constellationId);
       }
     }
-    const remaining = CONSTELLATIONS.filter(c => skyState.collected.indexOf(c.id) === -1);
-    const pool = remaining.length > 0 ? remaining : CONSTELLATIONS;
-    const next = pool[Math.floor(Math.random() * pool.length)];
-
+    const next = pickConstellation(skyState.duration, skyState.collected);
     skyState.constellationId = next.id;
     skyState.progressSec = 0;
     visibleStars = 0;
@@ -911,7 +955,56 @@ const CONSTELLATIONS = [
     $starTotal.textContent = next.stars.length;
     renderSky();
     renderCollection();
+    syncDurationButtons();
   }
+
+  /* ---------- Выбор длительности ---------- */
+  function setDurationButtonsEnabled(enabled) {
+    durationBtns.forEach(btn => { btn.disabled = !enabled; });
+  }
+
+  function syncDurationButtons() {
+    durationBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.duration === skyState.duration);
+    });
+  }
+
+  function changeDuration(newDuration) {
+    if (running) return;
+    if (newDuration === skyState.duration) return;
+    // Меняем длительность — генерируем новое созвездие из нового пула,
+    // прогресс сбрасывается.
+    const next = pickConstellation(newDuration, skyState.collected);
+    skyState.duration = newDuration;
+    skyState.constellationId = next.id;
+    skyState.progressSec = 0;
+    visibleStars = 0;
+    previousStars = 0;
+    saveSkyState();
+
+    $skyResult.classList.remove('show');
+    $skyWrap.classList.remove('complete');
+    $starCount.textContent = '0';
+    $starTotal.textContent = next.stars.length;
+    $timer.textContent = '00:00:00';
+    accumulatedMs = 0;
+    startedAtMs = null;
+    elapsedSec = 0;
+    lastElapsedSec = 0;
+    $start.textContent = 'Начать занятие';
+    $start.classList.add('accent');
+    $start.classList.remove('ghost');
+    $finish.style.display = 'none';
+    $reset.style.display = 'none';
+    persistActive();
+    renderSky();
+    renderCollection();
+    syncDurationButtons();
+  }
+
+  durationBtns.forEach(btn => {
+    btn.addEventListener('click', () => changeDuration(btn.dataset.duration));
+  });
 
   /* ---------- События ---------- */
   $start.addEventListener('click', () => { running ? pauseTimer() : startTimer(); });
@@ -961,6 +1054,7 @@ const CONSTELLATIONS = [
         $finish.style.display = 'inline-block';
         $reset.style.display = 'inline-block';
         if (!tickId) tickId = setInterval(tick, 500);
+        setDurationButtonsEnabled(false);
       } else if ((active.accumulatedMs || 0) > 0) {
         accumulatedMs = active.accumulatedMs || 0;
         startedAtMs = null;
@@ -994,6 +1088,7 @@ const CONSTELLATIONS = [
   restore();
   renderStreak();
   renderStats();
+  syncDurationButtons();
   renderCollection();
   $starTotal.textContent = currentConstellation().stars.length;
 
