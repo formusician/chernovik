@@ -1409,12 +1409,20 @@ const panels = document.querySelectorAll('.panel');
 const LS_PANEL_KEY = 'maestro-active-panel';
 const HIDE_INDICATOR_PANELS = ['terms', 'composers', 'scores', 'recordings'];
 
+const LS_PANEL_TIME_KEY = 'maestro-active-panel-time';
+const PANEL_TTL_MS = 5 * 60 * 60 * 1000; // 5 часов
+
 function switchPanel(target, save) {
   navItems.forEach(i => i.classList.toggle('active', i.dataset.panel === target));
   panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + target));
   if (HIDE_INDICATOR_PANELS.indexOf(target) !== -1) audioIndicator.classList.add('hidden');
   else audioIndicator.classList.remove('hidden');
-  if (save !== false) try { localStorage.setItem(LS_PANEL_KEY, target); } catch(e) {}
+  if (save !== false) {
+    try {
+      localStorage.setItem(LS_PANEL_KEY, target);
+      localStorage.setItem(LS_PANEL_TIME_KEY, Date.now().toString());
+    } catch(e) {}
+  }
 }
 
 navItems.forEach(item => {
@@ -3947,10 +3955,23 @@ renderPolyStage();
 
 (function restoreActivePanel() {
   let saved = null;
-  try { saved = localStorage.getItem(LS_PANEL_KEY); } catch(e) {}
-  if (saved && document.querySelector('.nav-item[data-panel="' + saved + '"]')) {
+  let savedTime = 0;
+  try {
+    saved = localStorage.getItem(LS_PANEL_KEY);
+    savedTime = parseInt(localStorage.getItem(LS_PANEL_TIME_KEY) || '0', 10);
+  } catch(e) {}
+
+  const isFresh = savedTime && (Date.now() - savedTime) < PANEL_TTL_MS;
+  const exists = saved && document.querySelector('.nav-item[data-panel="' + saved + '"]');
+
+  if (isFresh && exists) {
     switchPanel(saved, false);
   } else {
+    // Прошло больше 5 часов или раздела нет — открываем Метроном
+    try {
+      localStorage.removeItem(LS_PANEL_KEY);
+      localStorage.removeItem(LS_PANEL_TIME_KEY);
+    } catch(e) {}
     switchPanel('metronome', false);
   }
 })();
