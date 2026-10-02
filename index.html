@@ -664,109 +664,23 @@
   .session-toast .flame { font-size: 22px; }
   .session-toast .mins { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--accent); font-weight: 500; }
 
-  /* Бургер-меню — общие стили (скрыты на десктопе) */
-  .sidebar-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-  }
-  .burger-btn {
-    display: none;
-  }
-
   @media (max-width: 860px) {
     body { flex-direction: column; }
     .sidebar {
-      width: 100%;
-      padding: 12px 0;
-      border-right: none;
-      border-bottom: 1px solid var(--line);
+      width: 100%; padding: 20px 0 0;
+      border-right: none; border-bottom: 1px solid var(--line);
       flex-shrink: 0;
-      position: sticky;
-      top: 0;
-      height: auto;
-      max-height: none;
+      position: sticky; top: 0;
+      height: auto; max-height: none;
       align-self: stretch;
       z-index: 100;
-      overflow: visible;
     }
-    .sidebar-top { padding: 0 16px; }
-    .brand { padding: 0; font-size: 22px; }
-    .brand-sub {
-      padding: 2px 0 0;
-      margin-bottom: 0;
-      font-size: 9px;
-      letter-spacing: .15em;
-    }
-
-    /* Кнопка-бургер */
-    .burger-btn {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 28px;
-      height: 20px;
-      padding: 0;
-      border: none;
-      background: none;
-      cursor: pointer;
-      -webkit-appearance: none;
-      appearance: none;
-      z-index: 200;
-    }
-    .burger-btn span {
-      display: block;
-      height: 2px;
-      width: 100%;
-      background: var(--ink);
-      border-radius: 2px;
-      transition: transform .3s ease, opacity .3s ease;
-    }
-    .burger-btn.open span:nth-child(1) {
-      transform: translateY(9px) rotate(45deg);
-    }
-    .burger-btn.open span:nth-child(2) {
-      opacity: 0;
-    }
-    .burger-btn.open span:nth-child(3) {
-      transform: translateY(-9px) rotate(-45deg);
-    }
-
-    /* Выпадающее меню */
-    nav {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      flex-direction: column;
-      background: var(--surface);
-      padding: 10px 12px 14px;
-      gap: 2px;
-      border-bottom: 1px solid var(--line);
-      box-shadow: 0 8px 20px rgba(0,0,0,.06);
-      max-height: calc(100vh - 60px);
-      overflow-y: auto;
-    }
-    nav.open { display: flex; }
-    .nav-item {
-      white-space: normal;
-      padding: 14px 16px;
-      font-size: 16px;
-      border-radius: 8px;
-      gap: 14px;
-    }
-    .nav-item .num {
-      display: inline-block;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px;
-      font-weight: 500;
-      font-style: italic;
-      opacity: 0.85;
-      min-width: 30px;
-      color: var(--accent);
-    }
+    .brand { padding: 0 20px 4px; font-size: 24px; }
+    .brand-sub { padding: 0 20px 16px; margin-bottom: 10px; }
+    nav { flex-direction: row; overflow-x: auto; padding: 0 12px 12px; gap: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    nav::-webkit-scrollbar { display: none; }
+    .nav-item { white-space: nowrap; padding: 9px 14px; }
+    .nav-item .num { display: none; }
     .sidebar-foot { display: none; }
     main { padding: 32px 20px 100px; }
     .panel-title { font-size: 32px; }
@@ -858,15 +772,8 @@
 <body>
 
 <aside class="sidebar">
-  <div class="sidebar-top">
-    <div>
-      <div class="brand">Maestro</div>
-      <div class="brand-sub">Всё для музыканта</div>
-    </div>
-    <button type="button" class="burger-btn" id="burgerBtn" aria-label="Меню">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
+  <div class="brand">Maestro</div>
+  <div class="brand-sub">Всё для музыканта</div>
   <nav id="nav">
     <button type="button" class="nav-item active" data-panel="metronome"><span class="num">01</span>Метроном</button>
     <button type="button" class="nav-item" data-panel="tuner"><span class="num">02</span>Тюнер / Камертон</button>
@@ -1510,39 +1417,10 @@ function switchPanel(target, save) {
   if (save !== false) try { localStorage.setItem(LS_PANEL_KEY, target); } catch(e) {}
 }
 
-const burgerBtn = document.getElementById('burgerBtn');
-const navEl = document.getElementById('nav');
-
-function closeBurgerMenu() {
-  if (navEl) navEl.classList.remove('open');
-  if (burgerBtn) burgerBtn.classList.remove('open');
-}
-
-function toggleBurgerMenu() {
-  if (!navEl) return;
-  const isOpen = navEl.classList.toggle('open');
-  if (burgerBtn) burgerBtn.classList.toggle('open', isOpen);
-}
-
-if (burgerBtn) {
-  burgerBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleBurgerMenu();
-  });
-}
-
-document.addEventListener('click', (e) => {
-  if (!navEl || !navEl.classList.contains('open')) return;
-  if (e.target.closest('.burger-btn')) return;
-  if (e.target.closest('#nav')) return;
-  closeBurgerMenu();
-});
-
 navItems.forEach(item => {
   item.addEventListener('click', () => {
     switchPanel(item.dataset.panel);
     window.scrollTo({ top: 0, behavior: 'auto' });
-    closeBurgerMenu();
   });
 });
 
