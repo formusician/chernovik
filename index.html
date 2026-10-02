@@ -1824,23 +1824,66 @@ function playClick(time, accent, subIndex, subCount) {
   const ctx = getCtx();
   if (!ctx) return;
   if (ctx.state === 'suspended') ctx.resume();
-  const peak = (accent ? 0.85 : 0.55) * metroVolume;
-  const dur = accent ? 0.055 : 0.032;
-  const freq1 = accent ? 1600 : 1100;
-  const freq2 = accent ? 2400 : 1700;
+
+  // Громче и длиннее — ухо воспринимает такую длительность как «полноценный удар»
+  const peak = (accent ? 1.0 : 0.75) * metroVolume;
+  const dur = accent ? 0.08 : 0.06;
+
+  // Мастер-гейн клика
   const master = ctx.createGain();
   master.gain.setValueAtTime(0, time);
-  master.gain.linearRampToValueAtTime(peak, time + 0.001);
+  master.gain.linearRampToValueAtTime(peak, time + 0.0015);
   master.gain.exponentialRampToValueAtTime(0.0001, time + dur);
-  master.connect(ctx.destination);
+
+  // Компрессор — чтобы клик звучал плотно и «пробивал» шум
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -20;
+  comp.knee.value = 6;
+  comp.ratio.value = 4;
+  comp.attack.value = 0.001;
+  comp.release.value = 0.05;
+
+  master.connect(comp).connect(ctx.destination);
+
+  // 1. Основной тон — резкий «клик»
   const osc1 = ctx.createOscillator();
-  osc1.type = 'triangle'; osc1.frequency.value = freq1; osc1.connect(master);
-  osc1.start(time); osc1.stop(time + dur + 0.03);
+  osc1.type = 'square';
+  osc1.frequency.value = accent ? 1200 : 900;
+  const g1 = ctx.createGain();
+  g1.gain.value = 1.0;
+  osc1.connect(g1).connect(master);
+  osc1.start(time);
+  osc1.stop(time + dur + 0.02);
+
+  // 2. Высокий обертон — «острие» удара
   const osc2 = ctx.createOscillator();
-  osc2.type = 'sine'; osc2.frequency.value = freq2;
-  const g2 = ctx.createGain(); g2.gain.value = 0.55;
+  osc2.type = 'triangle';
+  osc2.frequency.value = accent ? 2800 : 2200;
+  const g2 = ctx.createGain();
+  g2.gain.setValueAtTime(0.75, time);
+  g2.gain.exponentialRampToValueAtTime(0.0001, time + dur * 0.6);
   osc2.connect(g2).connect(master);
-  osc2.start(time); osc2.stop(time + dur + 0.03);
+  osc2.start(time);
+  osc2.stop(time + dur + 0.02);
+
+  // 3. Шумовая атака — придаёт «щелчок» и резкость
+  const noiseLen = 0.008;
+  const noiseBuf = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * noiseLen)), ctx.sampleRate);
+  const noiseData = noiseBuf.getChannelData(0);
+  for (let i = 0; i < noiseData.length; i++) {
+    noiseData[i] = (Math.random() * 2 - 1) * (1 - i / noiseData.length);
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuf;
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.value = 2000;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(accent ? 0.55 : 0.4, time);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, time + noiseLen);
+  noise.connect(noiseFilter).connect(noiseGain).connect(master);
+  noise.start(time);
+  noise.stop(time + noiseLen + 0.01);
 }
 
 function scheduleVisual(beatIdx, subIdx, time) {
