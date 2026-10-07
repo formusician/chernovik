@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f4f1ea">
+<title>Maestro — Библиотека нот (demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea; --surface: #fbf9f4; --ink: #1c1a17;
+    --muted: #837c6e; --line: #ddd6c8;
+    --accent: #8a6f47; --accent-2: #b89b6b;
+    --green: #5a7a5a; --red: #a05555;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { min-height: 100%; -webkit-text-size-adjust: 100%; }
+  html, body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body { display: flex; min-height: 100vh; min-height: 100dvh; }
+
+  /* --- Сайдбар-заглушка (имитация основного сайта для контекста) --- */
+  .sidebar {
+    width: 240px; flex-shrink: 0; background: var(--surface);
+    border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; padding: 32px 0;
+    position: sticky; top: 0;
+    height: 100vh; height: 100dvh;
+    align-self: flex-start;
+    overflow-y: auto; z-index: 50;
+  }
+  .brand { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; letter-spacing: 0.02em; padding: 0 28px 4px; }
+  .brand-sub { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); padding: 0 28px 28px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+  nav { display: flex; flex-direction: column; padding: 0 12px; gap: 2px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 16px;
+    border-radius: 6px; font-size: 14px; color: var(--muted);
+    cursor: pointer; border: none; background: none;
+    font-family: inherit; text-align: left; transition: background .15s, color .15s; width: 100%;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: rgba(138,111,71,.07); color: var(--ink); }
+  .nav-item.active { background: var(--ink); color: var(--surface); }
+  .nav-item .num { font-family: 'Cormorant Garamond', serif; font-size: 13px; opacity: .55; min-width: 16px; }
+
+  /* --- Основная область --- */
+  main { flex: 1; min-width: 0; padding: 48px 56px 100px; max-width: 1100px; }
+
+  .panel-head { margin-bottom: 32px; }
+  .panel-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .panel-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 500; line-height: 1.1; margin-bottom: 10px; }
+  .panel-desc { font-size: 14px; color: var(--muted); max-width: 620px; line-height: 1.6; }
+
+  .info-banner {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(138,111,71,.07);
+    border: 1px solid rgba(138,111,71,.22);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 13px; line-height: 1.5;
+    color: var(--ink);
+  }
+  .info-banner-icon { font-size: 20px; flex-shrink: 0; }
+  .info-banner strong { color: var(--accent); }
+  .info-banner .btn-link { margin-left: auto; white-space: nowrap; }
+
+  /* --- Поиск --- */
+  .search-bar { position: relative; margin-bottom: 20px; }
+  .search-bar input {
+    width: 100%; font-family: inherit; font-size: 16px;
+    padding: 14px 16px 14px 44px;
+    border: 1px solid var(--line); background: var(--surface);
+    border-radius: 8px; color: var(--ink); outline: none;
+    transition: border-color .15s; -webkit-appearance: none;
+  }
+  .search-bar input:focus { border-color: var(--accent); }
+  .search-bar svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+
+  /* --- Категории --- */
+  .cats { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .cat {
+    font-family: inherit; font-size: 12px; letter-spacing: .04em;
+    padding: 7px 14px; border-radius: 20px;
+    border: 1px solid var(--line); background: transparent;
+    color: var(--muted); cursor: pointer; transition: all .15s;
+    -webkit-appearance: none;
+  }
+  .cat:hover { border-color: var(--accent); color: var(--ink); }
+  .cat.active { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+
+  /* --- Сетка карточек --- */
+  .scores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .score {
+    display: flex; flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 22px 18px;
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+    min-height: 240px;
+  }
+  .score:hover {
+    border-color: var(--accent-2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -12px rgba(0,0,0,.1);
+  }
+
+  .score-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .score-epoch {
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .score-diff {
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 10px;
+    border: 1px solid var(--line); color: var(--muted);
+  }
+  .score-diff.easy { border-color: rgba(90,122,90,.35); color: var(--green); }
+  .score-diff.medium { border-color: rgba(184,155,107,.5); color: var(--accent); }
+  .score-diff.hard { border-color: rgba(160,85,85,.35); color: var(--red); }
+
+  .score-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500; line-height: 1.2;
+    margin-bottom: 4px;
+    letter-spacing: -.01em;
+  }
+  .score-composer {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px; font-style: italic;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .score-desc {
+    font-size: 13px; line-height: 1.55;
+    color: var(--muted);
+    flex: 1;
+  }
+  .score-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid var(--line);
+    gap: 10px;
+  }
+  .score-inst {
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .score-open {
+    font-family: inherit;
+    font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+    padding: 9px 16px; border-radius: 6px;
+    border: 1px solid var(--ink); background: var(--ink);
+    color: var(--surface);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .score-open:hover {
+    background: transparent; color: var(--ink);
+  }
+  .score-open svg { width: 12px; height: 12px; }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center; padding: 60px 20px;
+    color: var(--muted); font-size: 14px;
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+  }
+
+  /* --- Кнопка ссылка --- */
+  .btn-link {
+    background: none; border: none; padding: 0;
+    color: var(--accent); font-family: inherit;
+    font-size: 12px; text-decoration: underline;
+    cursor: pointer;
+  }
+  .btn-link:hover { color: var(--ink); }
+
+  /* --- Модалка --- */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(28,26,23,.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px 28px;
+    max-width: 560px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,.35);
+    animation: modalIn .25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.96); }
+    to { opacity: 1; transform: none; }
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 500;
+    margin-bottom: 16px; line-height: 1.2;
+  }
+  .modal p {
+    font-size: 14px; line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .modal p.muted { color: var(--muted); font-size: 13px; }
+  .modal strong { color: var(--accent); }
+  .modal-list {
+    list-style: none; padding: 0;
+    margin: 16px 0;
+  }
+  .modal-list li {
+    font-size: 13px; line-height: 1.6;
+    padding-left: 22px; position: relative;
+    margin-bottom: 8px;
+  }
+  .modal-list li::before {
+    content: '✓'; position: absolute; left: 0;
+    color: var(--green); font-weight: 600;
+  }
+  .modal-list li.no::before { content: '✕'; color: var(--red); }
+  .modal-close {
+    display: block; margin-top: 20px;
+    font-family: inherit; font-size: 13px;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: 12px 24px; border-radius: 8px;
+    border: 1px solid var(--ink); background: var(--ink);
+    color: var(--surface); cursor: pointer;
+    transition: all .15s; width: 100%;
+  }
+  .modal-close:hover { background: transparent; color: var(--ink); }
+
+  /* --- Футер демо --- */
+  .demo-note {
+    margin-top: 40px; text-align: center;
+    font-size: 12px; color: var(--muted);
+    font-style: italic;
+  }
+
+  /* --- Мобильный --- */
+  @media (max-width: 860px) {
+    body { flex-direction: column; }
+    .sidebar {
+      width: 100%; padding: 16px 0 0;
+      border-right: none; border-bottom: 1px solid var(--line);
+      position: sticky; top: 0;
+      height: auto; max-height: none; align-self: stretch;
+      z-index: 100;
+    }
+    .brand { padding: 0 20px 4px; font-size: 24px; }
+    .brand-sub { padding: 0 20px 14px; margin-bottom: 8px; }
+    nav { flex-direction: row; overflow-x: auto; padding: 0 12px 10px; gap: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    nav::-webkit-scrollbar { display: none; }
+    .nav-item { white-space: nowrap; padding: 9px 14px; }
+    .nav-item .num { display: none; }
+    main { padding: 28px 20px 80px; }
+    .panel-title { font-size: 32px; }
+    .info-banner { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+    .info-banner .btn-link { margin-left: 0; }
+    .scores-grid { grid-template-columns: 1fr; gap: 12px; }
+    .score { padding: 18px 18px 14px; min-height: auto; }
+    .score-title { font-size: 20px; }
+    .modal { padding: 24px 20px; }
+    .modal-title { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">Maestro</div>
+  <div class="brand-sub">Всё для музыканта</div>
+  <nav>
+    <a href="#" class="nav-item"><span class="num">01</span>Метроном</a>
+    <a href="#" class="nav-item"><span class="num">02</span>Тюнер / Камертон</a>
+    <a href="#" class="nav-item"><span class="num">03</span>Пианино</a>
+    <a href="#" class="nav-item"><span class="num">04</span>Занятия</a>
+    <a href="#" class="nav-item"><span class="num">05</span>Термины</a>
+    <a href="#" class="nav-item"><span class="num">06</span>Композиторы</a>
+    <a href="#" class="nav-item active"><span class="num">07</span>Ноты</a>
+    <a href="#" class="nav-item"><span class="num">08</span>Записи</a>
+  </nav>
+</aside>
+
+<main>
+  <div class="panel-head">
+    <div class="panel-eyebrow">Раздел 07 · демо</div>
+    <h1 class="panel-title">Библиотека нот</h1>
+    <p class="panel-desc">Классические произведения в общественном достоянии — от Баха до Дебюсси. Откройте партитуру на IMSLP и играйте.</p>
+  </div>
+
+  <div class="info-banner">
+    <div class="info-banner-icon">📖</div>
+    <div>
+      В подборке — только <strong>public domain</strong>. Все ноты открываются на IMSLP — крупнейшей бесплатной библиотеке.
+    </div>
+    <button type="button" class="btn-link" id="aboutBtn">О разделе</button>
+  </div>
+
+  <div class="search-bar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input type="text" id="search" placeholder="Найти произведение или композитора…" autocomplete="off" autocorrect="off" autocapitalize="off">
+  </div>
+
+  <div class="cats" id="cats"></div>
+
+  <div class="scores-grid" id="grid"></div>
+
+  <p class="demo-note">Демо-версия раздела. Ссылки ведут на IMSLP в новой вкладке.</p>
+</main>
+
+<!-- Модалка «О разделе» -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 class="modal-title">О разделе «Ноты»</h2>
+    <p>Здесь собраны партитуры и клавиры классических произведений, которые находятся в <strong>общественном достоянии</strong> (public domain). Это значит, что их можно свободно скачивать, играть, распечатывать и передавать другим.</p>
+
+    <p>Ноты открываются на <strong>IMSLP</strong> — крупнейшей в мире библиотеке публичных доменных партитур. Там вы можете:</p>
+
+    <ul class="modal-list">
+      <li>Посмотреть ноты прямо в браузере</li>
+      <li>Скачать PDF на устройство</li>
+      <li>Распечатать на принтере</li>
+      <li>Выбрать редакцию из нескольких вариантов</li>
+    </ul>
+
+    <p class="muted">Что <strong>нельзя</strong> встретить в этом разделе:</p>
+    <ul class="modal-list">
+      <li class="no">Современные произведения XX–XXI века</li>
+      <li class="no">Свежие коммерческие издания</li>
+      <li class="no">Популярную музыку, киномузыку, джаз</li>
+    </ul>
+
+    <p class="muted">Всё это защищено авторским правом. Мы уважаем труд композиторов, издателей и правообладателей.</p>
+
+    <button type="button" class="modal-close" id="modalClose">Понятно</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   КАТАЛОГ ПРОИЗВЕДЕНИЙ
+   ============================================================ */
+const SCORES = [
+  {
+    title: 'Прелюдия и фуга до мажор (ХТК I)',
+    composer: 'Иоганн Себастьян Бах',
+    epoch: 'Барокко',
+    instrument: 'Фортепиано',
+    difficulty: 'medium',
+    desc: 'Открывающая прелюдия «Хорошо темперированного клавира» — 24 пьесы во всех тональностях, написанные как учебник и как шедевр одновременно.',
+    url: 'https://imslp.org/wiki/Prelude_and_Fugue_in_C_major,_BWV_846_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Инвенции, BWV 772–786',
+    composer: 'Иоганн Себастьян Бах',
+    epoch: 'Барокко',
+    instrument: 'Фортепиано',
+    difficulty: 'medium',
+    desc: 'Пятнадцать двухголосных инвенций — обязательная школа полифонии. Бах написал их для обучения сына Вильгельма Фридемана.',
+    url: 'https://imslp.org/wiki/Inventions,_BWV_772-786_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Менуэт соль мажор',
+    composer: 'Иоганн Себастьян Бах',
+    epoch: 'Барокко',
+    instrument: 'Фортепиано',
+    difficulty: 'easy',
+    desc: 'Одна из самых известных пьес из «Нотной тетради Анны Магдалены Бах» — сборника для домашнего музицирования.',
+    url: 'https://imslp.org/wiki/Minuet_in_G_major,_BWV_Anh.114_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Соната до мажор, K.545',
+    composer: 'Вольфганг Амадей Моцарт',
+    epoch: 'Классицизм',
+    instrument: 'Фортепиано',
+    difficulty: 'medium',
+    desc: '«Простая соната для начинающих» — так Моцарт сам её назвал. Прозрачная фактура, ясная форма, идеальный вход в классический стиль.',
+    url: 'https://imslp.org/wiki/Piano_Sonata_No.16_in_C_major,_K.545_(Mozart,_Wolfgang_Amadeus)'
+  },
+  {
+    title: 'Маленькая ночная серенада, K.525',
+    composer: 'Вольфганг Амадей Моцарт',
+    epoch: 'Классицизм',
+    instrument: 'Струнный ансамбль',
+    difficulty: 'medium',
+    desc: 'Одно из самых узнаваемых произведений в истории музыки. Четыре части, лёгкость и блеск венского классицизма.',
+    url: 'https://imslp.org/wiki/Eine_kleine_Nachtmusik,_K.525_(Mozart,_Wolfgang_Amadeus)'
+  },
+  {
+    title: 'К Элизе, WoO 59',
+    composer: 'Людвиг ван Бетховен',
+    epoch: 'Классицизм',
+    instrument: 'Фортепиано',
+    difficulty: 'easy',
+    desc: 'Багатель ля минор, найденный после смерти Бетховена. Самая известная фортепианная миниатюра в мире.',
+    url: 'https://imslp.org/wiki/Für_Elise,_WoO_59_(Beethoven,_Ludwig_van)'
+  },
+  {
+    title: 'Лунная соната, I часть',
+    composer: 'Людвиг ван Бетховен',
+    epoch: 'Классицизм → Романтизм',
+    instrument: 'Фортепиано',
+    difficulty: 'hard',
+    desc: 'Соната № 14, посвящённая Джульетте Гвиччарди. Первая часть — Adagio sostenuto — образец романтической лирики.',
+    url: 'https://imslp.org/wiki/Piano_Sonata_No.14,_Op.27_No.2_(Beethoven,_Ludwig_van)'
+  },
+  {
+    title: 'Патетическая соната, op. 13',
+    composer: 'Людвиг ван Бетховен',
+    epoch: 'Классицизм → Романтизм',
+    instrument: 'Фортепиано',
+    difficulty: 'hard',
+    desc: 'Ранний шедевр Бетховена, где классическая форма встречается с драматизмом и контрастами будущего романтизма.',
+    url: 'https://imslp.org/wiki/Piano_Sonata_No.8,_Op.13_(Beethoven,_Ludwig_van)'
+  },
+  {
+    title: 'Ноктюрны, op. 9',
+    composer: 'Фридерик Шопен',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    difficulty: 'medium',
+    desc: 'Три ноктюрна, включая знаменитый op. 9 № 2 ми-бемоль мажор. Лирика, rubato и шопеновская мелодическая выразительность.',
+    url: 'https://imslp.org/wiki/Nocturnes,_Op.9_(Chopin,_Frédéric)'
+  },
+  {
+    title: 'Прелюдии, op. 28',
+    composer: 'Фридерик Шопен',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    difficulty: 'medium',
+    desc: '24 прелюдии во всех тональностях. Особенно известна № 4 ля минор — «прощальная», написанная Шопеном на Майорке.',
+    url: 'https://imslp.org/wiki/Preludes,_Op.28_(Chopin,_Frédéric)'
+  },
+  {
+    title: 'Вальсы, op. 64',
+    composer: 'Фридерик Шопен',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    difficulty: 'hard',
+    desc: 'Среди трёх вальсов op. 64 — «Минутный вальс» ре-бемоль мажор и знаменитый вальс до-диез минор, полный ностальгии.',
+    url: 'https://imslp.org/wiki/Waltzes,_Op.64_(Chopin,_Frédéric)'
+  },
+  {
+    title: 'Серенада (Ständchen)',
+    composer: 'Франц Шуберт',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано / вокал',
+    difficulty: 'easy',
+    desc: 'Серенада из вокального цикла «Лебединая песня» — одна из самых проникновенных песен Шуберта о ночной тоске.',
+    url: 'https://imslp.org/wiki/Schwanengesang,_D.957_(Schubert,_Franz)'
+  },
+  {
+    title: 'Пер Гюнт, сюита № 1',
+    composer: 'Эдвард Григ',
+    epoch: 'Романтизм',
+    instrument: 'Оркестр',
+    difficulty: 'medium',
+    desc: 'Музыка к драме Ибсена. Среди четырёх частей — «Утро», «Смерть Озе», «Танец Анитры» и «В пещере горного короля».',
+    url: 'https://imslp.org/wiki/Peer_Gynt_Suite_No.1,_Op.46_(Grieg,_Edvard)'
+  },
+  {
+    title: 'Щелкунчик, op. 71',
+    composer: 'Пётр Ильич Чайковский',
+    epoch: 'Романтизм',
+    instrument: 'Оркестр / фортепиано',
+    difficulty: 'hard',
+    desc: 'Последний балет Чайковского. «Танец феи Драже», «Вальс цветов» и «Трепак» — жемчужины оркестровой музыки.',
+    url: 'https://imslp.org/wiki/The_Nutcracker_(ballet),_Op.71_(Tchaikovsky,_Pyotr)'
+  },
+  {
+    title: 'Симфония № 1 до минор, op. 68',
+    composer: 'Иоганнес Брамс',
+    epoch: 'Романтизм',
+    instrument: 'Оркестр',
+    difficulty: 'hard',
+    desc: 'Над первой симфонией Брамс работал более 20 лет. Её называют «Десятой симфонией Бетховена» за масштаб и драматизм.',
+    url: 'https://imslp.org/wiki/Symphony_No.1,_Op.68_(Brahms,_Johannes)'
+  },
+  {
+    title: 'Сюита «Бергамасская», L.75',
+    composer: 'Клод Дебюсси',
+    epoch: 'XX век · Импрессионизм',
+    instrument: 'Фортепиано',
+    difficulty: 'medium',
+    desc: 'Сюита из четырёх пьес, среди которых — знаменитая Clair de Lune («Лунный свет»), символ музыкального импрессионизма.',
+    url: 'https://imslp.org/wiki/Suite_bergamasque_(Debussy,_Claude)'
+  },
+  {
+    title: 'Три гимнопедии',
+    composer: 'Эрик Сати',
+    epoch: 'XX век · Импрессионизм',
+    instrument: 'Фортепиано',
+    difficulty: 'easy',
+    desc: 'Три медитативные пьесы 1888 года. Сати назвал их «мебелью в форме музыки» — предтеча эмбиента и минимализма.',
+    url: 'https://imslp.org/wiki/3_Gymnopédies_(Satie,_Erik)'
+  }
+];
+
+/* ============================================================
+   ОТРИСОВКА
+   ============================================================ */
+const EPOCHS = ['Все', 'Барокко', 'Классицизм', 'Романтизм', 'XX век'];
+
+const gridEl = document.getElementById('grid');
+const catsEl = document.getElementById('cats');
+const searchEl = document.getElementById('search');
+
+let activeEpoch = 'Все';
+let query = '';
+
+const DIFF_LABEL = {
+  easy: 'Начальный',
+  medium: 'Средний',
+  hard: 'Продвинутый'
+};
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function highlight(text, q) {
+  const safe = escapeHtml(text);
+  if (!q) return safe;
+  const esc = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try {
+    const re = new RegExp('(' + esc + ')', 'gi');
+    return safe.replace(re, '<mark style="background:rgba(184,155,107,.35);color:var(--accent);padding:0 2px;border-radius:3px;">$1</mark>');
+  } catch(e) { return safe; }
+}
+
+function renderCats() {
+  catsEl.innerHTML = '';
+  EPOCHS.forEach(e => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cat' + (e === activeEpoch ? ' active' : '');
+    b.textContent = e;
+    b.addEventListener('click', () => {
+      activeEpoch = e;
+      renderCats();
+      renderGrid();
+    });
+    catsEl.appendChild(b);
+  });
+}
+
+function renderGrid() {
+  const q = query.trim().toLowerCase();
+  const filtered = SCORES.filter(s => {
+    let okEpoch;
+    if (activeEpoch === 'Все') okEpoch = true;
+    else if (activeEpoch === 'Классицизм') okEpoch = s.epoch.indexOf('Классицизм') !== -1;
+    else if (activeEpoch === 'XX век') okEpoch = s.epoch.indexOf('XX век') !== -1;
+    else okEpoch = s.epoch.indexOf(activeEpoch) !== -1;
+
+    const hay = (s.title + ' ' + s.composer + ' ' + s.epoch + ' ' + s.desc).toLowerCase();
+    const okQ = !q || hay.indexOf(q) !== -1;
+    return okEpoch && okQ;
+  });
+
+  if (filtered.length === 0) {
+    gridEl.innerHTML = '<div class="empty">Ничего не найдено</div>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(s => {
+    html += '<article class="score">';
+    html += '<div class="score-top">';
+    html += '<span class="score-epoch">' + escapeHtml(s.epoch) + '</span>';
+    html += '<span class="score-diff ' + s.difficulty + '">' + DIFF_LABEL[s.difficulty] + '</span>';
+    html += '</div>';
+    html += '<h3 class="score-title">' + highlight(s.title, q) + '</h3>';
+    html += '<div class="score-composer">' + highlight(s.composer, q) + '</div>';
+    html += '<p class="score-desc">' + highlight(s.desc, q) + '</p>';
+    html += '<div class="score-foot">';
+    html += '<span class="score-inst">' + escapeHtml(s.instrument) + '</span>';
+    html += '<a class="score-open" href="' + s.url + '" target="_blank" rel="noopener">';
+    html += 'Открыть ноты';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>';
+    html += '</a>';
+    html += '</div>';
+    html += '</article>';
+  });
+  gridEl.innerHTML = html;
+}
+
+searchEl.addEventListener('input', e => {
+  query = e.target.value;
+  renderGrid();
+});
+
+renderCats();
+renderGrid();
+
+/* ============================================================
+   МОДАЛКА «О РАЗДЕЛЕ»
+   ============================================================ */
+const modalOverlay = document.getElementById('modalOverlay');
+const aboutBtn = document.getElementById('aboutBtn');
+const modalClose = document.getElementById('modalClose');
+
+function openModal() { modalOverlay.classList.add('open'); }
+function closeModal() { modalOverlay.classList.remove('open'); }
+
+aboutBtn.addEventListener('click', openModal);
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', e => {
+  if (e.target === modalOverlay) closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
