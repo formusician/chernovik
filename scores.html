@@ -125,15 +125,6 @@
     font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
     color: var(--accent);
   }
-  .score-diff {
-    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-    padding: 2px 8px; border-radius: 10px;
-    border: 1px solid var(--line); color: var(--muted);
-  }
-  .score-diff.easy { border-color: rgba(90,122,90,.35); color: var(--green); }
-  .score-diff.medium { border-color: rgba(184,155,107,.5); color: var(--accent); }
-  .score-diff.hard { border-color: rgba(160,85,85,.35); color: var(--red); }
-
   .score-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: 22px; font-weight: 500; line-height: 1.2;
@@ -376,7 +367,6 @@ const SCORES = [
     composer: 'Иоганн Себастьян Бах',
     epoch: 'Барокко',
     instrument: 'Фортепиано',
-    difficulty: 'medium',
     desc: 'Открывающая прелюдия «Хорошо темперированного клавира» — 24 пьесы во всех тональностях, написанные как учебник и как шедевр одновременно.',
     url: 'https://imslp.org/wiki/Prelude_and_Fugue_in_C_major,_BWV_846_(Bach,_Johann_Sebastian)'
   },
@@ -385,7 +375,6 @@ const SCORES = [
     composer: 'Иоганн Себастьян Бах',
     epoch: 'Барокко',
     instrument: 'Фортепиано',
-    difficulty: 'medium',
     desc: 'Пятнадцать двухголосных инвенций — обязательная школа полифонии. Бах написал их для обучения сына Вильгельма Фридемана.',
     url: 'https://imslp.org/wiki/Inventions,_BWV_772-786_(Bach,_Johann_Sebastian)'
   },
@@ -394,16 +383,78 @@ const SCORES = [
     composer: 'Иоганн Себастьян Бах',
     epoch: 'Барокко',
     instrument: 'Фортепиано',
-    difficulty: 'easy',
     desc: 'Одна из самых известных пьес из «Нотной тетради Анны Магдалены Бах» — сборника для домашнего музицирования.',
     url: 'https://imslp.org/wiki/Minuet_in_G_major,_BWV_Anh.114_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Токката и фуга ре минор, BWV 565',
+    composer: 'Иоганн Себастьян Бах',
+    epoch: 'Барокко',
+    instrument: 'Орган',
+    desc: 'Самое известное органное произведение в мире. Начинается со знаменитого нисходящего мотива, который узнают даже далёкие от классики слушатели.',
+    url: 'https://imslp.org/wiki/Toccata_and_Fugue_in_D_minor,_BWV_565_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Ария (Air из Сюиты № 3)',
+    composer: 'Иоганн Себастьян Бах',
+    epoch: 'Барокко',
+    instrument: 'Струнный оркестр',
+    desc: 'Вторая часть оркестровой сюиты, известная как «Air on the G String». Медленная, певучая, идеальная для струнных.',
+    url: 'https://imslp.org/wiki/Orchestral_Suite_No.3,_BWV_1068_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Сюиты для виолончели, BWV 1007–1012',
+    composer: 'Иоганн Себастьян Бах',
+    epoch: 'Барокко',
+    instrument: 'Виолончель',
+    desc: 'Шесть сюит для виолончели соло. Прелюдия из первой сюиты — одна из самых узнаваемых мелодий в истории музыки.',
+    url: 'https://imslp.org/wiki/Cello_Suites,_BWV_1007-1012_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Бранденбургские концерты',
+    composer: 'Иоганн Себастьян Бах',
+    epoch: 'Барокко',
+    instrument: 'Оркестр',
+    desc: 'Шесть концертов, подаренных маркграфу Бранденбургскому. Пример Concerti grossi на пике барочной формы.',
+    url: 'https://imslp.org/wiki/Brandenburg_Concertos,_BWV_1046-1051_(Bach,_Johann_Sebastian)'
+  },
+  {
+    title: 'Времена года',
+    composer: 'Антонио Вивальди',
+    epoch: 'Барокко',
+    instrument: 'Скрипка / оркестр',
+    desc: 'Четыре скрипичных концерта — «Весна», «Лето», «Осень», «Зима». Ранний пример программной музыки: у каждого концерта есть стихи-подсказки.',
+    url: 'https://imslp.org/wiki/Le_quattro_stagioni_(Vivaldi,_Antonio)'
+  },
+  {
+    title: 'Канон ре мажор',
+    composer: 'Иоганн Пахельбель',
+    epoch: 'Барокко',
+    instrument: 'Струнное трио',
+    desc: 'Канон, ставший символом свадебных церемоний. Три скрипки и бас повторяют одну и ту же гармоническую последовательность.',
+    url: 'https://imslp.org/wiki/Canon_and_Gigue_in_D_major,_P.37_(Pachelbel,_Johann)'
+  },
+  {
+    title: 'Мессия, HWV 56',
+    composer: 'Георг Фридрих Гендель',
+    epoch: 'Барокко',
+    instrument: 'Хор / оркестр',
+    desc: 'Оратория, написанная за 24 дня. Хор «Аллилуйя» настолько известен, что по традиции публика встаёт при его исполнении.',
+    url: 'https://imslp.org/wiki/Messiah,_HWV_56_(Handel,_George_Frideric)'
+  },
+  {
+    title: 'Музыка на воде, HWV 348–350',
+    composer: 'Георг Фридрих Гендель',
+    epoch: 'Барокко',
+    instrument: 'Оркестр',
+    desc: 'Три сюиты, написанные для прогулок короля Георга I по Темзе. Оркестр из пятидесяти музыкантов играл прямо на барже.',
+    url: 'https://imslp.org/wiki/Water_Music,_HWV_348-350_(Handel,_George_Frideric)'
   },
   {
     title: 'Соната до мажор, K.545',
     composer: 'Вольфганг Амадей Моцарт',
     epoch: 'Классицизм',
     instrument: 'Фортепиано',
-    difficulty: 'medium',
     desc: '«Простая соната для начинающих» — так Моцарт сам её назвал. Прозрачная фактура, ясная форма, идеальный вход в классический стиль.',
     url: 'https://imslp.org/wiki/Piano_Sonata_No.16_in_C_major,_K.545_(Mozart,_Wolfgang_Amadeus)'
   },
@@ -412,16 +463,30 @@ const SCORES = [
     composer: 'Вольфганг Амадей Моцарт',
     epoch: 'Классицизм',
     instrument: 'Струнный ансамбль',
-    difficulty: 'medium',
     desc: 'Одно из самых узнаваемых произведений в истории музыки. Четыре части, лёгкость и блеск венского классицизма.',
     url: 'https://imslp.org/wiki/Eine_kleine_Nachtmusik,_K.525_(Mozart,_Wolfgang_Amadeus)'
+  },
+  {
+    title: 'Реквием, K.626',
+    composer: 'Вольфганг Амадей Моцарт',
+    epoch: 'Классицизм',
+    instrument: 'Хор / оркестр',
+    desc: 'Последнее сочинение Моцарта, оставшееся незаконченным. Месса мёртвых, дописанная учеником — Зюсмайром. Мистика и музыка в одном.',
+    url: 'https://imslp.org/wiki/Requiem_in_D_minor,_K.626_(Mozart,_Wolfgang_Amadeus)'
+  },
+  {
+    title: 'Симфония № 40 соль минор, K.550',
+    composer: 'Вольфганг Амадей Моцарт',
+    epoch: 'Классицизм',
+    instrument: 'Оркестр',
+    desc: 'Одна из трёх последних симфоний Моцарта. Начинается «вздохом» — восходящим мотивом, который стал визитной карточкой.',
+    url: 'https://imslp.org/wiki/Symphony_No.40_in_G_minor,_K.550_(Mozart,_Wolfgang_Amadeus)'
   },
   {
     title: 'К Элизе, WoO 59',
     composer: 'Людвиг ван Бетховен',
     epoch: 'Классицизм',
     instrument: 'Фортепиано',
-    difficulty: 'easy',
     desc: 'Багатель ля минор, найденный после смерти Бетховена. Самая известная фортепианная миниатюра в мире.',
     url: 'https://imslp.org/wiki/Für_Elise,_WoO_59_(Beethoven,_Ludwig_van)'
   },
@@ -430,7 +495,6 @@ const SCORES = [
     composer: 'Людвиг ван Бетховен',
     epoch: 'Классицизм → Романтизм',
     instrument: 'Фортепиано',
-    difficulty: 'hard',
     desc: 'Соната № 14, посвящённая Джульетте Гвиччарди. Первая часть — Adagio sostenuto — образец романтической лирики.',
     url: 'https://imslp.org/wiki/Piano_Sonata_No.14,_Op.27_No.2_(Beethoven,_Ludwig_van)'
   },
@@ -439,16 +503,30 @@ const SCORES = [
     composer: 'Людвиг ван Бетховен',
     epoch: 'Классицизм → Романтизм',
     instrument: 'Фортепиано',
-    difficulty: 'hard',
     desc: 'Ранний шедевр Бетховена, где классическая форма встречается с драматизмом и контрастами будущего романтизма.',
     url: 'https://imslp.org/wiki/Piano_Sonata_No.8,_Op.13_(Beethoven,_Ludwig_van)'
+  },
+  {
+    title: 'Симфония № 5 до минор, op. 67',
+    composer: 'Людвиг ван Бетховен',
+    epoch: 'Классицизм → Романтизм',
+    instrument: 'Оркестр',
+    desc: 'Знаменитый мотив «судьба стучится в дверь» — четыре ноты, которые слышал каждый. Символ бетховенского героического периода.',
+    url: 'https://imslp.org/wiki/Symphony_No.5,_Op.67_(Beethoven,_Ludwig_van)'
+  },
+  {
+    title: 'Симфония № 9, op. 125',
+    composer: 'Людвиг ван Бетховен',
+    epoch: 'Классицизм → Романтизм',
+    instrument: 'Оркестр / хор',
+    desc: 'Последняя симфония Бетховена, написанная полностью глухим композитором. Финал с «Одой к радости» стал гимном Европы.',
+    url: 'https://imslp.org/wiki/Symphony_No.9,_Op.125_(Beethoven,_Ludwig_van)'
   },
   {
     title: 'Ноктюрны, op. 9',
     composer: 'Фридерик Шопен',
     epoch: 'Романтизм',
     instrument: 'Фортепиано',
-    difficulty: 'medium',
     desc: 'Три ноктюрна, включая знаменитый op. 9 № 2 ми-бемоль мажор. Лирика, rubato и шопеновская мелодическая выразительность.',
     url: 'https://imslp.org/wiki/Nocturnes,_Op.9_(Chopin,_Frédéric)'
   },
@@ -457,7 +535,6 @@ const SCORES = [
     composer: 'Фридерик Шопен',
     epoch: 'Романтизм',
     instrument: 'Фортепиано',
-    difficulty: 'medium',
     desc: '24 прелюдии во всех тональностях. Особенно известна № 4 ля минор — «прощальная», написанная Шопеном на Майорке.',
     url: 'https://imslp.org/wiki/Preludes,_Op.28_(Chopin,_Frédéric)'
   },
@@ -466,16 +543,54 @@ const SCORES = [
     composer: 'Фридерик Шопен',
     epoch: 'Романтизм',
     instrument: 'Фортепиано',
-    difficulty: 'hard',
     desc: 'Среди трёх вальсов op. 64 — «Минутный вальс» ре-бемоль мажор и знаменитый вальс до-диез минор, полный ностальгии.',
     url: 'https://imslp.org/wiki/Waltzes,_Op.64_(Chopin,_Frédéric)'
+  },
+  {
+    title: 'Этюды, op. 10',
+    composer: 'Фридерик Шопен',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    desc: 'Двенадцать этюдов — технические упражнения, ставшие концертными шедеврами. Известные: «Революционный», «Прощание».',
+    url: 'https://imslp.org/wiki/Etudes,_Op.10_(Chopin,_Frédéric)'
+  },
+  {
+    title: 'Баллады',
+    composer: 'Фридерик Шопен',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    desc: 'Четыре баллады — крупная форма в фортепианной музыке. Первая соль минор — одна из самых драматичных страниц Шопена.',
+    url: 'https://imslp.org/wiki/Ballades_(Chopin,_Frédéric)'
+  },
+  {
+    title: 'Грёзы (Träumerei из Детских сцен)',
+    composer: 'Роберт Шуман',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    desc: 'Седьмая пьеса из цикла «Детские сцены». Плавная, певучая миниатюра, одна из самых любимых в фортепианной литературе.',
+    url: 'https://imslp.org/wiki/Kinderszenen,_Op.15_(Schumann,_Robert)'
+  },
+  {
+    title: 'Карнавал, op. 9',
+    composer: 'Роберт Шуман',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    desc: 'Цикл из 21 миниатюры, где Шуман зашифровал маскарад. Одна из вершин романтической фортепианной музыки.',
+    url: 'https://imslp.org/wiki/Carnaval,_Op.9_(Schumann,_Robert)'
+  },
+  {
+    title: 'Венгерская рапсодия № 2',
+    composer: 'Ференц Лист',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    desc: 'Одна из девятнадцати рапсодий. Знаменитый цыганский напев, виртуозные пассажи и невероятный размах.',
+    url: 'https://imslp.org/wiki/Hungarian_Rhapsody_No.2,_S.244/2_(Liszt,_Franz)'
   },
   {
     title: 'Серенада (Ständchen)',
     composer: 'Франц Шуберт',
     epoch: 'Романтизм',
     instrument: 'Фортепиано / вокал',
-    difficulty: 'easy',
     desc: 'Серенада из вокального цикла «Лебединая песня» — одна из самых проникновенных песен Шуберта о ночной тоске.',
     url: 'https://imslp.org/wiki/Schwanengesang,_D.957_(Schubert,_Franz)'
   },
@@ -484,34 +599,86 @@ const SCORES = [
     composer: 'Эдвард Григ',
     epoch: 'Романтизм',
     instrument: 'Оркестр',
-    difficulty: 'medium',
     desc: 'Музыка к драме Ибсена. Среди четырёх частей — «Утро», «Смерть Озе», «Танец Анитры» и «В пещере горного короля».',
     url: 'https://imslp.org/wiki/Peer_Gynt_Suite_No.1,_Op.46_(Grieg,_Edvard)'
+  },
+  {
+    title: 'Песни без слов',
+    composer: 'Феликс Мендельсон',
+    epoch: 'Романтизм',
+    instrument: 'Фортепиано',
+    desc: 'Восемь тетрадей коротких лирических пьес. Мендельсон создал новый жанр — песня без текста, только мелодия и аккомпанемент.',
+    url: 'https://imslp.org/wiki/Songs_Without_Words_(Mendelssohn,_Felix)'
   },
   {
     title: 'Щелкунчик, op. 71',
     composer: 'Пётр Ильич Чайковский',
     epoch: 'Романтизм',
     instrument: 'Оркестр / фортепиано',
-    difficulty: 'hard',
     desc: 'Последний балет Чайковского. «Танец феи Драже», «Вальс цветов» и «Трепак» — жемчужины оркестровой музыки.',
     url: 'https://imslp.org/wiki/The_Nutcracker_(ballet),_Op.71_(Tchaikovsky,_Pyotr)'
+  },
+  {
+    title: 'Лебединое озеро, op. 20',
+    composer: 'Пётр Ильич Чайковский',
+    epoch: 'Романтизм',
+    instrument: 'Оркестр',
+    desc: 'Первый балет Чайковского. Тема лебедей из второго акта стала символом русского балета.',
+    url: 'https://imslp.org/wiki/Swan_Lake_(ballet),_Op.20_(Tchaikovsky,_Pyotr)'
+  },
+  {
+    title: 'Симфония № 9 «Из Нового Света»',
+    composer: 'Антонин Дворжак',
+    epoch: 'Романтизм',
+    instrument: 'Оркестр',
+    desc: 'Написана в США, впитала интонации спиричуэлс и индейских напевов. Знаменитая вторая часть — «Largo» — одно из самых красивых Adagio в симфонизме.',
+    url: 'https://imslp.org/wiki/Symphony_No.9,_Op.95_(Dvořák,_Antonín)'
   },
   {
     title: 'Симфония № 1 до минор, op. 68',
     composer: 'Иоганнес Брамс',
     epoch: 'Романтизм',
     instrument: 'Оркестр',
-    difficulty: 'hard',
     desc: 'Над первой симфонией Брамс работал более 20 лет. Её называют «Десятой симфонией Бетховена» за масштаб и драматизм.',
     url: 'https://imslp.org/wiki/Symphony_No.1,_Op.68_(Brahms,_Johannes)'
+  },
+  {
+    title: 'Шехеразада, op. 35',
+    composer: 'Николай Римский-Корсаков',
+    epoch: 'Романтизм',
+    instrument: 'Оркестр',
+    desc: 'Симфоническая сюита по мотивам «Тысячи и одной ночи». Изысканная оркестровка — визитная карточка Римского-Корсакова.',
+    url: 'https://imslp.org/wiki/Scheherazade,_Op.35_(Rimsky-Korsakov,_Nikolay)'
+  },
+  {
+    title: 'Полёт шмеля',
+    composer: 'Николай Римский-Корсаков',
+    epoch: 'Романтизм',
+    instrument: 'Оркестр / фортепиано',
+    desc: 'Интермедия из оперы «Сказка о царе Салтане». Виртуозная пьеса, изображающая стремительный полёт насекомого.',
+    url: 'https://imslp.org/wiki/The_Tale_of_Tsar_Saltan_(Rimsky-Korsakov,_Nikolay)'
+  },
+  {
+    title: 'Картинки с выставки',
+    composer: 'Модест Мусоргский',
+    epoch: 'Романтизм / Русская школа',
+    instrument: 'Фортепиано',
+    desc: 'Цикл из десяти пьес и «Прогулок» между ними. Мусоргский написал его под впечатлением от выставки художника Гартмана.',
+    url: 'https://imslp.org/wiki/Pictures_at_an_Exhibition_(Mussorgsky,_Modest)'
+  },
+  {
+    title: 'Каприс № 24 ля минор',
+    composer: 'Никколо Паганини',
+    epoch: 'Романтизм',
+    instrument: 'Скрипка',
+    desc: 'Последний из 24 каприсов. Тема, на которую потом написали вариации Лист, Брамс, Рахманинов и многие другие.',
+    url: 'https://imslp.org/wiki/24_Caprices,_Op.1_(Paganini,_Niccolò)'
   },
   {
     title: 'Сюита «Бергамасская», L.75',
     composer: 'Клод Дебюсси',
     epoch: 'XX век · Импрессионизм',
     instrument: 'Фортепиано',
-    difficulty: 'medium',
     desc: 'Сюита из четырёх пьес, среди которых — знаменитая Clair de Lune («Лунный свет»), символ музыкального импрессионизма.',
     url: 'https://imslp.org/wiki/Suite_bergamasque_(Debussy,_Claude)'
   },
@@ -520,7 +687,6 @@ const SCORES = [
     composer: 'Эрик Сати',
     epoch: 'XX век · Импрессионизм',
     instrument: 'Фортепиано',
-    difficulty: 'easy',
     desc: 'Три медитативные пьесы 1888 года. Сати назвал их «мебелью в форме музыки» — предтеча эмбиента и минимализма.',
     url: 'https://imslp.org/wiki/3_Gymnopédies_(Satie,_Erik)'
   }
@@ -598,7 +764,6 @@ function renderGrid() {
     html += '<article class="score">';
     html += '<div class="score-top">';
     html += '<span class="score-epoch">' + escapeHtml(s.epoch) + '</span>';
-    html += '<span class="score-diff ' + s.difficulty + '">' + DIFF_LABEL[s.difficulty] + '</span>';
     html += '</div>';
     html += '<h3 class="score-title">' + highlight(s.title, q) + '</h3>';
     html += '<div class="score-composer">' + highlight(s.composer, q) + '</div>';
