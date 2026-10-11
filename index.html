@@ -112,6 +112,45 @@
   }
   .btn.small { padding: 8px 14px; font-size: 11px; }
   .btn.tempo { padding: 7px 11px; font-size: 10px; letter-spacing: .05em; white-space: nowrap; flex: 0 0 auto; }
+    .bpm-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0 28px;
+  }
+  .bpm-row input[type=range] {
+    flex: 1;
+    margin: 0;
+  }
+  .bpm-step-btn {
+    flex-shrink: 0;
+    width: 56px;
+    height: 44px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .15s;
+    -webkit-appearance: none;
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bpm-step-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .bpm-step-btn:active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    transform: scale(.96);
+  }
   .switch {
     display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
     user-select: none; -webkit-user-select: none; font-size: 13px; color: var(--muted);
@@ -707,6 +746,8 @@
     main { padding: 32px 20px 100px; }
     .panel-title { font-size: 32px; }
     .bpm-value { font-size: 64px; min-width: 100px; }
+    .bpm-step-btn { width: 48px; height: 40px; font-size: 20px; }
+    .bpm-row { gap: 10px; }
     .tempo-name { font-size: 18px; }
     .tuner-note { font-size: 88px; }
     .tuner-note .oct { font-size: 30px; }
@@ -823,7 +864,11 @@
         <div class="tempo-name" id="tempoName">Andante</div>
       </div>
       <div class="bpm-hint">Нажмите на число, чтобы ввести вручную · диапазон 30–240</div>
-      <input type="range" id="bpmSlider" min="30" max="240" value="90">
+            <div class="bpm-row">
+        <button type="button" class="bpm-step-btn" id="bpmMinus" aria-label="Уменьшить на 5">−5</button>
+        <input type="range" id="bpmSlider" min="30" max="240" value="90">
+        <button type="button" class="bpm-step-btn" id="bpmPlus" aria-label="Увеличить на 5">+5</button>
+      </div>
       <div class="metro-row">
         <button type="button" class="btn accent" id="metroToggle">Старт</button>
         <label class="switch">
@@ -1628,7 +1673,56 @@ bpmValueEl.addEventListener('blur', () => {
 
 bpmSlider.addEventListener('input', e => updateBpm(+e.target.value));
 document.querySelectorAll('[data-bpm]').forEach(b => b.addEventListener('click', () => updateBpm(+b.dataset.bpm)));
+// Кнопки быстрого шага −5 / +5
+const bpmMinusBtn = document.getElementById('bpmMinus');
+const bpmPlusBtn = document.getElementById('bpmPlus');
 
+function stepBpm(delta) {
+  updateBpm(bpm + delta);
+}
+
+let bpmStepIntervalId = null;
+let bpmStepTimeoutId = null;
+let bpmStepDirection = 0;
+
+function startBpmStepping(delta) {
+  bpmStepDirection = delta;
+  stepBpm(delta);
+  // Ускоренное повторение при удержании
+  bpmStepTimeoutId = setTimeout(() => {
+    bpmStepIntervalId = setInterval(() => stepBpm(bpmStepDirection), 80);
+  }, 450);
+}
+
+function stopBpmStepping() {
+  if (bpmStepTimeoutId) { clearTimeout(bpmStepTimeoutId); bpmStepTimeoutId = null; }
+  if (bpmStepIntervalId) { clearInterval(bpmStepIntervalId); bpmStepIntervalId = null; }
+  bpmStepDirection = 0;
+}
+
+if (bpmMinusBtn) {
+  bpmMinusBtn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    startBpmStepping(-5);
+  });
+  bpmMinusBtn.addEventListener('pointerup', stopBpmStepping);
+  bpmMinusBtn.addEventListener('pointerleave', stopBpmStepping);
+  bpmMinusBtn.addEventListener('pointercancel', stopBpmStepping);
+}
+
+if (bpmPlusBtn) {
+  bpmPlusBtn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    startBpmStepping(5);
+  });
+  bpmPlusBtn.addEventListener('pointerup', stopBpmStepping);
+  bpmPlusBtn.addEventListener('pointerleave', stopBpmStepping);
+  bpmPlusBtn.addEventListener('pointercancel', stopBpmStepping);
+}
+
+// На всякий случай — если палец ушёл с кнопки, но pointerup не сработал
+document.addEventListener('pointerup', stopBpmStepping);
+document.addEventListener('pointercancel', stopBpmStepping);
 metroVolumeInput.addEventListener('input', e => {
   const v = Math.min(100, Math.max(30, +e.target.value));
   metroVolume = v / 100;
